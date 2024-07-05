@@ -14,8 +14,14 @@ static constexpr float PLAYER_CAMERA_SENSETIVITY = 0.0015;
 
 extern entt::registry registry;
 
+enum class GameState {
+    EDITOR,
+    PLAY,
+};
+
 extern float FRAME_DT;
 extern bool WINDOW_SHOULD_CLOSE;
+extern GameState GAME_STATE;
 
 void update();
 

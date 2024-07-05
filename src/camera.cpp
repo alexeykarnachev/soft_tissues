@@ -3,7 +3,6 @@
 #include "component/component.hpp"
 #include "component/transform.hpp"
 #include "globals.hpp"
-#include "mode.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rcamera.h"
@@ -71,10 +70,9 @@ static void update_first_person_mode() {
 void update() {
     if (GetTime() < 0.2) return;
 
-    mode::Mode mode = mode::get_mode();
-    switch (mode) {
-        case mode::Mode::EDITOR: update_editor_mode(); break;
-        case mode::Mode::PLAY: update_first_person_mode(); break;
+    switch (globals::GAME_STATE) {
+        case globals::GameState::EDITOR: update_editor_mode(); break;
+        case globals::GameState::PLAY: update_first_person_mode(); break;
     }
 }
 

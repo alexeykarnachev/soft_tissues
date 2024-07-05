@@ -1,8 +1,7 @@
-#include "movement.hpp"
+#include "controller.hpp"
 
 #include "component/component.hpp"
 #include "globals.hpp"
-#include "mode.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rcamera.h"
@@ -59,8 +58,6 @@ void update_rotation() {
 }
 
 void update() {
-    if (!mode::is_play()) return;
-
     update_translation();
     update_rotation();
 }
