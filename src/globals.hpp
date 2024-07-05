@@ -16,7 +16,6 @@ extern entt::registry registry;
 
 enum class GameState {
     EDITOR,
-    PLAY,
 };
 
 extern float FRAME_DT;

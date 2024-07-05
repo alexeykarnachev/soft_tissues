@@ -1,7 +1,5 @@
 #include "camera.hpp"
 
-#include "component/component.hpp"
-#include "component/transform.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -11,10 +9,10 @@
 namespace soft_tissues::camera {
 
 Camera3D CAMERA = {
-    .position = {0.0, 1.0, 0.0},
-    .target = {0.0, 0.0, -1.0},
+    .position = {5.0, 5.0, 5.0},
+    .target = {0.0, 0.0, 0.0},
     .up = {0.0, 1.0, 0.0},
-    .fovy = 70.0,
+    .fovy = 80.0,
     .projection = CAMERA_PERSPECTIVE,
 };
 
@@ -51,28 +49,11 @@ static void update_editor_mode() {
     CameraMoveToTarget(&CAMERA, -GetMouseWheelMove() * zoom_speed);
 }
 
-static void update_first_person_mode() {
-    auto player = globals::registry.view<component::Player>().front();
-    auto tr = globals::registry.get<component::Transform>(player);
-
-    Vector3 position = tr.position;
-    position.y += globals::PLAYER_HEIGHT;
-
-    Vector3 forward = tr.get_forward();
-    Vector3 target = Vector3Add(position, forward);
-
-    CAMERA.position = position;
-    CAMERA.target = target;
-
-    DrawSphere(target, 0.1, RED);
-}
-
 void update() {
     if (GetTime() < 0.2) return;
 
     switch (globals::GAME_STATE) {
         case globals::GameState::EDITOR: update_editor_mode(); break;
-        case globals::GameState::PLAY: update_first_person_mode(); break;
     }
 }
 
