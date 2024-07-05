@@ -2,7 +2,7 @@ APPNAME := soft_tissues
 
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -Wall -Werror -pedantic -std=c++2a -I./deps/include -O3
+CXXFLAGS := -Wall -pedantic -std=c++2a -I./deps/include -O3
 LDFLAGS := -L./deps/lib/linux -lraylib -limgui -lGL -lpthread -ldl
 
 # Directories

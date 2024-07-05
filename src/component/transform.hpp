@@ -13,23 +13,15 @@ private:
 public:
     Vector3 position = Vector3Zero();
     Vector3 scale = Vector3One();
-    Quaternion rotation = QuaternionIdentity();
+    Vector3 rotation = Vector3Zero();
 
     Transform(entt::entity entity, Vector3 position);
-    Transform(entt::entity entity, Vector3 position, Vector3 Scale);
-    Transform(entt::entity entity, Vector3 position, Vector3 Scale, Quaternion rotation);
+    Transform(entt::entity entity, Vector3 position, Vector3 scale);
+    Transform(entt::entity entity, Vector3 position, Vector3 scale, Vector3 rotation);
 
-    Matrix get_matrix();
-
-    Vector3 get_up();
+    Quaternion get_quaternion();
     Vector3 get_forward();
-
-    void translate(Vector3 vec);
-
-    void rotate_x(float rad);
-    void rotate_y(float rad);
-
-    Vector3 apply_to_vector(Vector3 vec);
+    Vector3 get_right();
 };
 
 }  // namespace soft_tissues::transform

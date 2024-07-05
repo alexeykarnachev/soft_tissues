@@ -53,21 +53,19 @@ static void update_editor_mode() {
 }
 
 static void update_first_person_mode() {
-    static float rot_speed = 0.003;
-
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
 
-    CAMERA.position = tr.position;
-    CAMERA.position.y += globals::PLAYER_HEIGHT;
+    Vector3 position = tr.position;
+    position.y += globals::PLAYER_HEIGHT;
 
-    Vector2 mouse_delta = GetMouseDelta();
-    CameraYaw(&CAMERA, -rot_speed * mouse_delta.x, false);
-    CameraPitch(&CAMERA, -rot_speed * mouse_delta.y, true, false, false);
+    Vector3 forward = tr.get_forward();
+    Vector3 target = Vector3Add(position, forward);
 
-    Vector3 forward = GetCameraForward(&CAMERA);
-    Vector3 target = Vector3Add(CAMERA.position, forward);
+    CAMERA.position = position;
     CAMERA.target = target;
+
+    DrawSphere(target, 0.1, RED);
 }
 
 void update() {

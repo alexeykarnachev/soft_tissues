@@ -12,8 +12,6 @@
 
 namespace soft_tissues::game {
 
-static bool WINDOW_SHOULD_CLOSE = false;
-
 static void load_window() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
 
@@ -37,11 +35,6 @@ static void unload() {
     CloseWindow();
 }
 
-static void update_window_should_close() {
-    bool is_alt_f4_pressed = IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_F4);
-    WINDOW_SHOULD_CLOSE = (WindowShouldClose() || is_alt_f4_pressed);
-}
-
 template <typename T> void update_components() {
     for (auto entity : globals::registry.view<T>()) {
         auto &component = globals::registry.get<T>(entity);
@@ -57,11 +50,10 @@ template <typename T> void draw_components() {
 }
 
 static void update() {
-    update_window_should_close();
-
+    globals::update();
+    mode::update();
     movement::update();
     camera::update();
-    mode::update();
 }
 
 static void draw() {
@@ -83,15 +75,8 @@ static void draw() {
 void run() {
     load();
 
-    float last_update_time = 0.0;
-    while (!WINDOW_SHOULD_CLOSE) {
-        float time = GetTime();
-
-        while (time - last_update_time >= globals::DT) {
-            update();
-            last_update_time += globals::DT;
-        }
-
+    while (!globals::WINDOW_SHOULD_CLOSE) {
+        update();
         draw();
     }
 
