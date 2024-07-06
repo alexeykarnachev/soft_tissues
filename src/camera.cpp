@@ -50,8 +50,6 @@ static void update_editor_mode() {
 }
 
 void update() {
-    if (GetTime() < 0.2) return;
-
     switch (globals::GAME_STATE) {
         case globals::GameState::EDITOR: update_editor_mode(); break;
     }
