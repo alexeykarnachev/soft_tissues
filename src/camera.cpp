@@ -68,8 +68,6 @@ static void update_first_person_mode() {
 }
 
 void update() {
-    if (GetTime() < 0.2) return;
-
     switch (globals::GAME_STATE) {
         case globals::GameState::EDITOR: update_editor_mode(); break;
         case globals::GameState::PLAY: update_first_person_mode(); break;

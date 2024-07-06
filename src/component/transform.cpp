@@ -6,12 +6,15 @@ namespace soft_tissues::transform {
 
 Transform::Transform(entt::entity entity, Vector3 position)
     : entity(entity)
-    , position(position) {}
+    , position(position)
+    , scale(Vector3One())
+    , rotation(Vector3Zero()) {}
 
 Transform::Transform(entt::entity entity, Vector3 position, Vector3 scale)
     : entity(entity)
     , position(position)
-    , scale(scale) {}
+    , scale(scale)
+    , rotation(Vector3Zero()) {}
 
 Transform::Transform(
     entt::entity entity, Vector3 position, Vector3 scale, Vector3 rotation

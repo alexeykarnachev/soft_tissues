@@ -49,6 +49,8 @@ template <typename T> void draw_components() {
 }
 
 static void update() {
+    if (GetTime() < 0.2) return;
+
     globals::update();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {

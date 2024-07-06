@@ -5,8 +5,8 @@
 
 namespace soft_tissues::globals {
 
-static constexpr int SCREEN_WIDTH = 2560;
-static constexpr int SCREEN_HEIGHT = 1440;
+static constexpr int SCREEN_WIDTH = 0;
+static constexpr int SCREEN_HEIGHT = 0;
 
 static constexpr float PLAYER_HEIGHT = 1.8;
 static constexpr float PLAYER_MOVEMENT_SPEED = 2.0;
