@@ -8,19 +8,18 @@ namespace soft_tissues::globals {
 
 entt::registry registry;
 
+float TOTAL_TIME = 0.0;
 float FRAME_DT = 0.0;
 bool WINDOW_SHOULD_CLOSE = false;
 GameState GAME_STATE = GameState::PLAY;
 
 void update() {
-    // FRAME_DT
     FRAME_DT = GetFrameTime();
+    TOTAL_TIME += FRAME_DT;
 
-    // WINDOW_SHOULD_CLOSE
     bool is_alt_f4_pressed = IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_F4);
     WINDOW_SHOULD_CLOSE = (WindowShouldClose() || is_alt_f4_pressed);
 
-    // MODE
     if (IsKeyPressed(KEY_ESCAPE)) {
         if (GAME_STATE == GameState::PLAY) {
             GAME_STATE = GameState::EDITOR;

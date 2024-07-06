@@ -8,6 +8,7 @@
 #include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include "resources.hpp"
 
 namespace soft_tissues::game {
 
@@ -24,6 +25,7 @@ static void load_window() {
 
 static void load() {
     load_window();
+    resources::load();
     editor::load();
 
     prefabs::spawn_player(Vector3Zero());
@@ -31,6 +33,7 @@ static void load() {
 
 static void unload() {
     editor::unload();
+    resources::unload();
     CloseWindow();
 }
 
@@ -49,8 +52,6 @@ template <typename T> void draw_components() {
 }
 
 static void update() {
-    if (GetTime() < 0.2) return;
-
     globals::update();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
@@ -88,24 +89,31 @@ static void draw() {
     BeginDrawing();
     ClearBackground(BLANK);
 
+    // -------------------------------------------------------------------
+    // draw world space
     BeginMode3D(camera::CAMERA);
-    DrawGrid(10.0, 1.0);
+    {
+        DrawGrid(10.0, 1.0);
 
-    if (globals::GAME_STATE == globals::GameState::EDITOR) {
-        draw_player();
+        // if (globals::GAME_STATE == globals::GameState::EDITOR) {
+        //     draw_player();
+        // }
+
+        DrawModel(resources::PLANE_MODEL, Vector3Zero(), 1.0, WHITE);
     }
-
     EndMode3D();
 
-    if (globals::GAME_STATE == globals::GameState::PLAY) {
-        draw_cursor();
+    // -------------------------------------------------------------------
+    // draw screen space
+    {
+        // if (globals::GAME_STATE == globals::GameState::PLAY) {
+        //     draw_cursor();
+        // } else if (globals::GAME_STATE == globals::GameState::EDITOR) {
+        //     editor::update_and_draw();
+        // }
+        // DrawFPS(0, 0);
     }
 
-    if (globals::GAME_STATE == globals::GameState::EDITOR) {
-        editor::update_and_draw();
-    }
-
-    DrawFPS(0, 0);
     EndDrawing();
 }
 

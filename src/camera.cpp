@@ -63,8 +63,6 @@ static void update_first_person_mode() {
 
     CAMERA.position = position;
     CAMERA.target = target;
-
-    DrawSphere(target, 0.1, RED);
 }
 
 void update() {

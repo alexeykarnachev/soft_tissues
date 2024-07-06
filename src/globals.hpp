@@ -19,6 +19,7 @@ enum class GameState {
     PLAY,
 };
 
+extern float TOTAL_TIME;
 extern float FRAME_DT;
 extern bool WINDOW_SHOULD_CLOSE;
 extern GameState GAME_STATE;
