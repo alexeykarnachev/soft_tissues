@@ -131,9 +131,5 @@ void main() {
     vec3 total_ambient = (u_ambient_color + albedo) * u_ambient_intensity * 0.5;
     vec3 color = total_ambient + total_light * occlusion;
 
-    // hdr & gamma
-    color = pow(color, color + vec3(1.0));
-    color = pow(color, vec3(1.0 / 2.2));
-
     f_color = vec4(color, 1.0);
 }

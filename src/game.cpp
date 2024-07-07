@@ -38,11 +38,11 @@ static void load() {
 
     // light
     {
-        Vector3 position = {15.0, 5.0, 0.0};
+        Vector3 position = {5.0, 10.0, -2.0};
         light::Type type = light::Type::POINT;
         Color color = WHITE;
-        float intensity = 10.0;
-        Vector3 attenuation = {1.0, 0.0, 0.0};
+        float intensity = 18.0;
+        Vector3 attenuation = {1.0, 0.03, 0.0003};
         light::Params params = {.point = {.attenuation = attenuation}};
         prefabs::spawn_light(position, type, color, intensity, params);
     }
