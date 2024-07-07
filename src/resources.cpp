@@ -1,13 +1,16 @@
 #include "resources.hpp"
 
+#include "drawing.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include <cstdio>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace soft_tissues::resources {
+using namespace soft_tissues::drawing;
 
 Material BRICK_WALL_MATERIAL;
 
@@ -44,7 +47,18 @@ static Shader load_shader(
     auto fs = load_shader_src(fs_file_name);
     Shader shader = LoadShaderFromMemory(vs.c_str(), fs.c_str());
 
+    if (!IsShaderReady(shader)) {
+        throw std::runtime_error(
+            "Failed to load the shader: " + vs_file_name + ", " + fs_file_name
+        );
+    }
+
     return shader;
+}
+
+static Texture load_texture(std::string dir_path, std::string file_name) {
+    auto file_path = dir_path + "/" + file_name;
+    return LoadTexture(file_path.c_str());
 }
 
 static Material load_pbr_material(std::string textures_dir_path) {
@@ -55,52 +69,48 @@ static Material load_pbr_material(std::string textures_dir_path) {
     // shader locations
 
     // vertex attributes
-    shader.locs[SHADER_LOC_VERTEX_POSITION] = GetShaderLocationAttrib(
-        shader, "a_position"
-    );
-    shader.locs[SHADER_LOC_VERTEX_TEXCOORD01] = GetShaderLocationAttrib(
-        shader, "a_tex_coord"
-    );
-    shader.locs[SHADER_LOC_VERTEX_NORMAL] = GetShaderLocationAttrib(shader, "a_normal");
+    shader.locs[SHADER_LOC_VERTEX_POSITION] = get_attribute_loc(shader, "a_position");
+    shader.locs[SHADER_LOC_VERTEX_TEXCOORD01] = get_attribute_loc(shader, "a_tex_coord");
+    shader.locs[SHADER_LOC_VERTEX_NORMAL] = get_attribute_loc(shader, "a_normal");
+    shader.locs[SHADER_LOC_VERTEX_TANGENT] = get_attribute_loc(shader, "a_tangent");
 
     // uniforms
-    shader.locs[SHADER_LOC_MATRIX_MVP] = GetShaderLocation(shader, "u_mvp_mat");
-    shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "u_model_mat");
-    shader.locs[SHADER_LOC_MATRIX_NORMAL] = GetShaderLocation(shader, "u_normal_mat");
+    shader.locs[SHADER_LOC_MATRIX_MVP] = get_uniform_loc(shader, "u_mvp_mat");
+    shader.locs[SHADER_LOC_MATRIX_MODEL] = get_uniform_loc(shader, "u_model_mat");
+    shader.locs[SHADER_LOC_MATRIX_NORMAL] = get_uniform_loc(shader, "u_normal_mat");
 
-    shader.locs[SHADER_LOC_MAP_ALBEDO] = GetShaderLocation(shader, "u_albedo_map");
-    shader.locs[MATERIAL_MAP_METALNESS] = GetShaderLocation(shader, "u_metalness_map");
-    shader.locs[MATERIAL_MAP_NORMAL] = GetShaderLocation(shader, "u_normal_map");
-    shader.locs[MATERIAL_MAP_ROUGHNESS] = GetShaderLocation(shader, "u_roughness_map");
-    shader.locs[MATERIAL_MAP_OCCLUSION] = GetShaderLocation(shader, "u_occlusion_map");
-    shader.locs[MATERIAL_MAP_HEIGHT] = GetShaderLocation(shader, "u_height_map");
+    shader.locs[SHADER_LOC_MAP_ALBEDO] = get_uniform_loc(shader, "u_albedo_map");
+    shader.locs[SHADER_LOC_MAP_METALNESS] = get_uniform_loc(shader, "u_metalness_map");
+    shader.locs[SHADER_LOC_MAP_NORMAL] = get_uniform_loc(shader, "u_normal_map");
+    shader.locs[SHADER_LOC_MAP_ROUGHNESS] = get_uniform_loc(shader, "u_roughness_map");
+    shader.locs[SHADER_LOC_MAP_OCCLUSION] = get_uniform_loc(shader, "u_occlusion_map");
 
     material.shader = shader;
 
     // -------------------------------------------------------------------
     // textures
-    material.maps[MATERIAL_MAP_ALBEDO].texture = LoadTexture(
-        (textures_dir_path + "/albedo.png").c_str()
+    material.maps[MATERIAL_MAP_ALBEDO].texture = load_texture(
+        textures_dir_path, "albedo.png"
     );
 
-    material.maps[MATERIAL_MAP_METALNESS].texture = LoadTexture(
-        (textures_dir_path + "/metalness.png").c_str()
+    material.maps[MATERIAL_MAP_METALNESS].texture = load_texture(
+        textures_dir_path, "/metalness.png"
     );
 
-    material.maps[MATERIAL_MAP_NORMAL].texture = LoadTexture(
-        (textures_dir_path + "/normal.png").c_str()
+    material.maps[MATERIAL_MAP_NORMAL].texture = load_texture(
+        textures_dir_path, "/normal.png"
     );
 
-    material.maps[MATERIAL_MAP_ROUGHNESS].texture = LoadTexture(
-        (textures_dir_path + "/roughness.png").c_str()
+    material.maps[MATERIAL_MAP_ROUGHNESS].texture = load_texture(
+        textures_dir_path, "/roughness.png"
     );
 
-    material.maps[MATERIAL_MAP_OCCLUSION].texture = LoadTexture(
-        (textures_dir_path + "/occlusion.png").c_str()
+    material.maps[MATERIAL_MAP_OCCLUSION].texture = load_texture(
+        textures_dir_path, "/occlusion.png"
     );
 
-    material.maps[MATERIAL_MAP_HEIGHT].texture = LoadTexture(
-        (textures_dir_path + "/height.png").c_str()
+    material.maps[MATERIAL_MAP_HEIGHT].texture = load_texture(
+        textures_dir_path, "/height.png"
     );
 
     return material;

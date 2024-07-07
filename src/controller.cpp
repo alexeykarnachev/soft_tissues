@@ -39,6 +39,9 @@ void update_translation() {
 }
 
 void update_rotation() {
+    static int tick_idx = 0;
+    if (tick_idx++ < 5) return;
+
     Vector2 mouse_delta = GetMouseDelta();
     mouse_delta = Vector2Scale(mouse_delta, globals::PLAYER_CAMERA_SENSETIVITY);
 
