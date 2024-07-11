@@ -56,9 +56,13 @@ static Shader load_shader(
     return shader;
 }
 
-static Texture load_texture(std::string dir_path, std::string file_name) {
+static Texture load_texture(
+    std::string dir_path, std::string file_name, bool is_bilinear
+) {
     auto file_path = dir_path + "/" + file_name;
-    return LoadTexture(file_path.c_str());
+    Texture texture = LoadTexture(file_path.c_str());
+    if (is_bilinear) SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
+    return texture;
 }
 
 static Material load_pbr_material(std::string textures_dir_path) {
@@ -72,7 +76,6 @@ static Material load_pbr_material(std::string textures_dir_path) {
     shader.locs[SHADER_LOC_VERTEX_POSITION] = get_attribute_loc(shader, "a_position");
     shader.locs[SHADER_LOC_VERTEX_TEXCOORD01] = get_attribute_loc(shader, "a_tex_coord");
     shader.locs[SHADER_LOC_VERTEX_NORMAL] = get_attribute_loc(shader, "a_normal");
-    shader.locs[SHADER_LOC_VERTEX_TANGENT] = get_attribute_loc(shader, "a_tangent");
 
     // uniforms
     shader.locs[SHADER_LOC_MATRIX_MVP] = get_uniform_loc(shader, "u_mvp_mat");
@@ -90,27 +93,27 @@ static Material load_pbr_material(std::string textures_dir_path) {
     // -------------------------------------------------------------------
     // textures
     material.maps[MATERIAL_MAP_ALBEDO].texture = load_texture(
-        textures_dir_path, "albedo.png"
+        textures_dir_path, "albedo.png", true
     );
 
     material.maps[MATERIAL_MAP_METALNESS].texture = load_texture(
-        textures_dir_path, "/metalness.png"
+        textures_dir_path, "/metalness.png", true
     );
 
     material.maps[MATERIAL_MAP_NORMAL].texture = load_texture(
-        textures_dir_path, "/normal.png"
+        textures_dir_path, "/normal.png", true
     );
 
     material.maps[MATERIAL_MAP_ROUGHNESS].texture = load_texture(
-        textures_dir_path, "/roughness.png"
+        textures_dir_path, "/roughness.png", true
     );
 
     material.maps[MATERIAL_MAP_OCCLUSION].texture = load_texture(
-        textures_dir_path, "/occlusion.png"
+        textures_dir_path, "/occlusion.png", true
     );
 
     material.maps[MATERIAL_MAP_HEIGHT].texture = load_texture(
-        textures_dir_path, "/height.png"
+        textures_dir_path, "/height.png", true
     );
 
     return material;

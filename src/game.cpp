@@ -29,20 +29,23 @@ static void load_window() {
     SetExitKey(KEY_NULL);
 }
 
+static Model PLAYER_MODEL;
+
 static void load() {
     load_window();
     resources::load();
     editor::load();
 
-    prefabs::spawn_player(Vector3Zero());
+    prefabs::spawn_player({0.0, 0.0, 3.0});
+    PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
     // light
     {
-        Vector3 position = {5.0, 10.0, -2.0};
+        Vector3 position = Vector3Zero();
         light::Type type = light::Type::POINT;
         Color color = WHITE;
-        float intensity = 18.0;
-        Vector3 attenuation = {1.0, 0.03, 0.0003};
+        float intensity = 5.0;
+        Vector3 attenuation = {1.0, 0.1, 0.01};
         light::Params params = {.point = {.attenuation = attenuation}};
         prefabs::spawn_light(position, type, color, intensity, params);
     }
@@ -76,6 +79,18 @@ static void update() {
     }
 
     camera::update();
+
+    // --------------------------
+    // TODO: remove this
+    auto player = globals::registry.view<component::Player>().front();
+    auto player_tr = globals::registry.get<component::Transform>(player);
+    int light_idx = 0;
+    for (auto entity : globals::registry.view<light::Light>()) {
+        auto &light_tr = globals::registry.get<component::Transform>(entity);
+        light_tr.position = player_tr.position;
+        light_tr.position.y += globals::PLAYER_HEIGHT;
+    }
+    // --------------------------
 }
 
 void draw_cursor() {
@@ -88,30 +103,26 @@ void draw_cursor() {
 }
 
 void draw_player() {
-    static float radius = 0.25;
-    static int n_slices = 16;
-    static Color color = {0, 255, 0, 255};
-
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
+    Matrix matrix = MatrixTranslate(tr.position.x, tr.position.y, tr.position.z);
 
-    Vector3 start_pos = tr.position;
-    Vector3 end_pos = start_pos;
-    end_pos.y += globals::PLAYER_HEIGHT;
-
-    DrawCylinder(tr.position, radius, radius, globals::PLAYER_HEIGHT, n_slices, color);
+    Model model = PLAYER_MODEL;
+    model.transform = MatrixMultiply(model.transform, matrix);
+    DrawModel(model, Vector3Zero(), 1.0, WHITE);
 }
 
 void draw_wall() {
-    static float height = 3.0;
-    static float length = 10.0;
+    static float height = 50.0;
+    static float length = 50.0;
     static float x = 0.0;
     static float y = 0.5 * height;
-    static float z = -3.0;
+    static float z = 0.0;
+    static float angle = 0.25 * PI * 0.0;
     static float tiling[2] = {length, height};
     static int use_normal_map = 1;
     static Vector3 ambient_color = {1.0, 1.0, 1.0};
-    static float ambient_intensity = 0.0025;
+    static float ambient_intensity = 0.01;
 
     Material material = resources::PLANE_MODEL.materials[0];
     Shader shader = material.shader;
@@ -151,16 +162,17 @@ void draw_wall() {
     // -----------------------------------------------------------------------
     // matrix
     Matrix t = MatrixTranslate(x, y, z);
-    Matrix r = MatrixRotateX(0.5 * PI);
-    Matrix s = MatrixScale(length, height, 1.0);
-    Matrix matrix = MatrixMultiply(r, MatrixMultiply(s, t));
+    Matrix rx = MatrixRotateX(0.5 * PI);
+    Matrix ry = MatrixRotateY(angle);
+    Matrix r = MatrixMultiply(rx, ry);
+    Matrix s = MatrixScale(length, 1.0, height);
+    Matrix matrix = MatrixMultiply(s, MatrixMultiply(r, t));
 
     // -----------------------------------------------------------------------
     // draw
-    rlPushMatrix();
-    rlMultMatrixf(MatrixToFloat(matrix));
-    DrawModel(resources::PLANE_MODEL, Vector3Zero(), 1.0, WHITE);
-    rlPopMatrix();
+    Model model = resources::PLANE_MODEL;
+    model.transform = MatrixMultiply(model.transform, matrix);
+    DrawModel(model, Vector3Zero(), 1.0, WHITE);
 }
 
 static void draw() {
@@ -171,7 +183,7 @@ static void draw() {
     // draw world space
     BeginMode3D(camera::CAMERA);
     {
-        DrawGrid(10.0, 1.0);
+        DrawGrid(20.0, 1.0);
 
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
