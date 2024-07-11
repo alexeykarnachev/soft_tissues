@@ -1,16 +1,21 @@
 // Constants
-const int MAX_N_LIGHTS = 16;
+const int MAX_N_LIGHTS = 8;
 const int POINT_LIGHT = 0;
 const int DIRECTIONAL_LIGHT = 1;
+const int SPOT_LIGHT = 2;
 
 // Structs
 struct Light {
-    vec3 position;
     int type;
-    vec3 color;
+
     float intensity;
+    float inner_cutoff;
+    float outer_cutoff;
+
+    vec3 position;
     vec3 attenuation;
     vec3 direction;
+    vec3 color;
 };
 
 // Inputs
@@ -110,13 +115,12 @@ void main() {
     for (int i = 0; i < u_n_lights; ++i) {
         Light light = u_lights[i];
 
-        float dist;
         vec3 light_dir;
         float attenuation;
         switch (light.type) {
             case POINT_LIGHT:
             {
-                dist = length(v_world_pos - light.position);
+                float dist = length(v_world_pos - light.position);
                 light_dir = normalize(v_world_pos - light.position);
                 attenuation = dot(light.attenuation, vec3(1.0, dist, dist * dist));
                 attenuation = 1.0 / attenuation;
@@ -126,6 +130,18 @@ void main() {
             {
                 light_dir = light.direction;
                 attenuation = 1.0;
+                break;
+            }
+            case SPOT_LIGHT:
+            {
+                float dist = length(v_world_pos - light.position);
+                light_dir = normalize(v_world_pos - light.position);
+                float theta = dot(light_dir, normalize(light.direction));
+                float epsilon = light.inner_cutoff - light.outer_cutoff;
+                float intensity = clamp((theta - light.outer_cutoff) / epsilon, 0.0, 1.0);
+                attenuation = dot(light.attenuation, vec3(1.0, dist, dist * dist));
+                attenuation = 1.0 / attenuation;
+                attenuation *= intensity;
                 break;
             }
         }

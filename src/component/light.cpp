@@ -43,15 +43,35 @@ void Light::set_shader_uniform(Shader shader, int idx) {
     switch (this->type) {
         case Type::POINT: {
             int attenuation_loc = get_uniform_loc(shader, idx, "attenuation");
+
             Vector3 attenuation = this->params.point.attenuation;
 
             SetShaderValue(shader, attenuation_loc, &attenuation, SHADER_UNIFORM_VEC3);
         } break;
         case Type::DIRECTIONAL: {
             int direction_loc = get_uniform_loc(shader, idx, "direction");
+
+            // TODO: provide direction via light transform component
             Vector3 direction = this->params.directional.direction;
 
             SetShaderValue(shader, direction_loc, &direction, SHADER_UNIFORM_VEC3);
+        } break;
+        case Type::SPOT: {
+            int attenuation_loc = get_uniform_loc(shader, idx, "attenuation");
+            int direction_loc = get_uniform_loc(shader, idx, "direction");
+            int inner_cutoff_loc = get_uniform_loc(shader, idx, "inner_cutoff");
+            int outer_cutoff_loc = get_uniform_loc(shader, idx, "outer_cutoff");
+
+            Vector3 attenuation = this->params.spot.attenuation;
+            // TODO: provide direction via light transform component
+            Vector3 direction = this->params.spot.direction;
+            float inner_cutoff = this->params.spot.inner_cutoff;
+            float outer_cutoff = this->params.spot.outer_cutoff;
+
+            SetShaderValue(shader, attenuation_loc, &attenuation, SHADER_UNIFORM_VEC3);
+            SetShaderValue(shader, direction_loc, &direction, SHADER_UNIFORM_VEC3);
+            SetShaderValue(shader, inner_cutoff_loc, &inner_cutoff, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(shader, outer_cutoff_loc, &outer_cutoff, SHADER_UNIFORM_FLOAT);
         } break;
     }
 }

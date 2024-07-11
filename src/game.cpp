@@ -22,9 +22,9 @@ static void load_window() {
     SetConfigFlags(FLAG_VSYNC_HINT);
 
     InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
+    ToggleFullscreen();
 
     DisableCursor();
-    ToggleFullscreen();
     SetTargetFPS(60);
     SetExitKey(KEY_NULL);
 }
@@ -41,12 +41,30 @@ static void load() {
 
     // light
     {
+        // Vector3 position = Vector3Zero();
+        // light::Type type = light::Type::POINT;
+        // Color color = WHITE;
+        // float intensity = 5.0;
+        // Vector3 attenuation = {1.0, 0.1, 0.01};
+        // light::Params params = {.point = {.attenuation = attenuation}};
+        // prefabs::spawn_light(position, type, color, intensity, params);
+
         Vector3 position = Vector3Zero();
-        light::Type type = light::Type::POINT;
+        light::Type type = light::Type::SPOT;
         Color color = WHITE;
-        float intensity = 5.0;
+        float intensity = 10.0;
         Vector3 attenuation = {1.0, 0.1, 0.01};
-        light::Params params = {.point = {.attenuation = attenuation}};
+        Vector3 direction = {0.0, 0.0, -1.0};
+        float inner_cutoff = 0.95;
+        float outer_cutoff = 0.80;
+
+        light::Params params
+            = {.spot = {
+                   .attenuation = attenuation,
+                   .direction = direction,
+                   .inner_cutoff = inner_cutoff,
+                   .outer_cutoff = outer_cutoff,
+               }};
         prefabs::spawn_light(position, type, color, intensity, params);
     }
 }
@@ -89,6 +107,9 @@ static void update() {
         auto &light_tr = globals::registry.get<component::Transform>(entity);
         light_tr.position = player_tr.position;
         light_tr.position.y += globals::PLAYER_HEIGHT;
+
+        auto &light = globals::registry.get<component::Light>(entity);
+        light.params.spot.direction = player_tr.get_forward();
     }
     // --------------------------
 }
@@ -113,8 +134,8 @@ void draw_player() {
 }
 
 void draw_wall() {
-    static float height = 50.0;
-    static float length = 50.0;
+    static float height = 3.0;
+    static float length = 20.0;
     static float x = 0.0;
     static float y = 0.5 * height;
     static float z = 0.0;
