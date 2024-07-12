@@ -150,10 +150,10 @@ void main() {
         vec3 bisect = -normalize(view_dir + light_dir);
 
         // Cook-Torrance BRDF distribution function
-        float nDotV = clamp(dot(v_normal, -view_dir), 0.0, 1.0);
-        float nDotL = clamp(dot(v_normal, -light_dir), 0.0, 1.0);
+        float nDotV = clamp(dot(normal, -view_dir), 0.0, 1.0);
+        float nDotL = clamp(dot(normal, -light_dir), 0.0, 1.0);
         float hDotV = clamp(dot(bisect, -view_dir), 0.0, 1.0);
-        float nDotH = clamp(dot(v_normal, bisect), 0.0, 1.0);
+        float nDotH = clamp(dot(normal, bisect), 0.0, 1.0);
         float D = GgxDistribution(nDotH, roughness);
         float G = GeomSmith(nDotV, nDotL, roughness);
         vec3 F = SchlickFresnel(hDotV, base_reflection);
