@@ -1,16 +1,19 @@
 #include "resources.hpp"
 
-#include "drawing.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include "raylib/rlgl.h"
+#include "utils.hpp"
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
 namespace soft_tissues::resources {
-using namespace soft_tissues::drawing;
+
+using namespace utils;
 
 Material BRICK_WALL_MATERIAL;
 
@@ -56,17 +59,27 @@ static Shader load_shader(
     return shader;
 }
 
-static Texture load_texture(
-    std::string dir_path, std::string file_name, bool is_bilinear
-) {
+static void load_texture(std::string dir_path, std::string file_name, Texture *texture) {
     auto file_path = dir_path + "/" + file_name;
-    Texture texture = LoadTexture(file_path.c_str());
-    if (is_bilinear) SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
-    return texture;
+
+    if (!std::filesystem::exists(file_path)) {
+        unsigned char pixels[4] = {0, 0, 0, 255};
+        texture->id = rlLoadTexture(
+            pixels, 1, 1, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1
+        );
+        TraceLog(LOG_INFO, "Texture is missing: %s", file_path.c_str());
+        return;
+    }
+
+    *texture = LoadTexture(file_path.c_str());
+
+    GenTextureMipmaps(texture);
+    SetTextureFilter(*texture, TEXTURE_FILTER_TRILINEAR);
+    SetTextureWrap(*texture, TEXTURE_WRAP_REPEAT);
 }
 
 static Material load_pbr_material(std::string textures_dir_path) {
-    Shader shader = load_shader("base.vert.glsl", "pbr.frag.glsl");
+    Shader shader = load_shader("pbr.vert.glsl", "pbr.frag.glsl");
     Material material = LoadMaterialDefault();
 
     // -------------------------------------------------------------------
@@ -87,33 +100,29 @@ static Material load_pbr_material(std::string textures_dir_path) {
     shader.locs[SHADER_LOC_MAP_NORMAL] = get_uniform_loc(shader, "u_normal_map");
     shader.locs[SHADER_LOC_MAP_ROUGHNESS] = get_uniform_loc(shader, "u_roughness_map");
     shader.locs[SHADER_LOC_MAP_OCCLUSION] = get_uniform_loc(shader, "u_occlusion_map");
+    shader.locs[SHADER_LOC_MAP_HEIGHT] = get_uniform_loc(shader, "u_height_map");
 
     material.shader = shader;
 
     // -------------------------------------------------------------------
     // textures
-    material.maps[MATERIAL_MAP_ALBEDO].texture = load_texture(
-        textures_dir_path, "albedo.png", true
+    load_texture(
+        textures_dir_path, "albedo.png", &material.maps[MATERIAL_MAP_ALBEDO].texture
     );
-
-    material.maps[MATERIAL_MAP_METALNESS].texture = load_texture(
-        textures_dir_path, "/metalness.png", true
+    load_texture(
+        textures_dir_path, "metalness.png", &material.maps[MATERIAL_MAP_METALNESS].texture
     );
-
-    material.maps[MATERIAL_MAP_NORMAL].texture = load_texture(
-        textures_dir_path, "/normal.png", true
+    load_texture(
+        textures_dir_path, "normal.png", &material.maps[MATERIAL_MAP_NORMAL].texture
     );
-
-    material.maps[MATERIAL_MAP_ROUGHNESS].texture = load_texture(
-        textures_dir_path, "/roughness.png", true
+    load_texture(
+        textures_dir_path, "roughness.png", &material.maps[MATERIAL_MAP_ROUGHNESS].texture
     );
-
-    material.maps[MATERIAL_MAP_OCCLUSION].texture = load_texture(
-        textures_dir_path, "/occlusion.png", true
+    load_texture(
+        textures_dir_path, "occlusion.png", &material.maps[MATERIAL_MAP_OCCLUSION].texture
     );
-
-    material.maps[MATERIAL_MAP_HEIGHT].texture = load_texture(
-        textures_dir_path, "/height.png", true
+    load_texture(
+        textures_dir_path, "height.png", &material.maps[MATERIAL_MAP_HEIGHT].texture
     );
 
     return material;
@@ -122,7 +131,7 @@ static Material load_pbr_material(std::string textures_dir_path) {
 void load() {
     BRICK_WALL_MATERIAL = load_pbr_material("resources/textures/brick_wall/");
 
-    PLANE_MESH = GenMeshPlane(1.0, 1.0, 2, 2);
+    PLANE_MESH = GenMeshPlane(1.0, 1.0, 128, 128);
 
     PLANE_MODEL = LoadModelFromMesh(PLANE_MESH);
     PLANE_MODEL.materials[0] = BRICK_WALL_MATERIAL;

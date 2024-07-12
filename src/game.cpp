@@ -5,7 +5,6 @@
 #include "component/light.hpp"
 #include "component/transform.hpp"
 #include "controller.hpp"
-#include "drawing.hpp"
 #include "editor.hpp"
 #include "globals.hpp"
 #include "prefabs.hpp"
@@ -13,9 +12,11 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
+#include "utils.hpp"
 
 namespace soft_tissues::game {
-using namespace soft_tissues::drawing;
+
+using namespace utils;
 
 static void load_window() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -141,9 +142,9 @@ void draw_wall() {
     static float z = 0.0;
     static float angle = 0.25 * PI * 0.0;
     static float tiling[2] = {length, height};
-    static int use_normal_map = 1;
     static Vector3 ambient_color = {1.0, 1.0, 1.0};
     static float ambient_intensity = 0.01;
+    static float displacement_scale = 0.1;
 
     Material material = resources::PLANE_MODEL.materials[0];
     Shader shader = material.shader;
@@ -151,10 +152,12 @@ void draw_wall() {
     // -----------------------------------------------------------------------
     // textures
     int tiling_loc = get_uniform_loc(shader, "u_tiling");
-    int use_normal_map_loc = get_uniform_loc(shader, "u_use_normal_map");
+    int displacement_scale_loc = get_uniform_loc(shader, "u_displacement_scale");
 
     SetShaderValue(shader, tiling_loc, tiling, SHADER_UNIFORM_VEC2);
-    SetShaderValue(shader, use_normal_map_loc, &use_normal_map, SHADER_UNIFORM_INT);
+    SetShaderValue(
+        shader, displacement_scale_loc, &displacement_scale, SHADER_UNIFORM_FLOAT
+    );
 
     // -----------------------------------------------------------------------
     // ambient light

@@ -1,7 +1,7 @@
 #include "light.hpp"
 
-#include "../drawing.hpp"
 #include "../globals.hpp"
+#include "../utils.hpp"
 #include "component.hpp"
 #include "raylib/raylib.h"
 #include <string>
@@ -19,7 +19,7 @@ static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
     std::string name = "u_lights[" + std::to_string(idx) + "]";
     name = name + "." + param_name;
 
-    return drawing::get_uniform_loc(shader, name);
+    return utils::get_uniform_loc(shader, name);
 }
 
 void Light::set_shader_uniform(Shader shader, int idx) {

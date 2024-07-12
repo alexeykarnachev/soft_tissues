@@ -25,10 +25,6 @@ in vec3 v_normal;
 in mat3 v_tbn;
 
 // Uniforms
-uniform vec2 u_tiling;
-
-uniform int u_use_normal_map;
-
 uniform sampler2D u_albedo_map;
 uniform sampler2D u_metalness_map;
 uniform sampler2D u_normal_map;
@@ -52,8 +48,6 @@ float mock_usage() {
     f += v_normal.x;
     f += v_tbn[0][0];
 
-    f += u_tiling.x;
-    f += float(u_use_normal_map);
     f += texture(u_albedo_map, uv).x;
     f += texture(u_metalness_map, uv).x;
     f += texture(u_normal_map, uv).x;
@@ -93,7 +87,7 @@ float GeomSmith(float nDotV, float nDotL, float roughness) {
 }
 
 void main() {
-    vec2 uv = fract(u_tiling * v_tex_coord);
+    vec2 uv = v_tex_coord;
 
     vec3 view_dir = normalize(v_world_pos - u_camera_pos);
     vec3 albedo = texture(u_albedo_map, uv).rgb;
@@ -102,12 +96,13 @@ void main() {
     float occlusion = texture(u_occlusion_map, uv).r;
     vec3 base_reflection = mix(vec3(0.04), albedo.rgb, metallic);
 
-    vec3 normal = normalize(v_normal);
-    if (u_use_normal_map == 1) {
-        normal = texture(u_normal_map, uv).rgb;
+    vec3 normal = texture(u_normal_map, uv).rgb;
+    if (length(normal) > EPSILON) {
+        normal = v_normal;
+    } else {
         normal = normal * 2.0 - 1.0;
-        normal = normalize(v_tbn * normal);
     }
+    normal = normalize(normal);
 
     // -------------------------------------------------------------------
     // total light
