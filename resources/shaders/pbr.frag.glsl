@@ -98,9 +98,9 @@ void main() {
 
     vec3 normal = texture(u_normal_map, uv).rgb;
     if (length(normal) > EPSILON) {
-        normal = v_normal;
-    } else {
         normal = normal * 2.0 - 1.0;
+    } else {
+        normal = v_normal;
     }
     normal = normalize(normal);
 

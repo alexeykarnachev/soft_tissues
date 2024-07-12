@@ -63,7 +63,7 @@ static void load_texture(std::string dir_path, std::string file_name, Texture *t
     auto file_path = dir_path + "/" + file_name;
 
     if (!std::filesystem::exists(file_path)) {
-        unsigned char pixels[4] = {0, 0, 0, 255};
+        unsigned char pixels[4] = {0, 0, 0, 0};
         texture->id = rlLoadTexture(
             pixels, 1, 1, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1
         );
