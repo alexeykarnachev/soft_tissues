@@ -8,6 +8,9 @@ namespace soft_tissues::globals {
 static constexpr int SCREEN_WIDTH = 0;
 static constexpr int SCREEN_HEIGHT = 0;
 
+static constexpr int WORLD_N_ROWS = 512;
+static constexpr int WORLD_N_COLS = 512;
+
 static constexpr float PLAYER_HEIGHT = 1.8;
 static constexpr float PLAYER_MOVEMENT_SPEED = 2.0;
 static constexpr float PLAYER_CAMERA_SENSETIVITY = 0.0015;

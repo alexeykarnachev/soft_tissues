@@ -1,9 +1,9 @@
 #include "resources.hpp"
 
 #include "raylib/raylib.h"
-#include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "utils.hpp"
+#include <cmath>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -18,8 +18,6 @@ using namespace utils;
 Material BRICK_WALL_MATERIAL;
 
 Mesh PLANE_MESH;
-
-Model PLANE_MODEL;
 
 static std::string get_shader_file_path(const std::string &file_name) {
     auto file_path = "resources/shaders/" + file_name;
@@ -128,16 +126,14 @@ static Material load_pbr_material(std::string textures_dir_path) {
     return material;
 }
 
+static Mesh gen_mesh_plane(int resolution) {
+    return GenMeshPlane(1.0, 1.0, resolution, resolution);
+}
+
 void load() {
     BRICK_WALL_MATERIAL = load_pbr_material("resources/textures/brick_wall/");
 
-    PLANE_MESH = GenMeshPlane(1.0, 1.0, 128, 128);
-
-    PLANE_MODEL = LoadModelFromMesh(PLANE_MESH);
-    PLANE_MODEL.materials[0] = BRICK_WALL_MATERIAL;
-    PLANE_MODEL.transform = MatrixIdentity();
-    PLANE_MODEL.materialCount = 1;
-    PLANE_MODEL.meshCount = 1;
+    PLANE_MESH = gen_mesh_plane(16);
 }
 
 void unload() {

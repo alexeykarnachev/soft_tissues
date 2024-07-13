@@ -12,11 +12,10 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
-#include "utils.hpp"
+#include "tiling.hpp"
+#include <vector>
 
 namespace soft_tissues::game {
-
-using namespace utils;
 
 static void load_window() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -25,17 +24,44 @@ static void load_window() {
     InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
     ToggleFullscreen();
 
+    // InitWindow(2560 / 2, 1440 / 2, "Soft Tissues");
+
     DisableCursor();
     SetTargetFPS(60);
     SetExitKey(KEY_NULL);
 }
 
 static Model PLAYER_MODEL;
+static std::vector<tiling::Tile> TILES;
 
 static void load() {
     load_window();
     resources::load();
     editor::load();
+
+    // clang-format off
+    // auto flags = 
+    //       tiling::TILE_FLOOR 
+    //     | tiling::TILE_CEIL
+    //     | tiling::TILE_NORTH_WALL 
+    //     | tiling::TILE_SOUTH_WALL 
+    //     | tiling::TILE_WEST_WALL
+    //     | tiling::TILE_EAST_WALL;
+    auto flags = 
+          tiling::TILE_FLOOR 
+        | tiling::TILE_CEIL
+        | tiling::TILE_SOUTH_WALL;
+    // clang-format on
+
+    TILES.push_back(tiling::Tile(
+        0,
+        flags,
+        tiling::TileMaterials(
+            resources::BRICK_WALL_MATERIAL,
+            resources::BRICK_WALL_MATERIAL,
+            resources::BRICK_WALL_MATERIAL
+        )
+    ));
 
     prefabs::spawn_player({0.0, 0.0, 3.0});
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
@@ -134,69 +160,10 @@ void draw_player() {
     DrawModel(model, Vector3Zero(), 1.0, WHITE);
 }
 
-void draw_wall() {
-    static float height = 3.0;
-    static float length = 20.0;
-    static float x = 0.0;
-    static float y = 0.5 * height;
-    static float z = 0.0;
-    static float angle = 0.25 * PI * 0.0;
-    static float tiling[2] = {length, height};
-    static Vector3 ambient_color = {1.0, 1.0, 1.0};
-    static float ambient_intensity = 0.01;
-    static float displacement_scale = 0.1;
-
-    Material material = resources::PLANE_MODEL.materials[0];
-    Shader shader = material.shader;
-
-    // -----------------------------------------------------------------------
-    // textures
-    int tiling_loc = get_uniform_loc(shader, "u_tiling");
-    int displacement_scale_loc = get_uniform_loc(shader, "u_displacement_scale");
-
-    SetShaderValue(shader, tiling_loc, tiling, SHADER_UNIFORM_VEC2);
-    SetShaderValue(
-        shader, displacement_scale_loc, &displacement_scale, SHADER_UNIFORM_FLOAT
-    );
-
-    // -----------------------------------------------------------------------
-    // ambient light
-    int ambient_color_loc = get_uniform_loc(shader, "u_ambient_color");
-    int ambient_intensity_loc = get_uniform_loc(shader, "u_ambient_intensity");
-
-    SetShaderValue(shader, ambient_color_loc, &ambient_color, SHADER_UNIFORM_VEC3);
-    SetShaderValue(
-        shader, ambient_intensity_loc, &ambient_intensity, SHADER_UNIFORM_FLOAT
-    );
-
-    // -----------------------------------------------------------------------
-    // lighting
-    int light_idx = 0;
-    for (auto entity : globals::registry.view<light::Light>()) {
-        auto light = globals::registry.get<light::Light>(entity);
-        light.set_shader_uniform(shader, light_idx++);
+void draw_tiles() {
+    for (auto tile : TILES) {
+        tile.draw();
     }
-
-    int camera_pos_loc = get_uniform_loc(shader, "u_camera_pos");
-    int n_lights_loc = get_uniform_loc(shader, "u_n_lights");
-
-    SetShaderValue(shader, camera_pos_loc, &camera::CAMERA.position, SHADER_UNIFORM_VEC3);
-    SetShaderValue(shader, n_lights_loc, &light_idx, SHADER_UNIFORM_INT);
-
-    // -----------------------------------------------------------------------
-    // matrix
-    Matrix t = MatrixTranslate(x, y, z);
-    Matrix rx = MatrixRotateX(0.5 * PI);
-    Matrix ry = MatrixRotateY(angle);
-    Matrix r = MatrixMultiply(rx, ry);
-    Matrix s = MatrixScale(length, 1.0, height);
-    Matrix matrix = MatrixMultiply(s, MatrixMultiply(r, t));
-
-    // -----------------------------------------------------------------------
-    // draw
-    Model model = resources::PLANE_MODEL;
-    model.transform = MatrixMultiply(model.transform, matrix);
-    DrawModel(model, Vector3Zero(), 1.0, WHITE);
 }
 
 static void draw() {
@@ -213,7 +180,7 @@ static void draw() {
             draw_player();
         }
 
-        draw_wall();
+        draw_tiles();
     }
     EndMode3D();
 

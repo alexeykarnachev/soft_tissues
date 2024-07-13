@@ -8,7 +8,6 @@ extern Material BRICK_WALL_MATERIAL;
 
 extern Mesh PLANE_MESH;
 
-extern Model PLANE_MODEL;
 
 void load();
 void unload();
