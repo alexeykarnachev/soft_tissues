@@ -98,7 +98,7 @@ void main() {
 
     vec3 normal = texture(u_normal_map, uv).rgb;
     if (length(normal) > EPSILON) {
-        normal = normal * 2.0 - 1.0;
+        normal = v_tbn * normalize(normal * 2.0 - 1.0);
     } else {
         normal = v_normal;
     }
@@ -159,12 +159,12 @@ void main() {
         light_total += (kD * albedo / PI + spec) * radiance * nDotL;
 
         // TODO: remove
-        f_color = vec4(normal, 1.0 + mock_usage());
+        // f_color = vec4(normal, 1.0 + mock_usage());
     }
 
     vec3 ambient_total = (u_ambient_color + albedo) * u_ambient_intensity * 0.5;
     vec3 color = ambient_total + light_total * occlusion;
 
     // TODO: uncomment
-    // f_color = vec4(color, 1.0 + mock_usage());
+    f_color = vec4(color, 1.0 + mock_usage());
 }

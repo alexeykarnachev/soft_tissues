@@ -40,26 +40,22 @@ static void load() {
     editor::load();
 
     // clang-format off
-    // auto flags = 
-    //       tiling::TILE_FLOOR 
-    //     | tiling::TILE_CEIL
-    //     | tiling::TILE_NORTH_WALL 
-    //     | tiling::TILE_SOUTH_WALL 
-    //     | tiling::TILE_WEST_WALL
-    //     | tiling::TILE_EAST_WALL;
     auto flags = 
           tiling::TILE_FLOOR 
         | tiling::TILE_CEIL
-        | tiling::TILE_SOUTH_WALL;
+        | tiling::TILE_NORTH_WALL 
+        | tiling::TILE_SOUTH_WALL 
+        | tiling::TILE_WEST_WALL
+        | tiling::TILE_EAST_WALL;
     // clang-format on
 
     TILES.push_back(tiling::Tile(
         0,
         flags,
         tiling::TileMaterials(
+            resources::TILED_STONE_MATERIAL,
             resources::BRICK_WALL_MATERIAL,
-            resources::BRICK_WALL_MATERIAL,
-            resources::BRICK_WALL_MATERIAL
+            resources::TILED_STONE_MATERIAL
         )
     ));
 

@@ -93,7 +93,7 @@ void Tile::draw() {
     }
 
     if (this->has_flags(TILE_CEIL)) {
-        Material material = this->materials.floor;
+        Material material = this->materials.ceil;
 
         Matrix t = MatrixTranslate(position.x, this->height, position.y);
         Matrix r = MatrixRotateX(PI);
