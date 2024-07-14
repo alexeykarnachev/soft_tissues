@@ -99,7 +99,9 @@ void load() {
     }
 }
 
-void unload() {}
+Vector2 get_center() {
+    return {0.5f * WORLD_N_COLS, 0.5f * WORLD_N_ROWS};
+}
 
 static Vector2 get_world_position(uint32_t idx) {
     uint32_t row = idx / WORLD_N_COLS;

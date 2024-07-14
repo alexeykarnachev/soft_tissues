@@ -42,7 +42,8 @@ public:
 };
 
 void load();
-void unload();
+
+Vector2 get_center();
 
 void draw_tiles();
 
