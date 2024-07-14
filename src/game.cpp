@@ -163,7 +163,11 @@ static void draw() {
             draw_player();
         }
 
+        rlEnableDepthTest();
         world::draw_tiles();
+
+        rlDisableDepthTest();
+        world::draw_grid();
     }
     EndMode3D();
 

@@ -45,6 +45,7 @@ void load();
 
 Vector2 get_center();
 
+void draw_grid();
 void draw_tiles();
 
 }  // namespace soft_tissues::world

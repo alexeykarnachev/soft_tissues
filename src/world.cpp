@@ -3,10 +3,11 @@
 #include "camera.hpp"
 #include "component/light.hpp"
 #include "globals.hpp"
+#include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "resources.hpp"
 #include "utils.hpp"
-#include <vector>
+#include <array>
 
 namespace soft_tissues::world {
 
@@ -17,7 +18,7 @@ const int WORLD_N_ROWS = 15;
 const int WORLD_N_COLS = 15;
 const int WORLD_N_TILES = WORLD_N_ROWS * WORLD_N_COLS;
 
-std::vector<Tile> TILES;
+std::array<Tile, WORLD_N_TILES> TILES;
 
 TileMaterials::TileMaterials() = default;
 
@@ -79,7 +80,6 @@ static void set_shader_uniforms(Shader shader) {
 
 void load() {
     for (int i = 0; i < WORLD_N_TILES; ++i) {
-
         int row = i / WORLD_N_COLS;
         int col = i % WORLD_N_COLS;
         auto flags = TILE_FLOOR | TILE_CEIL;
@@ -95,7 +95,7 @@ void load() {
             resources::TILED_STONE_MATERIAL
         );
 
-        TILES.emplace_back(Tile(flags, materials));
+        TILES[i] = Tile(flags, materials);
     }
 }
 
@@ -111,6 +111,29 @@ static Vector2 get_world_position(uint32_t idx) {
     float y = static_cast<float>(row) + 0.5;
 
     return {x, y};
+}
+
+void draw_grid() {
+    // z lines
+    for (float x = 1.0; x < WORLD_N_COLS; x += 1.0) {
+        Vector3 start_pos = {x, 0.0, 0.0};
+        Vector3 end_pos = {x, 0.0, WORLD_N_ROWS};
+        DrawLine3D(start_pos, end_pos, WHITE);
+    }
+
+    // x lines
+    for (float z = 1.0; z < WORLD_N_ROWS; z += 1.0) {
+        Vector3 start_pos = {0.0, 0.0, z};
+        Vector3 end_pos = {WORLD_N_COLS, 0.0, z};
+        DrawLine3D(start_pos, end_pos, WHITE);
+    }
+
+    // perimiter
+    DrawLine3D({0.0, 0.0, 0.0}, {WORLD_N_COLS, 0.0, 0.0}, RED);
+    DrawLine3D({0.0, 0.0, WORLD_N_ROWS}, {WORLD_N_COLS, 0.0, WORLD_N_ROWS}, RED);
+
+    DrawLine3D({0.0, 0.0, 0.0}, {0.0, 0.0, WORLD_N_ROWS}, RED);
+    DrawLine3D({WORLD_N_COLS, 0.0, 0.0}, {WORLD_N_COLS, 0.0, WORLD_N_ROWS}, RED);
 }
 
 void draw_tiles() {
