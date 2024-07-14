@@ -12,8 +12,7 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
-#include "tiling.hpp"
-#include <vector>
+#include "world.hpp"
 
 namespace soft_tissues::game {
 
@@ -27,61 +26,57 @@ static void load_window() {
     // InitWindow(2560 / 2, 1440 / 2, "Soft Tissues");
 
     DisableCursor();
-    SetTargetFPS(60);
+    // SetTargetFPS(60);
     SetExitKey(KEY_NULL);
 }
 
 static Model PLAYER_MODEL;
-static std::vector<tiling::Tile> TILES;
 
 static void load() {
     load_window();
     resources::load();
     editor::load();
-
-    // clang-format off
-    auto flags = 
-          tiling::TILE_FLOOR 
-        | tiling::TILE_CEIL
-        | tiling::TILE_NORTH_WALL 
-        | tiling::TILE_SOUTH_WALL 
-        | tiling::TILE_WEST_WALL
-        | tiling::TILE_EAST_WALL;
-    // clang-format on
-
-    TILES.push_back(tiling::Tile(
-        0,
-        flags,
-        tiling::TileMaterials(
-            resources::TILED_STONE_MATERIAL,
-            resources::BRICK_WALL_MATERIAL,
-            resources::TILED_STONE_MATERIAL
-        )
-    ));
+    world::load();
 
     prefabs::spawn_player({0.0, 0.0, 3.0});
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
     // light
     {
-        // Vector3 position = Vector3Zero();
-        // light::Type type = light::Type::POINT;
-        // Color color = WHITE;
-        // float intensity = 5.0;
-        // Vector3 attenuation = {1.0, 0.1, 0.01};
-        // light::Params params = {.point = {.attenuation = attenuation}};
-        // prefabs::spawn_light(position, type, color, intensity, params);
-
-        Vector3 position = Vector3Zero();
-        light::Type type = light::Type::SPOT;
-        Color color = WHITE;
-        float intensity = 10.0;
+        Vector3 position = {10, 10, 10};
+        light::Type type = light::Type::POINT;
+        Color color = BLUE;
+        float intensity = 5.0;
         Vector3 attenuation = {1.0, 0.1, 0.01};
+        light::Params params = {.point = {.attenuation = attenuation}};
+        prefabs::spawn_light(position, type, color, intensity, params);
+
+        position = {20, 20, 10};
+        type = light::Type::POINT;
+        color = RED;
+        intensity = 5.0;
+        attenuation = {1.0, 0.1, 0.01};
+        params = {.point = {.attenuation = attenuation}};
+        prefabs::spawn_light(position, type, color, intensity, params);
+
+        position = {15, 15, 10};
+        type = light::Type::POINT;
+        color = GREEN;
+        intensity = 5.0;
+        attenuation = {1.0, 0.1, 0.01};
+        params = {.point = {.attenuation = attenuation}};
+        prefabs::spawn_light(position, type, color, intensity, params);
+
+        position = Vector3Zero();
+        type = light::Type::SPOT;
+        color = {255, 255, 220, 255};
+        intensity = 50.0;
+        attenuation = {1.0, 1.2, 0.2};
         Vector3 direction = {0.0, 0.0, -1.0};
         float inner_cutoff = 0.95;
         float outer_cutoff = 0.80;
 
-        light::Params params
+        params
             = {.spot = {
                    .attenuation = attenuation,
                    .direction = direction,
@@ -93,6 +88,7 @@ static void load() {
 }
 
 static void unload() {
+    world::unload();
     editor::unload();
     resources::unload();
     CloseWindow();
@@ -156,12 +152,6 @@ void draw_player() {
     DrawModel(model, Vector3Zero(), 1.0, WHITE);
 }
 
-void draw_tiles() {
-    for (auto tile : TILES) {
-        tile.draw();
-    }
-}
-
 static void draw() {
     BeginDrawing();
     ClearBackground(BLANK);
@@ -170,13 +160,11 @@ static void draw() {
     // draw world space
     BeginMode3D(camera::CAMERA);
     {
-        DrawGrid(20.0, 1.0);
-
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
         }
 
-        draw_tiles();
+        world::draw_tiles();
     }
     EndMode3D();
 

@@ -157,14 +157,10 @@ void main() {
         vec3 kD = (1.0 - F) * (1.0 - metallic);
 
         light_total += (kD * albedo / PI + spec) * radiance * nDotL;
-
-        // TODO: remove
-        // f_color = vec4(normal, 1.0 + mock_usage());
     }
 
     vec3 ambient_total = (u_ambient_color + albedo) * u_ambient_intensity * 0.5;
     vec3 color = ambient_total + light_total * occlusion;
 
-    // TODO: uncomment
-    f_color = vec4(color, 1.0 + mock_usage());
+    f_color = vec4(color, 1.0);
 }
