@@ -18,6 +18,7 @@ namespace soft_tissues::resources {
 
 using namespace utils;
 
+Material DEFAULT_MATERIAL;
 Material BRICK_WALL_MATERIAL;
 Material TILED_STONE_MATERIAL;
 
@@ -267,6 +268,7 @@ static Mesh gen_mesh_plane(int resolution) {
 }
 
 void load() {
+    DEFAULT_MATERIAL = LoadMaterialDefault();
     BRICK_WALL_MATERIAL = load_pbr_material("resources/textures/brick_wall/");
     TILED_STONE_MATERIAL = load_pbr_material("resources/textures/tiled_stone/");
 

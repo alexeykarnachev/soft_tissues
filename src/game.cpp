@@ -43,40 +43,40 @@ static void load() {
 
     // light
     {
-        Vector3 position = {10, 10, 10};
-        light::Type type = light::Type::POINT;
-        Color color = BLUE;
-        float intensity = 5.0;
-        Vector3 attenuation = {1.0, 0.1, 0.01};
-        light::Params params = {.point = {.attenuation = attenuation}};
-        prefabs::spawn_light(position, type, color, intensity, params);
+        // Vector3 position = {10, 10, 10};
+        // light::Type type = light::Type::POINT;
+        // Color color = BLUE;
+        // float intensity = 5.0;
+        // Vector3 attenuation = {1.0, 0.1, 0.01};
+        // light::Params params = {.point = {.attenuation = attenuation}};
+        // prefabs::spawn_light(position, type, color, intensity, params);
 
-        position = {20, 20, 10};
-        type = light::Type::POINT;
-        color = RED;
-        intensity = 5.0;
-        attenuation = {1.0, 0.1, 0.01};
-        params = {.point = {.attenuation = attenuation}};
-        prefabs::spawn_light(position, type, color, intensity, params);
+        // position = {20, 20, 10};
+        // type = light::Type::POINT;
+        // color = RED;
+        // intensity = 5.0;
+        // attenuation = {1.0, 0.1, 0.01};
+        // params = {.point = {.attenuation = attenuation}};
+        // prefabs::spawn_light(position, type, color, intensity, params);
 
-        position = {15, 15, 10};
-        type = light::Type::POINT;
-        color = GREEN;
-        intensity = 5.0;
-        attenuation = {1.0, 0.1, 0.01};
-        params = {.point = {.attenuation = attenuation}};
-        prefabs::spawn_light(position, type, color, intensity, params);
+        // position = {15, 15, 10};
+        // type = light::Type::POINT;
+        // color = GREEN;
+        // intensity = 5.0;
+        // attenuation = {1.0, 0.1, 0.01};
+        // params = {.point = {.attenuation = attenuation}};
+        // prefabs::spawn_light(position, type, color, intensity, params);
 
-        position = Vector3Zero();
-        type = light::Type::SPOT;
-        color = {255, 255, 220, 255};
-        intensity = 50.0;
-        attenuation = {1.0, 1.2, 0.2};
+        Vector3 position = Vector3Zero();
+        auto type = light::Type::SPOT;
+        Color color = {255, 255, 220, 255};
+        auto intensity = 50.0;
+        Vector3 attenuation = {1.0, 1.2, 0.2};
         Vector3 direction = {0.0, 0.0, -1.0};
         float inner_cutoff = 0.95;
         float outer_cutoff = 0.80;
 
-        params
+        light::Params params
             = {.spot = {
                    .attenuation = attenuation,
                    .direction = direction,
@@ -155,33 +155,23 @@ static void draw() {
     BeginDrawing();
     ClearBackground(BLANK);
 
-    // -------------------------------------------------------------------
-    // draw world space
     BeginMode3D(camera::CAMERA);
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
+            editor::update_and_draw();
+            world::draw_grid();
         }
 
-        rlEnableDepthTest();
         world::draw_tiles();
-
-        rlDisableDepthTest();
-        world::draw_grid();
     }
     EndMode3D();
 
-    // -------------------------------------------------------------------
-    // draw screen space
-    {
-        if (globals::GAME_STATE == globals::GameState::PLAY) {
-            draw_cursor();
-        } else if (globals::GAME_STATE == globals::GameState::EDITOR) {
-            editor::update_and_draw();
-        }
-        DrawFPS(0, 0);
+    if (globals::GAME_STATE == globals::GameState::PLAY) {
+        draw_cursor();
     }
 
+    DrawFPS(0, 0);
     EndDrawing();
 }
 

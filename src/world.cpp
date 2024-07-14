@@ -79,28 +79,37 @@ static void set_shader_uniforms(Shader shader) {
 }
 
 void load() {
-    for (int i = 0; i < WORLD_N_TILES; ++i) {
-        int row = i / WORLD_N_COLS;
-        int col = i % WORLD_N_COLS;
-        auto flags = TILE_FLOOR | TILE_CEIL;
+    // for (int i = 0; i < WORLD_N_TILES; ++i) {
+    //     int row = i / WORLD_N_COLS;
+    //     int col = i % WORLD_N_COLS;
+    //     auto flags = TILE_FLOOR | TILE_CEIL;
 
-        if (row == 0) flags |= TILE_NORTH_WALL;
-        if (col == 0) flags |= TILE_WEST_WALL;
-        if (row == WORLD_N_ROWS - 1) flags |= TILE_SOUTH_WALL;
-        if (col == WORLD_N_COLS - 1) flags |= TILE_EAST_WALL;
+    //     if (row == 0) flags |= TILE_NORTH_WALL;
+    //     if (col == 0) flags |= TILE_WEST_WALL;
+    //     if (row == WORLD_N_ROWS - 1) flags |= TILE_SOUTH_WALL;
+    //     if (col == WORLD_N_COLS - 1) flags |= TILE_EAST_WALL;
 
-        TileMaterials materials(
-            resources::TILED_STONE_MATERIAL,
-            resources::BRICK_WALL_MATERIAL,
-            resources::TILED_STONE_MATERIAL
-        );
+    //     TileMaterials materials(
+    //         resources::TILED_STONE_MATERIAL,
+    //         resources::BRICK_WALL_MATERIAL,
+    //         resources::TILED_STONE_MATERIAL
+    //     );
 
-        TILES[i] = Tile(flags, materials);
-    }
+    //     TILES[i] = Tile(flags, materials);
+    // }
 }
 
 Vector2 get_center() {
     return {0.5f * WORLD_N_COLS, 0.5f * WORLD_N_ROWS};
+}
+
+Rectangle get_bound_rect() {
+    return {
+        .x = 0.0,
+        .y = 0.0,
+        .width = WORLD_N_COLS,
+        .height = WORLD_N_ROWS,
+    };
 }
 
 static Vector2 get_world_position(uint32_t idx) {

@@ -44,6 +44,7 @@ public:
 void load();
 
 Vector2 get_center();
+Rectangle get_bound_rect();
 
 void draw_grid();
 void draw_tiles();
