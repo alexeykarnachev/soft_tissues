@@ -12,6 +12,11 @@ static constexpr float PLAYER_HEIGHT = 1.8;
 static constexpr float PLAYER_MOVEMENT_SPEED = 2.0;
 static constexpr float PLAYER_CAMERA_SENSETIVITY = 0.0015;
 
+static constexpr int WORLD_HEIGHT = 3;
+static constexpr int WORLD_N_ROWS = 15;
+static constexpr int WORLD_N_COLS = 15;
+static constexpr int WORLD_N_TILES = WORLD_N_ROWS * WORLD_N_COLS;
+
 extern entt::registry registry;
 
 enum class GameState {

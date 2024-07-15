@@ -6,7 +6,8 @@
 #include <string>
 
 namespace soft_tissues::utils {
-
+// -----------------------------------------------------------------------
+// shaders
 std::string get_shader_file_path(const std::string &file_name) {
     auto file_path = "resources/shaders/" + file_name;
     return file_path;
@@ -59,6 +60,20 @@ int get_uniform_loc(Shader shader, std::string name, bool is_fail_allowed) {
     }
 
     return loc;
+}
+
+// -----------------------------------------------------------------------
+// math and geometry
+RayCollision get_cursor_floor_rect_collision(Rectangle rect, Camera camera) {
+    Vector2 mouse_position = GetMousePosition();
+    Ray ray = GetScreenToWorldRay(mouse_position, camera);
+    Vector3 p1 = {rect.x, 0.0, rect.y};
+    Vector3 p2 = {p1.x + rect.width, 0.0, p1.y};
+    Vector3 p3 = {p1.x + rect.width, 0.0, p1.y + rect.height};
+    Vector3 p4 = {rect.x, 0.0, p1.y + rect.height};
+
+    RayCollision collision = GetRayCollisionQuad(ray, p1, p2, p3, p4);
+    return collision;
 }
 
 }  // namespace soft_tissues::utils
