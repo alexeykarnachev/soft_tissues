@@ -20,7 +20,7 @@ void update() {
     bool is_alt_f4_pressed = IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_F4);
     WINDOW_SHOULD_CLOSE = (WindowShouldClose() || is_alt_f4_pressed);
 
-    if (IsKeyPressed(KEY_ESCAPE)) {
+    if (IsKeyPressed(KEY_F1)) {
         if (GAME_STATE == GameState::PLAY) {
             GAME_STATE = GameState::EDITOR;
             EnableCursor();

@@ -4,6 +4,16 @@
 #include <string>
 
 namespace soft_tissues::utils {
+
+// -----------------------------------------------------------------------
+// enums
+enum class CardinalDirection {
+    NORTH = 0,
+    SOUTH,
+    WEST,
+    EAST,
+};
+
 // -----------------------------------------------------------------------
 // shaders
 std::string get_shader_file_path(const std::string &file_name);

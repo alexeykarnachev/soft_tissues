@@ -1,16 +1,12 @@
 #pragma once
 
 #include "raylib/raylib.h"
+#include "utils.hpp"
 #include <cstdint>
 
 namespace soft_tissues::tile {
 
-enum class CardinalDirection {
-    NORTH,
-    SOUTH,
-    WEST,
-    EAST,
-};
+using namespace utils;
 
 enum TileFlags : uint16_t {
     TILE_FLOOR = 1 << 0,
@@ -29,19 +25,23 @@ public:
 
     TileMaterials();
     TileMaterials(Material floor, Material wall, Material ceil);
+
+    bool is_ready();
 };
 
 class Tile {
 private:
-    uint32_t idx;
+    uint32_t id;
 
 public:
     uint16_t flags = 0;
     TileMaterials materials;
 
     Tile();
-    Tile(uint32_t idx);
+    Tile(uint32_t id);
 
+    uint32_t get_id();
+    bool is_empty();
     bool has_flags(uint16_t flags);
 
     Vector2 get_floor_position();

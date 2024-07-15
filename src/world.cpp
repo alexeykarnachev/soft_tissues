@@ -11,6 +11,8 @@
 
 namespace soft_tissues::world {
 
+using namespace utils;
+
 std::array<tile::Tile, globals::WORLD_N_TILES> TILES;
 
 void load() {
@@ -46,6 +48,31 @@ tile::Tile *get_tile_at_cursor() {
     }
 
     return tile;
+}
+
+std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
+    std::array<tile::Tile *, 4> neighbors;
+
+    int row = id / globals::WORLD_N_COLS;
+    int col = id % globals::WORLD_N_COLS;
+
+    if (row > 0) {
+        neighbors[(int)CardinalDirection::NORTH] = &TILES[id - globals::WORLD_N_COLS];
+    }
+
+    if (row < globals::WORLD_N_ROWS - 1) {
+        neighbors[(int)CardinalDirection::SOUTH] = &TILES[id + globals::WORLD_N_COLS];
+    }
+
+    if (col > 0) {
+        neighbors[(int)CardinalDirection::WEST] = &TILES[id - 1];
+    }
+
+    if (col < globals::WORLD_N_COLS - 1) {
+        neighbors[(int)CardinalDirection::EAST] = &TILES[id + 1];
+    }
+
+    return neighbors;
 }
 
 void draw_grid() {

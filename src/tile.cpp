@@ -3,9 +3,11 @@
 #include "camera.hpp"
 #include "component/light.hpp"
 #include "globals.hpp"
+#include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "resources.hpp"
 #include "utils.hpp"
+#include <cstdint>
 
 namespace soft_tissues::tile {
 
@@ -18,18 +20,31 @@ TileMaterials::TileMaterials(Material floor, Material wall, Material ceil)
     , wall(wall)
     , ceil(ceil) {}
 
+bool TileMaterials::is_ready() {
+    return IsMaterialReady(this->floor) && IsMaterialReady(this->wall)
+           && IsMaterialReady(this->ceil);
+}
+
 Tile::Tile() = default;
 
-Tile::Tile(uint32_t idx)
-    : idx(idx) {}
+Tile::Tile(uint32_t id)
+    : id(id) {}
+
+uint32_t Tile::get_id() {
+    return this->id;
+}
+
+bool Tile::is_empty() {
+    return this->flags == 0;
+}
 
 bool Tile::has_flags(uint16_t flags) {
     return (this->flags & flags) == flags;
 }
 
 Vector2 Tile::get_floor_position() {
-    uint32_t row = this->idx / globals::WORLD_N_COLS;
-    uint32_t col = this->idx % globals::WORLD_N_COLS;
+    uint32_t row = this->id / globals::WORLD_N_COLS;
+    uint32_t col = this->id % globals::WORLD_N_COLS;
 
     float x = static_cast<float>(col) + 0.5;
     float y = static_cast<float>(row) + 0.5;
