@@ -20,10 +20,10 @@ static void load_window() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetConfigFlags(FLAG_VSYNC_HINT);
 
-    InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
-    ToggleFullscreen();
+    // InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
+    // ToggleFullscreen();
 
-    // InitWindow(2560 / 2, 1440 / 2, "Soft Tissues");
+    InitWindow(2560 / 1.5, 1440 / 1.5, "Soft Tissues");
 
     DisableCursor();
     // SetTargetFPS(60);
@@ -148,7 +148,7 @@ void draw_player() {
 
     Model model = PLAYER_MODEL;
     model.transform = MatrixMultiply(model.transform, matrix);
-    DrawModel(model, Vector3Zero(), 1.0, WHITE);
+    DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
 }
 
 static void draw() {

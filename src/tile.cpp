@@ -20,11 +20,6 @@ TileMaterials::TileMaterials(Material floor, Material wall, Material ceil)
     , wall(wall)
     , ceil(ceil) {}
 
-bool TileMaterials::is_ready() {
-    return IsMaterialReady(this->floor) && IsMaterialReady(this->wall)
-           && IsMaterialReady(this->ceil);
-}
-
 Tile::Tile() = default;
 
 Tile::Tile(uint32_t id)
@@ -107,8 +102,13 @@ Matrix Tile::get_wall_matrix(CardinalDirection side, int elevation) {
 static void set_shader_uniforms(Shader shader) {
     static float tiling[2] = {1.0, 1.0};
     static float displacement_scale = 0.1;
-    static float ambient_intensity = 0.01;
     static Vector3 ambient_color = {1.0, 1.0, 1.0};
+
+    // TODO: omg, factor out this shit from here
+    float ambient_intensity = 0.01;
+    if (globals::GAME_STATE == globals::GameState::EDITOR) {
+        ambient_intensity = 0.3;
+    }
 
     // -----------------------------------------------------------------------
     // textures

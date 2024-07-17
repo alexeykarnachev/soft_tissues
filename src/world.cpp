@@ -8,6 +8,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 
 namespace soft_tissues::world {
 
@@ -51,7 +52,8 @@ tile::Tile *get_tile_at_cursor() {
 }
 
 std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
-    std::array<tile::Tile *, 4> neighbors;
+    // TODO: wtf?
+    std::array<tile::Tile *, 4> neighbors = {nullptr, nullptr, nullptr, nullptr};
 
     int row = id / globals::WORLD_N_COLS;
     int col = id % globals::WORLD_N_COLS;
@@ -60,7 +62,7 @@ std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
         neighbors[(int)CardinalDirection::NORTH] = &TILES[id - globals::WORLD_N_COLS];
     }
 
-    if (row < globals::WORLD_N_ROWS - 1) {
+    if (row < (globals::WORLD_N_ROWS - 1)) {
         neighbors[(int)CardinalDirection::SOUTH] = &TILES[id + globals::WORLD_N_COLS];
     }
 
@@ -68,11 +70,41 @@ std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
         neighbors[(int)CardinalDirection::WEST] = &TILES[id - 1];
     }
 
-    if (col < globals::WORLD_N_COLS - 1) {
+    if (col < (globals::WORLD_N_COLS - 1)) {
         neighbors[(int)CardinalDirection::EAST] = &TILES[id + 1];
     }
 
     return neighbors;
+}
+
+void set_room_tile_flags(tile::Tile *tile) {
+    auto nbs = world::get_tile_neighbors(tile->get_id());
+    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
+
+    // TODO: manual enumeration is very bad in this case, IMPROVE!
+    auto nb = nbs[(int)CardinalDirection::NORTH];
+    bool has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_NORTH_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::SOUTH];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_SOUTH_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::WEST];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_WEST_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::EAST];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_EAST_WALL;
+    }
 }
 
 void draw_grid() {

@@ -25,8 +25,6 @@ public:
 
     TileMaterials();
     TileMaterials(Material floor, Material wall, Material ceil);
-
-    bool is_ready();
 };
 
 class Tile {

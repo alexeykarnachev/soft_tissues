@@ -9,10 +9,11 @@
 #include "tile.hpp"
 #include "world.hpp"
 #include <cmath>
-#include <stdexcept>
 #include <unordered_set>
 
 namespace soft_tissues::editor {
+
+using namespace utils;
 
 enum class EditorState {
     NONE,
@@ -27,10 +28,6 @@ public:
     tile::TileMaterials materials;
 
     NewRoom() {}
-
-    bool is_ready_to_create() {
-        return this->tiles.size() != 0 && this->materials.is_ready();
-    }
 
     bool can_add_tile(tile::Tile *tile) {
         if (!tile->is_empty()) return false;
@@ -48,11 +45,32 @@ public:
     }
 
     void reset() {
+        for (auto tile : this->tiles) {
+            tile->flags = 0;
+        }
         *this = NewRoom();
     }
 
     void add_tile(tile::Tile *tile) {
+        // TODO:
+        this->materials.floor = resources::BRICK_WALL_MATERIAL;
+        this->materials.wall = resources::TILED_STONE_MATERIAL;
+        this->materials.ceil = resources::BRICK_WALL_MATERIAL;
+        tile->materials = this->materials;
+
         if (!this->can_add_tile(tile)) return;
+
+        world::set_room_tile_flags(tile);
+        auto neighbors = world::get_tile_neighbors(tile->get_id());
+
+        for (auto nb : neighbors) {
+            if (nb && !nb->is_empty()) {
+                nb->materials = this->materials;
+                world::set_room_tile_flags(nb);
+            }
+        }
+
+        world::set_room_tile_flags(tile);
         this->tiles.insert(tile);
     }
 
@@ -138,17 +156,6 @@ static void update_rooms_inspector() {
         if (button_cancel()) {
             STATE = EditorState::NONE;
             NEW_ROOM.reset();
-        }
-
-        ImGui::SameLine();
-
-        if (NEW_ROOM.is_ready_to_create()) {
-            if (button_accept()) {
-                STATE = EditorState::NONE;
-                NEW_ROOM.reset();
-            }
-        } else {
-            button_accept(false);
         }
     } else {
         if (button("Create")) {
