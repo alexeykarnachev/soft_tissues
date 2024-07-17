@@ -5,6 +5,7 @@
 #include "entt/entity/fwd.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 
 namespace soft_tissues::prefabs {
 
@@ -30,6 +31,10 @@ entt::entity spawn_light(
     globals::registry.emplace<component::Light>(entity, light);
 
     return entity;
+}
+
+entt::entity spawn_ambient_light(Color color, float intensity) {
+    return spawn_light(Vector3Zero(), light::Type::AMBIENT, color, intensity, {});
 }
 
 }  // namespace soft_tissues::prefabs

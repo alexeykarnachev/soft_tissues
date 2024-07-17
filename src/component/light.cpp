@@ -73,6 +73,8 @@ void Light::set_shader_uniform(Shader shader, int idx) {
             SetShaderValue(shader, inner_cutoff_loc, &inner_cutoff, SHADER_UNIFORM_FLOAT);
             SetShaderValue(shader, outer_cutoff_loc, &outer_cutoff, SHADER_UNIFORM_FLOAT);
         } break;
+        case Type::AMBIENT: {
+        } break;
     }
 }
 

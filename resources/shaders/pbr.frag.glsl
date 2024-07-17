@@ -3,6 +3,7 @@ const int MAX_N_LIGHTS = 8;
 const int POINT_LIGHT = 0;
 const int DIRECTIONAL_LIGHT = 1;
 const int SPOT_LIGHT = 2;
+const int AMBIENT_LIGHT = 3;
 
 // Structs
 struct Light {
@@ -31,8 +32,6 @@ uniform sampler2D u_normal_map;
 uniform sampler2D u_roughness_map;
 uniform sampler2D u_occlusion_map;
 
-uniform float u_ambient_intensity;
-uniform vec3 u_ambient_color;
 uniform vec3 u_camera_pos;
 uniform int u_n_lights;
 uniform Light u_lights[MAX_N_LIGHTS];
@@ -54,8 +53,6 @@ float mock_usage() {
     f += texture(u_roughness_map, uv).x;
     f += texture(u_occlusion_map, uv).x;
 
-    f += u_ambient_intensity;
-    f += u_ambient_color.x;
     f += u_camera_pos.x;
     f += float(u_n_lights);
 
@@ -107,6 +104,7 @@ void main() {
     // -------------------------------------------------------------------
     // total light
     vec3 light_total = vec3(0.0, 0.0, 0.0);
+    vec3 ambient_total = vec3(0.0, 0.0, 0.0);
     for (int i = 0; i < u_n_lights; ++i) {
         Light light = u_lights[i];
 
@@ -139,6 +137,13 @@ void main() {
                 attenuation *= intensity;
                 break;
             }
+            case AMBIENT_LIGHT:
+            {
+                ambient_total += (light.color + albedo) * light.intensity * 0.5;
+                // NOTE: Ambient light doesn't compute BRDF,
+                // so I just continue the iteration over lights
+                continue;
+            }
         }
 
         vec3 radiance = light.color * light.intensity * attenuation;
@@ -159,8 +164,6 @@ void main() {
         light_total += (kD * albedo / PI + spec) * radiance * nDotL;
     }
 
-    vec3 ambient_total = (u_ambient_color + albedo) * u_ambient_intensity * 0.5;
     vec3 color = ambient_total + light_total * occlusion;
-
     f_color = vec4(color, 1.0);
 }

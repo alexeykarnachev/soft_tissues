@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pbr.hpp"
 #include "raylib/raylib.h"
 #include "utils.hpp"
 #include <cstdint>
@@ -19,12 +20,12 @@ enum TileFlags : uint16_t {
 
 class TileMaterials {
 public:
-    Material floor;
-    Material wall;
-    Material ceil;
+    pbr::MaterialPBR floor;
+    pbr::MaterialPBR wall;
+    pbr::MaterialPBR ceil;
 
     TileMaterials();
-    TileMaterials(Material floor, Material wall, Material ceil);
+    TileMaterials(pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil);
 };
 
 class Tile {

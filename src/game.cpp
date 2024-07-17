@@ -84,6 +84,8 @@ static void load() {
                    .outer_cutoff = outer_cutoff,
                }};
         prefabs::spawn_light(position, type, color, intensity, params);
+
+        prefabs::spawn_ambient_light(WHITE, 0.1);
     }
 }
 
@@ -117,7 +119,7 @@ static void update() {
     camera::update();
 
     // --------------------------
-    // TODO: remove this
+    // TODO: move this from here
     auto player = globals::registry.view<component::Player>().front();
     auto player_tr = globals::registry.get<component::Transform>(player);
     int light_idx = 0;

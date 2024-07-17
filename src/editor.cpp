@@ -52,10 +52,6 @@ public:
     }
 
     void add_tile(tile::Tile *tile) {
-        // TODO:
-        this->materials.floor = resources::BRICK_WALL_MATERIAL;
-        this->materials.wall = resources::TILED_STONE_MATERIAL;
-        this->materials.ceil = resources::BRICK_WALL_MATERIAL;
         tile->materials = this->materials;
 
         if (!this->can_add_tile(tile)) return;
@@ -145,13 +141,11 @@ static bool button_cancel(bool is_enabled = true) {
     return button_color("Cancel", COLOR_CANCEL, is_enabled);
 }
 
-static bool button_accept(bool is_enabled = true) {
-    return button_color("Accept", COLOR_ACCEPT, is_enabled);
-}
+// static bool button_accept(bool is_enabled = true) {
+//     return button_color("Accept", COLOR_ACCEPT, is_enabled);
+// }
 
 static void update_rooms_inspector() {
-    auto colors = ImGui::GetStyle().Colors;
-
     if (STATE == EditorState::NEW_ROOM_CREATION) {
         if (button_cancel()) {
             STATE = EditorState::NONE;
@@ -208,6 +202,8 @@ void load() {
 
     ADDED_TILE_MATERIAL = LoadMaterialDefault();
     ADDED_TILE_MATERIAL.maps[0].color = RAYWHITE;
+
+    NEW_ROOM.reset();
 }
 
 void unload() {

@@ -1,11 +1,12 @@
 #pragma once
 
+#include "pbr.hpp"
 #include "raylib/raylib.h"
 
 namespace soft_tissues::resources {
 
-extern Material BRICK_WALL_MATERIAL;
-extern Material TILED_STONE_MATERIAL;
+extern pbr::MaterialPBR BRICK_WALL_MATERIAL_PBR;
+extern pbr::MaterialPBR TILED_STONE_MATERIAL_PBR;
 
 extern Mesh PLANE_MESH;
 

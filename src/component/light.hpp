@@ -9,7 +9,10 @@ enum class Type {
     POINT = 0,
     DIRECTIONAL,
     SPOT,
+    AMBIENT,
 };
+
+struct Ambient {};
 
 struct Point {
     Vector3 attenuation;
