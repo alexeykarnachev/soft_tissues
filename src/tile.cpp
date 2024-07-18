@@ -15,7 +15,7 @@ using namespace utils;
 TileMaterials::TileMaterials()
     : floor(resources::TILED_STONE_MATERIAL_PBR)
     , wall(resources::TILED_STONE_MATERIAL_PBR)
-    , ceil(resources::TILED_STONE_MATERIAL_PBR){}
+    , ceil(resources::TILED_STONE_MATERIAL_PBR) {}
 
 TileMaterials::TileMaterials(
     pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil

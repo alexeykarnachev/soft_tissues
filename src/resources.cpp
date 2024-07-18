@@ -13,12 +13,16 @@ namespace soft_tissues::resources {
 
 using namespace utils;
 
+static Material DEFAULT_MATERIAL;
+
 pbr::MaterialPBR BRICK_WALL_MATERIAL_PBR;
 pbr::MaterialPBR TILED_STONE_MATERIAL_PBR;
 
 Mesh PLANE_MESH;
 
 void load() {
+    DEFAULT_MATERIAL = LoadMaterialDefault();
+
     BRICK_WALL_MATERIAL_PBR = pbr::MaterialPBR(
         "resources/textures/brick_wall/", {1.0, 1.0}, 0.1
     );
@@ -30,10 +34,18 @@ void load() {
 }
 
 void unload() {
+    UnloadMaterial(DEFAULT_MATERIAL);
+
     BRICK_WALL_MATERIAL_PBR.unload();
     TILED_STONE_MATERIAL_PBR.unload();
 
     UnloadMesh(PLANE_MESH);
+}
+
+Material get_color_material(Color color) {
+    Material material = DEFAULT_MATERIAL;
+    material.maps[0].color = RAYWHITE;
+    return material;
 }
 
 }  // namespace soft_tissues::resources

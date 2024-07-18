@@ -5,6 +5,7 @@
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "utils.hpp"
+#include <filesystem>
 
 namespace soft_tissues::pbr {
 
@@ -12,7 +13,8 @@ using namespace utils;
 
 MaterialPBR::MaterialPBR() = default;
 
-MaterialPBR::MaterialPBR(std::string dir_path, Vector2 tiling, float displacement_scale) {
+MaterialPBR::MaterialPBR(std::string dir_path, Vector2 tiling, float displacement_scale)
+    : dir_path(dir_path) {
     Material material = LoadMaterialDefault();
     Shader shader = load_shader("pbr.vert.glsl", "pbr.frag.glsl");
 
@@ -85,6 +87,12 @@ Material MaterialPBR::get_material() {
     SetShaderValue(shader, n_lights_loc, &light_idx, SHADER_UNIFORM_INT);
 
     return this->material;
+}
+
+std::string MaterialPBR::get_name() {
+    std::filesystem::path path(this->dir_path);
+    auto parent_name = path.parent_path().filename().string();
+    return parent_name;
 }
 
 void MaterialPBR::unload() {

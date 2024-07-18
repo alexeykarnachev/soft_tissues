@@ -5,7 +5,7 @@
 #include "component/light.hpp"
 #include "component/transform.hpp"
 #include "controller.hpp"
-#include "editor.hpp"
+#include "editor/editor.hpp"
 #include "globals.hpp"
 #include "prefabs.hpp"
 #include "raylib/raylib.h"
@@ -20,10 +20,10 @@ static void load_window() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetConfigFlags(FLAG_VSYNC_HINT);
 
-    // InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
-    // ToggleFullscreen();
+    InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
+    ToggleFullscreen();
 
-    InitWindow(2560 / 1.5, 1440 / 1.5, "Soft Tissues");
+    // InitWindow(2560 / 1.5, 1440 / 1.5, "Soft Tissues");
 
     DisableCursor();
     // SetTargetFPS(60);
@@ -49,22 +49,6 @@ static void load() {
         // float intensity = 5.0;
         // Vector3 attenuation = {1.0, 0.1, 0.01};
         // light::Params params = {.point = {.attenuation = attenuation}};
-        // prefabs::spawn_light(position, type, color, intensity, params);
-
-        // position = {20, 20, 10};
-        // type = light::Type::POINT;
-        // color = RED;
-        // intensity = 5.0;
-        // attenuation = {1.0, 0.1, 0.01};
-        // params = {.point = {.attenuation = attenuation}};
-        // prefabs::spawn_light(position, type, color, intensity, params);
-
-        // position = {15, 15, 10};
-        // type = light::Type::POINT;
-        // color = GREEN;
-        // intensity = 5.0;
-        // attenuation = {1.0, 0.1, 0.01};
-        // params = {.point = {.attenuation = attenuation}};
         // prefabs::spawn_light(position, type, color, intensity, params);
 
         Vector3 position = Vector3Zero();
@@ -163,9 +147,9 @@ static void draw() {
             draw_player();
             editor::update_and_draw();
             world::draw_grid();
+        } else if (globals::GAME_STATE == globals::GameState::PLAY) {
+            world::draw_tiles();
         }
-
-        world::draw_tiles();
     }
     EndMode3D();
 

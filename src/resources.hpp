@@ -10,6 +10,8 @@ extern pbr::MaterialPBR TILED_STONE_MATERIAL_PBR;
 
 extern Mesh PLANE_MESH;
 
+Material get_color_material(Color color);
+
 void load();
 void unload();
 
