@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imgui/imgui.h"
+#include "raylib/raylib.h"
 
 namespace soft_tissues::editor {
 
@@ -32,6 +33,7 @@ bool button(const char *name, bool is_enabled = true);
 bool button_color(const char *name, ImVec4 color, bool is_enabled = true);
 bool button_cancel(bool is_enabled = true);
 bool button_accept(bool is_enabled = true);
+void image(Texture texture, float width, float height=0.0);
 
 }  // namespace gui
 

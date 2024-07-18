@@ -2,11 +2,11 @@
 
 #include "pbr.hpp"
 #include "raylib/raylib.h"
+#include <vector>
 
 namespace soft_tissues::resources {
 
-extern pbr::MaterialPBR BRICK_WALL_MATERIAL_PBR;
-extern pbr::MaterialPBR TILED_STONE_MATERIAL_PBR;
+extern std::vector<pbr::MaterialPBR> MATERIALS_PBR;
 
 extern Mesh PLANE_MESH;
 

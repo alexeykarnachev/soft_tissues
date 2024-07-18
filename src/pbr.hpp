@@ -15,6 +15,7 @@ public:
     MaterialPBR();
     MaterialPBR(std::string dir_path, Vector2 tiling, float displacement_scale);
 
+    Texture get_texture();
     Material get_material();
     std::string get_name();
 

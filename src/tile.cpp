@@ -12,10 +12,12 @@ namespace soft_tissues::tile {
 
 using namespace utils;
 
-TileMaterials::TileMaterials()
-    : floor(resources::TILED_STONE_MATERIAL_PBR)
-    , wall(resources::TILED_STONE_MATERIAL_PBR)
-    , ceil(resources::TILED_STONE_MATERIAL_PBR) {}
+TileMaterials::TileMaterials() = default;
+
+TileMaterials::TileMaterials(pbr::MaterialPBR material)
+    : floor(material)
+    , wall(material)
+    , ceil(material) {}
 
 TileMaterials::TileMaterials(
     pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil
@@ -104,8 +106,9 @@ Matrix Tile::get_wall_matrix(CardinalDirection side, int elevation) {
 }
 
 void Tile::draw() {
-    Mesh mesh = resources::PLANE_MESH;
+    if (this->is_empty()) return;
 
+    Mesh mesh = resources::PLANE_MESH;
     Material floor_material = this->materials.floor.get_material();
     Material wall_material = this->materials.wall.get_material();
     Material ceil_material = this->materials.ceil.get_material();

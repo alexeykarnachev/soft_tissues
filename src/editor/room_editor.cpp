@@ -35,14 +35,11 @@ static void reset() {
 static void add_tile(tile::Tile *tile) {
     if (!can_add_tile(tile)) return;
 
-    tile->materials = MATERIALS;
-
     world::set_room_tile_flags(tile);
     auto neighbors = world::get_tile_neighbors(tile->get_id());
 
     for (auto nb : neighbors) {
         if (nb && !nb->is_empty()) {
-            nb->materials = MATERIALS;
             world::set_room_tile_flags(nb);
         }
     }
@@ -51,54 +48,114 @@ static void add_tile(tile::Tile *tile) {
     TILES.insert(tile);
 }
 
-void update_and_draw() {
+static void update_lazy_load() {
     static bool is_loaded = false;
     if (!is_loaded) {
-        MATERIALS = tile::TileMaterials();
+        MATERIALS = tile::TileMaterials(resources::MATERIALS_PBR[0]);
+        is_loaded = true;
     }
+}
 
-    if (editor::STATE == editor::EditorState::NEW_ROOM_CREATION) {
-        if (gui::button_cancel()) {
-            STATE = EditorState::NONE;
-            reset();
-        }
-
-        // auto material = NEW_ROOM.materials.floor;
-        // ImGui::SeparatorText("Floor");
-        // ImGui::Text(material.get_name().c_str(), "");
-        // material.get_material().maps[0].texture
-
-        // ---------------------------------------------------------------
-        tile::Tile *tile = world::get_tile_at_cursor();
-
-        // ghost tile
-        if (tile) {
-            Color color = can_add_tile(tile) ? GREEN : RED;
-            Material material = resources::get_color_material(color);
-            Matrix matrix = tile->get_floor_matrix();
-            DrawMesh(resources::PLANE_MESH, material, matrix);
-
-            if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-                add_tile(tile);
+static void update_material(pbr::MaterialPBR *material) {
+    if (ImGui::BeginMenu(material->get_name().c_str())) {
+        for (auto &another_material : resources::MATERIALS_PBR) {
+            if (ImGui::MenuItem(another_material.get_name().c_str())) {
+                *material = another_material;
             }
         }
-
-    } else {
-        if (gui::button("Create")) {
-            STATE = EditorState::NEW_ROOM_CREATION;
-        }
-
-        ImGui::SameLine();
-
-        gui::button_cancel(false);
+        ImGui::EndMenu();
     }
 
-    // new room tiles
+    gui::image(material->get_texture(), 150.0);
+}
+
+static void update_active() {
+    // ---------------------------------------------------------------
+    // buttons
+    gui::button("Create", false);
+
+    ImGui::SameLine();
+
+    if (gui::button_cancel()) {
+        STATE = EditorState::NONE;
+        reset();
+    }
+
+    // ---------------------------------------------------------------
+    // materials
+    ImGui::SeparatorText("Materials");
+
+    ImGui::BeginTabBar("Materials");
+
+    if (ImGui::BeginTabItem("floor")) {
+        update_material(&MATERIALS.floor);
+        ImGui::EndTabItem();
+    }
+
+    if (ImGui::BeginTabItem("wall")) {
+        update_material(&MATERIALS.wall);
+        ImGui::EndTabItem();
+    }
+
+    if (ImGui::BeginTabItem("ceil")) {
+        update_material(&MATERIALS.ceil);
+        ImGui::EndTabItem();
+    }
+
+    ImGui::EndTabBar();
+
+    // auto material = NEW_ROOM.materials.floor;
+    // ImGui::SeparatorText("Floor");
+    // ImGui::Text(material.get_name().c_str(), "");
+    // material.get_material().maps[0].texture;
+
+    // ---------------------------------------------------------------
+    // tile under cursor
+    tile::Tile *tile = world::get_tile_at_cursor();
+
+    if (tile) {
+        Color color = can_add_tile(tile) ? GREEN : RED;
+        Material material = resources::get_color_material(color);
+        Matrix matrix = tile->get_floor_matrix();
+        DrawMesh(resources::PLANE_MESH, material, matrix);
+
+        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+            add_tile(tile);
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // set active materials
+    for (tile::Tile *tile : TILES) {
+        tile->materials = MATERIALS;
+    }
+}
+
+static void update_inactive() {
+    if (gui::button("Create")) {
+        STATE = EditorState::NEW_ROOM_CREATION;
+    }
+
+    ImGui::SameLine();
+
+    gui::button_cancel(false);
+}
+
+static void update_tiles() {
     for (auto tile : TILES) {
         Matrix matrix = tile->get_floor_matrix();
         Material material = resources::get_color_material(RAYWHITE);
         DrawMesh(resources::PLANE_MESH, material, matrix);
     }
+}
+
+void update_and_draw() {
+    update_lazy_load();
+
+    if (editor::STATE == editor::EditorState::NEW_ROOM_CREATION) update_active();
+    else update_inactive();
+
+    update_tiles();
 }
 
 }  // namespace soft_tissues::editor::room_editor

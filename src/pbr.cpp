@@ -69,6 +69,10 @@ MaterialPBR::MaterialPBR(std::string dir_path, Vector2 tiling, float displacemen
     this->material = material;
 }
 
+Texture MaterialPBR::get_texture() {
+    return this->material.maps[0].texture;
+}
+
 Material MaterialPBR::get_material() {
     Shader shader = this->material.shader;
 

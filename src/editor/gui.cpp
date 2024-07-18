@@ -1,5 +1,6 @@
 #include "editor.hpp"
 #include "imgui/imgui.h"
+#include "raylib/raylib.h"
 #include <cmath>
 #include <cstdio>
 
@@ -58,6 +59,14 @@ bool button_cancel(bool is_enabled) {
 
 bool button_accept(bool is_enabled) {
     return button_color("Accept", COLOR_ACCEPT, is_enabled);
+}
+
+void image(Texture texture, float width, float height) {
+    if (height <= 0.0) {
+        float aspect = (float)texture.width / texture.height;
+        height = width / aspect;
+    }
+    ImGui::Image((ImTextureID)(long)texture.id, {width, height});
 }
 
 }  // namespace soft_tissues::editor::gui

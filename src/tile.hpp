@@ -25,6 +25,7 @@ public:
     pbr::MaterialPBR ceil;
 
     TileMaterials();
+    TileMaterials(pbr::MaterialPBR material);
     TileMaterials(pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil);
 };
 
