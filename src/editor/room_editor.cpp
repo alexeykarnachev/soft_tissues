@@ -57,11 +57,18 @@ static void update_lazy_load() {
 }
 
 static void update_material(pbr::MaterialPBR *material) {
-    if (ImGui::BeginMenu(material->get_name().c_str())) {
+    auto name = material->get_name();
+
+    if (ImGui::BeginMenu(name.c_str())) {
         for (auto &another_material : resources::MATERIALS_PBR) {
-            if (ImGui::MenuItem(another_material.get_name().c_str())) {
+            auto another_name = another_material.get_name();
+            bool is_selected = name == another_name;
+
+            if (ImGui::MenuItem(another_name.c_str(), NULL, is_selected)) {
                 *material = another_material;
             }
+            gui::image(another_material.get_texture(), 30.0);
+            ImGui::Separator();
         }
         ImGui::EndMenu();
     }

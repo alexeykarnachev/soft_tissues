@@ -23,11 +23,11 @@ void load() {
     DEFAULT_MATERIAL = LoadMaterialDefault();
 
     MATERIALS_PBR = {
-        pbr::MaterialPBR("resources/textures/brick_wall/", {1.0, 1.0}, 0.1),
-        pbr::MaterialPBR("resources/textures/tiled_stone/", {1.0, 1.0}, 0.0)
+        pbr::MaterialPBR("resources/textures/brick_wall/", {1.0, 1.0}, 0.0),
+        pbr::MaterialPBR("resources/textures/tiled_stone/", {1.0, 1.0}, 0.0),
     };
 
-    PLANE_MESH = gen_mesh_plane(16);
+    PLANE_MESH = gen_mesh_plane(2);
 }
 
 void unload() {
