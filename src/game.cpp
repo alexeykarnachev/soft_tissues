@@ -147,9 +147,9 @@ static void draw() {
             draw_player();
             editor::update_and_draw();
             world::draw_grid();
-        } else if (globals::GAME_STATE == globals::GameState::PLAY) {
-            world::draw_tiles();
         }
+
+        world::draw_tiles();
     }
     EndMode3D();
 

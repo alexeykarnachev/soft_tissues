@@ -5,10 +5,12 @@
 #include "raylib/raylib.h"
 #include "tile.hpp"
 #include "utils.hpp"
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <unordered_set>
 
 namespace soft_tissues::world {
 
@@ -35,6 +37,16 @@ Rectangle get_bound_rect() {
     };
 }
 
+tile::Tile *get_tile_at(int row, int col) {
+    uint32_t idx = row * globals::WORLD_N_COLS + col;
+    tile::Tile *tile = NULL;
+    if (idx < globals::WORLD_N_TILES) {
+        tile = &TILES[idx];
+    }
+
+    return tile;
+}
+
 tile::Tile *get_tile_at_cursor() {
     RayCollision collision = utils::get_cursor_floor_rect_collision(
         world::get_bound_rect(), camera::CAMERA
@@ -44,8 +56,7 @@ tile::Tile *get_tile_at_cursor() {
     if (collision.hit) {
         int row = std::floor(collision.point.z);
         int col = std::floor(collision.point.x);
-        uint32_t idx = row * globals::WORLD_N_COLS + col;
-        tile = &TILES[idx];
+        tile = get_tile_at(row, col);
     }
 
     return tile;
@@ -77,34 +88,30 @@ std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
     return neighbors;
 }
 
-void set_room_tile_flags(tile::Tile *tile) {
-    auto nbs = world::get_tile_neighbors(tile->get_id());
-    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
+std::unordered_set<tile::Tile *> get_tiles_between_corners(
+    uint32_t corner_0, uint32_t corner_1
+) {
+    int row_0 = corner_0 / globals::WORLD_N_COLS;
+    int col_0 = corner_0 % globals::WORLD_N_COLS;
 
-    // TODO: manual enumeration is very bad in this case, IMPROVE!
-    auto nb = nbs[(int)CardinalDirection::NORTH];
-    bool has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_NORTH_WALL;
+    int row_1 = corner_1 / globals::WORLD_N_COLS;
+    int col_1 = corner_1 % globals::WORLD_N_COLS;
+
+    int row_min = std::min(row_0, row_1);
+    int row_max = std::max(row_0, row_1);
+
+    int col_min = std::min(col_0, col_1);
+    int col_max = std::max(col_0, col_1);
+
+    std::unordered_set<tile::Tile *> tiles;
+    for (int row = row_min; row <= row_max; ++row) {
+        for (int col = col_min; col <= col_max; ++col) {
+            tile::Tile *tile = get_tile_at(row, col);
+            if (tile) tiles.insert(tile);
+        }
     }
 
-    nb = nbs[(int)CardinalDirection::SOUTH];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_SOUTH_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::WEST];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_WEST_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::EAST];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_EAST_WALL;
-    }
+    return tiles;
 }
 
 void draw_grid() {
