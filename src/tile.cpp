@@ -109,45 +109,40 @@ void Tile::draw() {
     if (this->is_empty()) return;
 
     Mesh mesh = resources::PLANE_MESH;
-    Material floor_material = this->materials.floor.get_material();
-    Material wall_material = this->materials.wall.get_material();
-    Material ceil_material = this->materials.ceil.get_material();
 
     if (this->has_flags(TILE_FLOOR)) {
-        Matrix matrix = this->get_floor_matrix();
-        DrawMesh(mesh, floor_material, matrix);
+        pbr::draw_mesh(mesh, this->materials.floor, this->get_floor_matrix());
     }
 
     if (this->has_flags(TILE_CEIL)) {
-        Matrix matrix = this->get_ceil_matrix();
-        DrawMesh(mesh, ceil_material, matrix);
+        pbr::draw_mesh(mesh, this->materials.ceil, this->get_ceil_matrix());
     }
 
     if (this->has_flags(TILE_NORTH_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::NORTH, i);
-            DrawMesh(mesh, wall_material, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, matrix);
         }
     }
 
     if (this->has_flags(TILE_SOUTH_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::SOUTH, i);
-            DrawMesh(mesh, wall_material, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, matrix);
         }
     }
 
     if (this->has_flags(TILE_WEST_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::WEST, i);
-            DrawMesh(mesh, wall_material, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, matrix);
         }
     }
 
     if (this->has_flags(TILE_EAST_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::EAST, i);
-            DrawMesh(mesh, wall_material, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, matrix);
         }
     }
 }

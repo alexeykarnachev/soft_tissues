@@ -12,6 +12,7 @@ float TOTAL_TIME = 0.0;
 float FRAME_DT = 0.0;
 bool WINDOW_SHOULD_CLOSE = false;
 GameState GAME_STATE = GameState::PLAY;
+GraphicsOptions GRAPHICS_OPTIONS;
 
 void update() {
     FRAME_DT = GetFrameTime();

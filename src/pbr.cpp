@@ -103,4 +103,9 @@ void MaterialPBR::unload() {
     UnloadMaterial(this->material);
 }
 
+void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Matrix matrix) {
+    Material material = material_pbr.get_material();
+    DrawMesh(mesh, material, matrix);
+}
+
 }  // namespace soft_tissues::pbr

@@ -22,4 +22,6 @@ public:
     void unload();
 };
 
+void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Matrix matrix);
+
 }  // namespace soft_tissues::pbr
