@@ -32,6 +32,7 @@ uniform sampler2D u_normal_map;
 uniform sampler2D u_roughness_map;
 uniform sampler2D u_occlusion_map;
 
+uniform int u_is_light_enabled;
 uniform vec3 u_camera_pos;
 uniform int u_n_lights;
 uniform Light u_lights[MAX_N_LIGHTS];
@@ -85,9 +86,14 @@ float GeomSmith(float nDotV, float nDotL, float roughness) {
 
 void main() {
     vec2 uv = v_tex_coord;
+    vec3 albedo = texture(u_albedo_map, uv).rgb;
+
+    if (u_is_light_enabled != 1) {
+        f_color = vec4(albedo, 1.0);
+        return;
+    }
 
     vec3 view_dir = normalize(v_world_pos - u_camera_pos);
-    vec3 albedo = texture(u_albedo_map, uv).rgb;
     float metallic = clamp(texture(u_metalness_map, uv).r, 0.04, 1.0);
     float roughness = clamp(texture(u_roughness_map, uv).r, 0.04, 1.0);
     float occlusion = texture(u_occlusion_map, uv).r;

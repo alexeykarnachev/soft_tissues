@@ -74,22 +74,6 @@ Texture MaterialPBR::get_texture() {
 }
 
 Material MaterialPBR::get_material() {
-    Shader shader = this->material.shader;
-
-    // -----------------------------------------------------------------------
-    // lighting
-    int light_idx = 0;
-    for (auto entity : globals::registry.view<light::Light>()) {
-        auto light = globals::registry.get<light::Light>(entity);
-        light.set_shader_uniform(shader, light_idx++);
-    }
-
-    int camera_pos_loc = get_uniform_loc(shader, "u_camera_pos");
-    int n_lights_loc = get_uniform_loc(shader, "u_n_lights");
-
-    SetShaderValue(shader, camera_pos_loc, &camera::CAMERA.position, SHADER_UNIFORM_VEC3);
-    SetShaderValue(shader, n_lights_loc, &light_idx, SHADER_UNIFORM_INT);
-
     return this->material;
 }
 
@@ -105,6 +89,28 @@ void MaterialPBR::unload() {
 
 void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Matrix matrix) {
     Material material = material_pbr.get_material();
+    Shader shader = material.shader;
+
+    int is_light_enabled = globals::GRAPHICS_OPTIONS.is_light_enabled;
+    int is_light_enabled_loc = get_uniform_loc(shader, "u_is_light_enabled");
+    SetShaderValue(shader, is_light_enabled_loc, &is_light_enabled, SHADER_UNIFORM_INT);
+
+    if (is_light_enabled) {
+        int light_idx = 0;
+        for (auto entity : globals::registry.view<light::Light>()) {
+            auto light = globals::registry.get<light::Light>(entity);
+            light.set_shader_uniform(shader, light_idx++);
+        }
+
+        int camera_pos_loc = get_uniform_loc(shader, "u_camera_pos");
+        int n_lights_loc = get_uniform_loc(shader, "u_n_lights");
+
+        SetShaderValue(
+            shader, camera_pos_loc, &camera::CAMERA.position, SHADER_UNIFORM_VEC3
+        );
+        SetShaderValue(shader, n_lights_loc, &light_idx, SHADER_UNIFORM_INT);
+    }
+
     DrawMesh(mesh, material, matrix);
 }
 
