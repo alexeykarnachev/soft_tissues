@@ -2,6 +2,7 @@
 #include "../tile.hpp"
 #include "../world.hpp"
 #include "editor.hpp"
+#include "imgui/imgui.h"
 #include "raylib/raylib.h"
 #include <cstdint>
 #include <cstdio>
@@ -49,83 +50,77 @@ void update_and_draw() {
         is_loaded = true;
     }
 
-    if (ROOM_ID == -1) {
-        if (gui::button("New Room")) {
-            world::add_room();
+    if (gui::button("New Room")) {
+        ROOM_ID = world::add_room();
+    }
+    ImGui::Separator();
+
+    for (auto id : world::get_room_ids()) {
+        auto name = "Edit room #" + std::to_string(id);
+
+        if (id != ROOM_ID && gui::button(name.c_str())) {
+            ROOM_ID = id;
         }
 
-        for (auto id : world::get_room_ids()) {
-            auto name = "Room #" + std::to_string(id);
-            ImGui::TextUnformatted(name.c_str());
+        if (id == ROOM_ID) {
+            // ---------------------------------------------------------------
+            ImGui::BeginTabBar("Materials");
 
-            if (gui::button("Edit")) {
-                ROOM_ID = id;
+            if (ImGui::BeginTabItem("floor")) {
+                update_material(&MATERIALS.floor);
+                ImGui::EndTabItem();
             }
-        }
-    } else {
-        if (gui::button_cancel()) {
-            world::remove_room(ROOM_ID);
-            ROOM_ID = -1;
-            return;
-        }
 
-        // ---------------------------------------------------------------
-        ImGui::SeparatorText("Materials");
+            if (ImGui::BeginTabItem("wall")) {
+                update_material(&MATERIALS.wall);
+                ImGui::EndTabItem();
+            }
 
-        ImGui::BeginTabBar("Materials");
+            if (ImGui::BeginTabItem("ceil")) {
+                update_material(&MATERIALS.ceil);
+                ImGui::EndTabItem();
+            }
 
-        if (ImGui::BeginTabItem("floor")) {
-            update_material(&MATERIALS.floor);
-            ImGui::EndTabItem();
-        }
+            ImGui::EndTabBar();
 
-        if (ImGui::BeginTabItem("wall")) {
-            update_material(&MATERIALS.wall);
-            ImGui::EndTabItem();
-        }
+            // ---------------------------------------------------------------
+            static tile::Tile *start_tile = NULL;
+            static tile::Tile *end_tile = NULL;
 
-        if (ImGui::BeginTabItem("ceil")) {
-            update_material(&MATERIALS.ceil);
-            ImGui::EndTabItem();
-        }
+            tile::Tile *tile = world::get_tile_at_cursor();
 
-        ImGui::EndTabBar();
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                start_tile = tile;
+                end_tile = tile;
+            } else if (start_tile != NULL && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+                if (tile != NULL) end_tile = tile;
 
-        // ---------------------------------------------------------------
-        static tile::Tile *start_tile = NULL;
-        static tile::Tile *end_tile = NULL;
+                GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
+            } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+                for (auto tile : GHOST_TILES) {
+                    if (tile->is_empty()) world::add_tile_to_room(tile, ROOM_ID);
+                }
 
-        tile::Tile *tile = world::get_tile_at_cursor();
+                GHOST_TILES.clear();
+                start_tile = NULL;
+                end_tile = NULL;
+            }
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            start_tile = tile;
-            end_tile = tile;
-        } else if (start_tile != NULL && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-            if (tile != NULL) end_tile = tile;
+            // ---------------------------------------------------------------
+            for (auto tile : world::get_room_tiles(ROOM_ID)) {
+                tile->materials = MATERIALS;
+            }
 
-            GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
-        } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             for (auto tile : GHOST_TILES) {
-                if (tile->is_empty()) world::add_tile_to_room(tile, ROOM_ID);
+                draw_tile_ghost(tile, WHITE);
             }
 
-            GHOST_TILES.clear();
-            start_tile = NULL;
-            end_tile = NULL;
+            if (tile != NULL) {
+                draw_tile_ghost(tile, GREEN);
+            }
         }
 
-        // ---------------------------------------------------------------
-        for (auto tile : world::get_room_tiles(ROOM_ID)) {
-            tile->materials = MATERIALS;
-        }
-
-        for (auto tile : GHOST_TILES) {
-            draw_tile_ghost(tile, WHITE);
-        }
-
-        if (tile != NULL) {
-            draw_tile_ghost(tile, GREEN);
-        }
+        ImGui::Separator();
     }
 }
 
