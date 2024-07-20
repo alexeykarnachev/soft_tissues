@@ -131,6 +131,19 @@ int add_room() {
     return id++;
 }
 
+void remove_room(int room_id) {
+    if (ROOM_ID_TO_TILES.count(room_id) == 0) {
+        throw std::runtime_error("Can't remove unexisting room");
+    }
+
+    for (auto tile : ROOM_ID_TO_TILES[room_id]) {
+        tile->flags = 0;
+        TILE_TO_ROOM_ID.erase(tile);
+    }
+
+    ROOM_ID_TO_TILES.erase(room_id);
+}
+
 std::vector<int> get_room_ids() {
     std::vector<int> ids;
     for (auto &pair : ROOM_ID_TO_TILES) {

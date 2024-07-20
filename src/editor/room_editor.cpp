@@ -63,6 +63,12 @@ void update_and_draw() {
             }
         }
     } else {
+        if (gui::button_cancel()) {
+            world::remove_room(ROOM_ID);
+            ROOM_ID = -1;
+            return;
+        }
+
         // ---------------------------------------------------------------
         ImGui::SeparatorText("Materials");
 
@@ -100,7 +106,7 @@ void update_and_draw() {
             GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
         } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             for (auto tile : GHOST_TILES) {
-                world::add_tile_to_room(tile, ROOM_ID);
+                if (tile->is_empty()) world::add_tile_to_room(tile, ROOM_ID);
             }
 
             GHOST_TILES.clear();

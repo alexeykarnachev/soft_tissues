@@ -21,6 +21,7 @@ std::vector<tile::Tile *> get_tiles_between_corners(
 );
 
 int add_room();
+void remove_room(int room_id);
 std::vector<int> get_room_ids();
 std::vector<tile::Tile *> get_room_tiles(int room_id);
 
