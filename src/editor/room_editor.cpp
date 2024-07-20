@@ -4,18 +4,19 @@
 #include "editor.hpp"
 #include "raylib/raylib.h"
 #include <cstdio>
+#include <string>
 #include <unordered_set>
 
 namespace soft_tissues::editor::room_editor {
 
 using namespace utils;
 
-static std::unordered_set<tile::Tile *> RELEASED_ROOM_TILES;
-static std::unordered_set<tile::Tile *> CREATING_ROOM_TILES;
+static std::vector<tile::Tile *> RELEASED_ROOM_TILES;
+static std::vector<tile::Tile *> CREATING_ROOM_TILES;
 static tile::TileMaterials MATERIALS;
 
 static void set_room_tile_flags(tile::Tile *tile) {
-    auto nbs = world::get_tile_neighbors(tile->get_id());
+    auto nbs = world::get_tile_neighbors(tile);
     tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
     tile->materials = MATERIALS;
 
@@ -120,9 +121,7 @@ static void update_active() {
         }
 
         if (start_tile != NULL && end_tile != NULL) {
-            CREATING_ROOM_TILES = world::get_tiles_between_corners(
-                start_tile->get_id(), end_tile->get_id()
-            );
+            CREATING_ROOM_TILES = world::get_tiles_between_corners(start_tile, end_tile);
             for (auto tile : CREATING_ROOM_TILES) {
                 Material material = resources::get_color_material(WHITE);
                 Matrix matrix = tile->get_floor_matrix();
@@ -135,7 +134,7 @@ static void update_active() {
             if (!tile->is_empty()) continue;
 
             set_room_tile_flags(tile);
-            auto neighbors = world::get_tile_neighbors(tile->get_id());
+            auto neighbors = world::get_tile_neighbors(tile);
 
             for (auto nb : neighbors) {
                 if (nb && !nb->is_empty()) {
@@ -144,7 +143,7 @@ static void update_active() {
             }
 
             set_room_tile_flags(tile);
-            RELEASED_ROOM_TILES.insert(tile);
+            RELEASED_ROOM_TILES.push_back(tile);
         }
 
         CREATING_ROOM_TILES.clear();
@@ -183,8 +182,20 @@ void update_and_draw() {
     }
 
     // update depending on state
-    if (editor::STATE == editor::EditorState::NEW_ROOM_CREATION) update_active();
-    else update_inactive();
+    // if (editor::STATE == editor::EditorState::NEW_ROOM_CREATION) {
+    //     update_active();
+    // } else {
+    //     update_inactive();
+    // }
+    
+    if (gui::button("New Room")) {
+        world::add_room();
+    }
+
+    for (auto id : world::get_room_ids()) {
+        auto name = "Room #" + std::to_string(id);
+        ImGui::TextUnformatted(name.c_str());
+    }
 }
 
 }  // namespace soft_tissues::editor::room_editor

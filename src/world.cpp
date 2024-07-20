@@ -10,13 +10,16 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
-#include <unordered_set>
+#include <unordered_map>
 
 namespace soft_tissues::world {
 
 using namespace utils;
 
 std::array<tile::Tile, globals::WORLD_N_TILES> TILES;
+
+std::unordered_map<uint32_t, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
+std::unordered_map<tile::Tile *, uint32_t> TILE_TO_ROOM_ID;
 
 void load() {
     for (int i = 0; i < globals::WORLD_N_TILES; ++i) {
@@ -37,7 +40,7 @@ Rectangle get_bound_rect() {
     };
 }
 
-tile::Tile *get_tile_at(int row, int col) {
+tile::Tile *get_tile_at_row_col(int row, int col) {
     uint32_t idx = row * globals::WORLD_N_COLS + col;
     tile::Tile *tile = NULL;
     if (idx < globals::WORLD_N_TILES) {
@@ -56,15 +59,16 @@ tile::Tile *get_tile_at_cursor() {
     if (collision.hit) {
         int row = std::floor(collision.point.z);
         int col = std::floor(collision.point.x);
-        tile = get_tile_at(row, col);
+        tile = get_tile_at_row_col(row, col);
     }
 
     return tile;
 }
 
-std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
+std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
     // TODO: wtf?
     std::array<tile::Tile *, 4> neighbors = {nullptr, nullptr, nullptr, nullptr};
+    uint32_t id = tile->get_id();
 
     int row = id / globals::WORLD_N_COLS;
     int col = id % globals::WORLD_N_COLS;
@@ -88,14 +92,17 @@ std::array<tile::Tile *, 4> get_tile_neighbors(uint32_t id) {
     return neighbors;
 }
 
-std::unordered_set<tile::Tile *> get_tiles_between_corners(
-    uint32_t corner_0, uint32_t corner_1
+std::vector<tile::Tile *> get_tiles_between_corners(
+    tile::Tile *corner_0, tile::Tile *corner_1
 ) {
-    int row_0 = corner_0 / globals::WORLD_N_COLS;
-    int col_0 = corner_0 % globals::WORLD_N_COLS;
+    uint32_t id_0 = corner_0->get_id();
+    uint32_t id_1 = corner_1->get_id();
 
-    int row_1 = corner_1 / globals::WORLD_N_COLS;
-    int col_1 = corner_1 % globals::WORLD_N_COLS;
+    int row_0 = id_0 / globals::WORLD_N_COLS;
+    int col_0 = id_0 % globals::WORLD_N_COLS;
+
+    int row_1 = id_1 / globals::WORLD_N_COLS;
+    int col_1 = id_1 % globals::WORLD_N_COLS;
 
     int row_min = std::min(row_0, row_1);
     int row_max = std::max(row_0, row_1);
@@ -103,15 +110,35 @@ std::unordered_set<tile::Tile *> get_tiles_between_corners(
     int col_min = std::min(col_0, col_1);
     int col_max = std::max(col_0, col_1);
 
-    std::unordered_set<tile::Tile *> tiles;
+    std::vector<tile::Tile *> tiles;
     for (int row = row_min; row <= row_max; ++row) {
         for (int col = col_min; col <= col_max; ++col) {
-            tile::Tile *tile = get_tile_at(row, col);
-            if (tile) tiles.insert(tile);
+            tile::Tile *tile = get_tile_at_row_col(row, col);
+            if (tile) tiles.push_back(tile);
         }
     }
 
     return tiles;
+}
+
+uint32_t add_room() {
+    static int id = 0;
+
+    ROOM_ID_TO_TILES[id] = {};
+
+    return id++;
+}
+
+std::vector<uint32_t> get_room_ids() {
+    std::vector<uint32_t> ids;
+    for (auto &pair : ROOM_ID_TO_TILES) {
+        ids.push_back(pair.first);
+    }
+    return ids;
+}
+
+std::vector<tile::Tile *> get_room_tiles(uint32_t room_id) {
+    return ROOM_ID_TO_TILES[room_id];
 }
 
 void draw_grid() {

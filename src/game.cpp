@@ -145,7 +145,6 @@ static void draw() {
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
-            editor::update_and_draw();
             world::draw_grid();
         }
 
@@ -155,6 +154,10 @@ static void draw() {
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
         draw_cursor();
+    }
+
+    if (globals::GAME_STATE == globals::GameState::EDITOR) {
+        editor::update_and_draw();
     }
 
     DrawFPS(0, 0);

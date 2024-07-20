@@ -34,8 +34,12 @@ static void update_editor_mode() {
     if (is_moving) {
         CameraMoveRight(&CAMERA, -move_speed * mouse_delta.x, true);
 
-        Vector3 up_norm = Vector3Normalize(CAMERA.up);
-        Vector3 up = Vector3Scale(up_norm, move_speed * mouse_delta.y);
+        // camera basis
+        auto z = GetCameraForward(&CAMERA);
+        auto x = Vector3Normalize(Vector3CrossProduct(z, {0.0, 1.0, 0.0}));
+        auto y = Vector3Normalize(Vector3CrossProduct(x, z));
+
+        Vector3 up = Vector3Scale(y, move_speed * mouse_delta.y);
 
         CAMERA.position = Vector3Add(CAMERA.position, up);
         CAMERA.target = Vector3Add(CAMERA.target, up);
