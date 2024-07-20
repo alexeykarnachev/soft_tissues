@@ -3,6 +3,7 @@
 #include "../world.hpp"
 #include "editor.hpp"
 #include "raylib/raylib.h"
+#include <cstdint>
 #include <cstdio>
 #include <string>
 #include <unordered_set>
@@ -11,40 +12,9 @@ namespace soft_tissues::editor::room_editor {
 
 using namespace utils;
 
-static std::vector<tile::Tile *> RELEASED_ROOM_TILES;
-static std::vector<tile::Tile *> CREATING_ROOM_TILES;
+static int ROOM_ID = -1;
+static std::vector<tile::Tile *> GHOST_TILES;
 static tile::TileMaterials MATERIALS;
-
-static void set_room_tile_flags(tile::Tile *tile) {
-    auto nbs = world::get_tile_neighbors(tile);
-    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
-    tile->materials = MATERIALS;
-
-    // TODO: manual enumeration is very bad in this case, IMPROVE!
-    auto nb = nbs[(int)CardinalDirection::NORTH];
-    bool has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_NORTH_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::SOUTH];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_SOUTH_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::WEST];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_WEST_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::EAST];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_EAST_WALL;
-    }
-}
 
 static void update_material(pbr::MaterialPBR *material) {
     auto name = material->get_name();
@@ -66,135 +36,90 @@ static void update_material(pbr::MaterialPBR *material) {
     gui::image(material->get_texture(), 150.0);
 }
 
-static void update_active() {
-    // ---------------------------------------------------------------
-    // buttons
-    gui::button("Create", false);
-
-    ImGui::SameLine();
-
-    if (gui::button_cancel()) {
-        for (auto tile : RELEASED_ROOM_TILES) {
-            tile->flags = 0;
-        }
-        RELEASED_ROOM_TILES.clear();
-        STATE = EditorState::NONE;
-    }
-
-    // ---------------------------------------------------------------
-    // materials
-    ImGui::SeparatorText("Materials");
-
-    ImGui::BeginTabBar("Materials");
-
-    if (ImGui::BeginTabItem("floor")) {
-        update_material(&MATERIALS.floor);
-        ImGui::EndTabItem();
-    }
-
-    if (ImGui::BeginTabItem("wall")) {
-        update_material(&MATERIALS.wall);
-        ImGui::EndTabItem();
-    }
-
-    if (ImGui::BeginTabItem("ceil")) {
-        update_material(&MATERIALS.ceil);
-        ImGui::EndTabItem();
-    }
-
-    ImGui::EndTabBar();
-
-    // ---------------------------------------------------------------
-    // creating tiles
-    tile::Tile *tile = world::get_tile_at_cursor();
-
-    static tile::Tile *start_tile = NULL;
-    static tile::Tile *end_tile = NULL;
-
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        start_tile = tile;
-        end_tile = tile;
-    } else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-
-        if (tile != NULL) {
-            end_tile = tile;
-        }
-
-        if (start_tile != NULL && end_tile != NULL) {
-            CREATING_ROOM_TILES = world::get_tiles_between_corners(start_tile, end_tile);
-            for (auto tile : CREATING_ROOM_TILES) {
-                Material material = resources::get_color_material(WHITE);
-                Matrix matrix = tile->get_floor_matrix();
-                DrawMesh(resources::PLANE_MESH, material, matrix);
-            }
-        }
-    } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-        for (auto tile : CREATING_ROOM_TILES) {
-            if (tile == NULL) continue;
-            if (!tile->is_empty()) continue;
-
-            set_room_tile_flags(tile);
-            auto neighbors = world::get_tile_neighbors(tile);
-
-            for (auto nb : neighbors) {
-                if (nb && !nb->is_empty()) {
-                    set_room_tile_flags(nb);
-                }
-            }
-
-            set_room_tile_flags(tile);
-            RELEASED_ROOM_TILES.push_back(tile);
-        }
-
-        CREATING_ROOM_TILES.clear();
-        start_tile = NULL;
-        end_tile = NULL;
-    }
-
-    if (tile != NULL) {
-        Material material = resources::get_color_material(GREEN);
-        Matrix matrix = tile->get_floor_matrix();
-        DrawMesh(resources::PLANE_MESH, material, matrix);
-    }
-
-    // set materials for all room tiles
-    for (auto tile : RELEASED_ROOM_TILES) {
-        tile->materials = MATERIALS;
-    }
-}
-
-static void update_inactive() {
-    if (gui::button("Create")) {
-        STATE = EditorState::NEW_ROOM_CREATION;
-    }
-
-    ImGui::SameLine();
-
-    gui::button_cancel(false);
+void draw_tile_ghost(tile::Tile *tile, Color color) {
+    Material material = resources::get_color_material(color);
+    Matrix matrix = tile->get_floor_matrix();
+    DrawMesh(resources::PLANE_MESH, material, matrix);
 }
 
 void update_and_draw() {
-    // lazy load initial materials
     static bool is_loaded = false;
     if (!is_loaded) {
         MATERIALS = tile::TileMaterials(resources::MATERIALS_PBR[0]);
         is_loaded = true;
     }
 
-    // update depending on state
-    // if (editor::STATE == editor::EditorState::NEW_ROOM_CREATION) {
-    //     update_active();
-    // } else {
-    //     update_inactive();
-    // }
-    
-    if (gui::button("New Room")) {
-        world::add_room();
-    }
+    if (ROOM_ID == -1) {
+        if (gui::button("New Room")) {
+            world::add_room();
+        }
 
-    for (auto id : world::get_room_ids()) {
-        auto name = "Room #" + std::to_string(id);
-        ImGui::TextUnformatted(name.c_str());
+        for (auto id : world::get_room_ids()) {
+            auto name = "Room #" + std::to_string(id);
+            ImGui::TextUnformatted(name.c_str());
+
+            if (gui::button("Edit")) {
+                ROOM_ID = id;
+            }
+        }
+    } else {
+        // ---------------------------------------------------------------
+        ImGui::SeparatorText("Materials");
+
+        ImGui::BeginTabBar("Materials");
+
+        if (ImGui::BeginTabItem("floor")) {
+            update_material(&MATERIALS.floor);
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("wall")) {
+            update_material(&MATERIALS.wall);
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("ceil")) {
+            update_material(&MATERIALS.ceil);
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+
+        // ---------------------------------------------------------------
+        static tile::Tile *start_tile = NULL;
+        static tile::Tile *end_tile = NULL;
+
+        tile::Tile *tile = world::get_tile_at_cursor();
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            start_tile = tile;
+            end_tile = tile;
+        } else if (start_tile != NULL && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+            if (tile != NULL) end_tile = tile;
+
+            GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
+        } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            for (auto tile : GHOST_TILES) {
+                world::add_tile_to_room(tile, ROOM_ID);
+            }
+
+            GHOST_TILES.clear();
+            start_tile = NULL;
+            end_tile = NULL;
+        }
+
+        // ---------------------------------------------------------------
+        for (auto tile : world::get_room_tiles(ROOM_ID)) {
+            tile->materials = MATERIALS;
+        }
+
+        for (auto tile : GHOST_TILES) {
+            draw_tile_ghost(tile, WHITE);
+        }
+
+        if (tile != NULL) {
+            draw_tile_ghost(tile, GREEN);
+        }
     }
 }
 

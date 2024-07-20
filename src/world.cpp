@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <stdexcept>
 #include <unordered_map>
 
 namespace soft_tissues::world {
@@ -18,8 +19,8 @@ using namespace utils;
 
 std::array<tile::Tile, globals::WORLD_N_TILES> TILES;
 
-std::unordered_map<uint32_t, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
-std::unordered_map<tile::Tile *, uint32_t> TILE_TO_ROOM_ID;
+std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
+std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
 
 void load() {
     for (int i = 0; i < globals::WORLD_N_TILES; ++i) {
@@ -56,6 +57,7 @@ tile::Tile *get_tile_at_cursor() {
     );
 
     tile::Tile *tile = NULL;
+
     if (collision.hit) {
         int row = std::floor(collision.point.z);
         int col = std::floor(collision.point.x);
@@ -121,7 +123,7 @@ std::vector<tile::Tile *> get_tiles_between_corners(
     return tiles;
 }
 
-uint32_t add_room() {
+int add_room() {
     static int id = 0;
 
     ROOM_ID_TO_TILES[id] = {};
@@ -129,16 +131,75 @@ uint32_t add_room() {
     return id++;
 }
 
-std::vector<uint32_t> get_room_ids() {
-    std::vector<uint32_t> ids;
+std::vector<int> get_room_ids() {
+    std::vector<int> ids;
     for (auto &pair : ROOM_ID_TO_TILES) {
         ids.push_back(pair.first);
     }
     return ids;
 }
 
-std::vector<tile::Tile *> get_room_tiles(uint32_t room_id) {
+std::vector<tile::Tile *> get_room_tiles(int room_id) {
     return ROOM_ID_TO_TILES[room_id];
+}
+
+static void set_room_tile_flags(tile::Tile *tile) {
+    auto nbs = world::get_tile_neighbors(tile);
+    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
+
+    // TODO: manual enumeration is very bad in this case, IMPROVE!
+    auto nb = nbs[(int)CardinalDirection::NORTH];
+    bool has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_NORTH_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::SOUTH];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_SOUTH_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::WEST];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_WEST_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::EAST];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_EAST_WALL;
+    }
+}
+
+void add_tile_to_room(tile::Tile *tile, int room_id) {
+    if (tile == NULL) {
+        throw std::runtime_error("Can't add NULL tile to the room");
+    }
+
+    if (!tile->is_empty()) {
+        throw std::runtime_error("Can't add unempty tile to the room");
+    }
+
+    if (TILE_TO_ROOM_ID.count(tile) != 0) {
+        throw std::runtime_error("Can't add already added tile to the room");
+    }
+
+    if (ROOM_ID_TO_TILES.count(room_id) == 0) {
+        throw std::runtime_error("Can't add tile to unexisting room");
+    }
+
+    ROOM_ID_TO_TILES[room_id].push_back(tile);
+    TILE_TO_ROOM_ID[tile] = room_id;
+
+    set_room_tile_flags(tile);
+    for (auto nb : world::get_tile_neighbors(tile)) {
+        if (nb && !nb->is_empty()) {
+            set_room_tile_flags(nb);
+        }
+    }
+    set_room_tile_flags(tile);
 }
 
 void draw_grid() {

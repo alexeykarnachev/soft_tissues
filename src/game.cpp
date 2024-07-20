@@ -157,7 +157,9 @@ static void draw() {
     }
 
     if (globals::GAME_STATE == globals::GameState::EDITOR) {
+        BeginMode3D(camera::CAMERA);
         editor::update_and_draw();
+        EndMode3D();
     }
 
     DrawFPS(0, 0);

@@ -3,7 +3,6 @@
 #include "raylib/raylib.h"
 #include "tile.hpp"
 #include <array>
-#include <cstdint>
 #include <vector>
 
 namespace soft_tissues::world {
@@ -21,9 +20,11 @@ std::vector<tile::Tile *> get_tiles_between_corners(
     tile::Tile *corner_0, tile::Tile *corner_1
 );
 
-uint32_t add_room();
-std::vector<uint32_t> get_room_ids();
-std::vector<tile::Tile *> get_room_tiles(uint32_t room_id);
+int add_room();
+std::vector<int> get_room_ids();
+std::vector<tile::Tile *> get_room_tiles(int room_id);
+
+void add_tile_to_room(tile::Tile *tile, int room_id);
 
 void draw_grid();
 void draw_tiles();
