@@ -23,6 +23,7 @@ std::vector<tile::Tile *> get_tiles_between_corners(
 
 int add_room();
 void remove_room(int room_id);
+void clear_tile(tile::Tile *tile);
 std::vector<int> get_room_ids();
 Rectangle get_tile_rect(tile::Tile *tile);
 Vector2 get_tile_center(tile::Tile *tile);

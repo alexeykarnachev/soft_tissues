@@ -125,10 +125,12 @@ std::vector<tile::Tile *> get_tiles_between_corners(
 }
 
 int add_room() {
+    for (auto [room_id, room_tiles] : ROOM_ID_TO_TILES) {
+        if (room_tiles.size() == 0) return room_id;
+    }
+
     static int id = 0;
-
     ROOM_ID_TO_TILES[id] = {};
-
     return id++;
 }
 
@@ -143,6 +145,54 @@ void remove_room(int room_id) {
     }
 
     ROOM_ID_TO_TILES.erase(room_id);
+}
+
+static void set_room_tile_flags(tile::Tile *tile) {
+    auto nbs = world::get_tile_neighbors(tile);
+    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
+
+    // TODO: manual enumeration is very bad in this case, IMPROVE!
+    auto nb = nbs[(int)CardinalDirection::NORTH];
+    bool has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_NORTH_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::SOUTH];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_SOUTH_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::WEST];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_WEST_WALL;
+    }
+
+    nb = nbs[(int)CardinalDirection::EAST];
+    has_nb = nb != NULL && !nb->is_empty();
+    if (!has_nb) {
+        tile->flags |= tile::TileFlags::TILE_EAST_WALL;
+    }
+}
+
+void clear_tile(tile::Tile *tile) {
+    tile->flags = 0;
+
+    if (TILE_TO_ROOM_ID.count(tile) != 0) {
+        int room_id = TILE_TO_ROOM_ID[tile];
+
+        auto &tiles = ROOM_ID_TO_TILES[room_id];
+        tiles.erase(std::remove(tiles.begin(), tiles.end(), tile), tiles.end());
+        TILE_TO_ROOM_ID.erase(tile);
+    }
+
+    for (auto nb : world::get_tile_neighbors(tile)) {
+        if (nb && !nb->is_empty()) {
+            set_room_tile_flags(nb);
+        }
+    }
 }
 
 std::vector<int> get_room_ids() {
@@ -197,36 +247,6 @@ std::vector<tile::Tile *> get_all_rooms_tiles() {
     }
 
     return tiles;
-}
-
-static void set_room_tile_flags(tile::Tile *tile) {
-    auto nbs = world::get_tile_neighbors(tile);
-    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
-
-    // TODO: manual enumeration is very bad in this case, IMPROVE!
-    auto nb = nbs[(int)CardinalDirection::NORTH];
-    bool has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_NORTH_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::SOUTH];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_SOUTH_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::WEST];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_WEST_WALL;
-    }
-
-    nb = nbs[(int)CardinalDirection::EAST];
-    has_nb = nb != NULL && !nb->is_empty();
-    if (!has_nb) {
-        tile->flags |= tile::TileFlags::TILE_EAST_WALL;
-    }
 }
 
 void add_tile_to_room(tile::Tile *tile, int room_id) {
