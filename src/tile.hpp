@@ -18,6 +18,8 @@ enum TileFlags : uint16_t {
     TILE_EAST_WALL = 1 << 5
 };
 
+TileFlags get_wall_tile_flag(CardinalDirection direction);
+
 class TileMaterials {
 public:
     pbr::MaterialPBR floor;

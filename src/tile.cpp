@@ -12,6 +12,15 @@ namespace soft_tissues::tile {
 
 using namespace utils;
 
+TileFlags get_wall_tile_flag(CardinalDirection direction) {
+    switch (direction) {
+        case utils::CardinalDirection::NORTH: return TILE_NORTH_WALL;
+        case utils::CardinalDirection::SOUTH: return TILE_SOUTH_WALL;
+        case utils::CardinalDirection::WEST: return TILE_WEST_WALL;
+        case utils::CardinalDirection::EAST: return TILE_EAST_WALL;
+    }
+}
+
 TileMaterials::TileMaterials() = default;
 
 TileMaterials::TileMaterials(pbr::MaterialPBR material)

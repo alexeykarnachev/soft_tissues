@@ -27,9 +27,6 @@ static void update_material_selector(pbr::MaterialPBR *material) {
     auto name = material->get_name();
 
     if (ImGui::BeginMenu(name.c_str())) {
-        if (gui::button("Apply to all")) {
-            MATERIALS = pbr::MaterialPBR(*material);
-        }
         ImGui::Separator();
 
         for (auto &another_material : resources::MATERIALS_PBR) {
@@ -43,6 +40,10 @@ static void update_material_selector(pbr::MaterialPBR *material) {
             ImGui::Separator();
         }
         ImGui::EndMenu();
+    }
+
+    if (gui::button("Apply to all")) {
+        MATERIALS = pbr::MaterialPBR(*material);
     }
 
     gui::image(material->get_texture(), 150.0);
