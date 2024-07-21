@@ -12,6 +12,7 @@ namespace soft_tissues::editor::room_editor {
 using namespace utils;
 
 static int ROOM_ID = -1;
+static int ROOM_ID_AT_CURSOR = -1;
 static std::vector<tile::Tile *> GHOST_TILES;
 static tile::TileMaterials MATERIALS;
 
@@ -53,23 +54,28 @@ void update_and_draw() {
         is_loaded = true;
     }
 
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        ROOM_ID = -1;
+    }
+
     if (gui::button("New Room")) {
         ROOM_ID = world::add_room();
     }
     ImGui::Separator();
 
+    // ---------------------------------------------------------------
     for (auto id : world::get_room_ids()) {
         auto name = "Edit room #" + std::to_string(id);
 
         if (id != ROOM_ID && gui::button(name.c_str())) {
             ROOM_ID = id;
             auto tiles = world::get_room_tiles(id);
+
             // NOTE: Assume that the room materials is the first tile materials
             if (tiles.size() > 0) MATERIALS = tiles[0]->materials;
         }
 
         if (id == ROOM_ID) {
-            // ---------------------------------------------------------------
             ImGui::BeginTabBar("Materials");
 
             if (ImGui::BeginTabItem("floor")) {
@@ -88,45 +94,47 @@ void update_and_draw() {
             }
 
             ImGui::EndTabBar();
-
-            // ---------------------------------------------------------------
-            static tile::Tile *start_tile = NULL;
-            static tile::Tile *end_tile = NULL;
-
-            tile::Tile *tile = world::get_tile_at_cursor();
-
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                start_tile = tile;
-                end_tile = tile;
-            } else if (start_tile != NULL && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-                if (tile != NULL) end_tile = tile;
-
-                GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
-            } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-                for (auto tile : GHOST_TILES) {
-                    if (tile->is_empty()) world::add_tile_to_room(tile, ROOM_ID);
-                }
-
-                GHOST_TILES.clear();
-                start_tile = NULL;
-                end_tile = NULL;
-            }
-
-            // ---------------------------------------------------------------
-            for (auto tile : world::get_room_tiles(ROOM_ID)) {
-                tile->materials = MATERIALS;
-            }
-
-            for (auto tile : GHOST_TILES) {
-                draw_tile_ghost(tile, WHITE);
-            }
-
-            if (tile != NULL) {
-                draw_tile_ghost(tile, GREEN);
-            }
         }
 
         ImGui::Separator();
+    }
+
+    // ---------------------------------------------------------------
+    if (ROOM_ID != -1) {
+        static tile::Tile *start_tile = NULL;
+        static tile::Tile *end_tile = NULL;
+
+        tile::Tile *tile_at_cursor = world::get_tile_at_cursor();
+        ROOM_ID_AT_CURSOR = world::get_tile_room_id(tile_at_cursor);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            start_tile = tile_at_cursor;
+            end_tile = tile_at_cursor;
+        } else if (start_tile != NULL && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+            if (tile_at_cursor != NULL) end_tile = tile_at_cursor;
+
+            GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
+        } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            for (auto tile : GHOST_TILES) {
+                if (tile->is_empty()) world::add_tile_to_room(tile, ROOM_ID);
+            }
+
+            GHOST_TILES.clear();
+            start_tile = NULL;
+            end_tile = NULL;
+        }
+
+        for (auto tile : world::get_room_tiles(ROOM_ID)) {
+            tile->materials = MATERIALS;
+        }
+
+        for (auto tile : GHOST_TILES) {
+            draw_tile_ghost(tile, WHITE);
+        }
+
+        if (tile_at_cursor != NULL) {
+            draw_tile_ghost(tile_at_cursor, GREEN);
+        }
     }
 }
 

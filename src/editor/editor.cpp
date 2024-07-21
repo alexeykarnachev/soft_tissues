@@ -9,8 +9,6 @@
 
 namespace soft_tissues::editor {
 
-EditorState STATE = EditorState::NONE;
-
 static void begin() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -40,8 +38,6 @@ void unload() {
 
 void update_and_draw() {
     begin();
-
-    if (IsKeyPressed(KEY_ESCAPE)) STATE = EditorState::NONE;
 
     ImGui::Begin("Inspector", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     {

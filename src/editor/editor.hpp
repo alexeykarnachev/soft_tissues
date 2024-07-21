@@ -5,13 +5,6 @@
 
 namespace soft_tissues::editor {
 
-enum class EditorState {
-    NONE,
-    NEW_ROOM_CREATION,
-};
-
-extern EditorState STATE;
-
 void load();
 void unload();
 

@@ -24,6 +24,7 @@ int add_room();
 void remove_room(int room_id);
 std::vector<int> get_room_ids();
 std::vector<tile::Tile *> get_room_tiles(int room_id);
+int get_tile_room_id(tile::Tile *tile);
 
 void add_tile_to_room(tile::Tile *tile, int room_id);
 

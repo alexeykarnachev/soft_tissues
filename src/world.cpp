@@ -153,7 +153,19 @@ std::vector<int> get_room_ids() {
 }
 
 std::vector<tile::Tile *> get_room_tiles(int room_id) {
+    if (ROOM_ID_TO_TILES.count(room_id) == 0) {
+        return {};
+    }
+
     return ROOM_ID_TO_TILES[room_id];
+}
+
+int get_tile_room_id(tile::Tile *tile) {
+    if (TILE_TO_ROOM_ID.count(tile) == 0) {
+        return -1;
+    }
+
+    return TILE_TO_ROOM_ID[tile];
 }
 
 static void set_room_tile_flags(tile::Tile *tile) {
