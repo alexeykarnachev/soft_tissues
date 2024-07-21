@@ -47,6 +47,8 @@ public:
     bool is_empty();
     bool has_flags(uint16_t flags);
 
+    void clear_flags(uint16_t flags);
+
     Vector2 get_floor_position();
     Matrix get_floor_matrix();
     Matrix get_ceil_matrix();

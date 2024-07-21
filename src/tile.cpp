@@ -52,6 +52,10 @@ bool Tile::has_flags(uint16_t flags) {
     return (this->flags & flags) == flags;
 }
 
+void Tile::clear_flags(uint16_t flags) {
+    this->flags &= ~flags;
+}
+
 Vector2 Tile::get_floor_position() {
     uint32_t row = this->id / globals::WORLD_N_COLS;
     uint32_t col = this->id % globals::WORLD_N_COLS;
