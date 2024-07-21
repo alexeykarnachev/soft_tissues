@@ -36,6 +36,7 @@ private:
 public:
     uint16_t flags = 0;
     TileMaterials materials;
+    Color constant_color = {0, 0, 0, 0};
 
     Tile();
     Tile(uint32_t id);

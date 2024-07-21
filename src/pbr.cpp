@@ -87,13 +87,18 @@ void MaterialPBR::unload() {
     UnloadMaterial(this->material);
 }
 
-void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Matrix matrix) {
+void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix matrix) {
     Material material = material_pbr.get_material();
     Shader shader = material.shader;
 
     int is_light_enabled = globals::GRAPHICS_OPTIONS.is_light_enabled;
+    Vector4 constant_color_vec = ColorNormalize(constant_color);
+
     int is_light_enabled_loc = get_uniform_loc(shader, "u_is_light_enabled");
+    int constant_color_loc = get_uniform_loc(shader, "u_constant_color");
+
     SetShaderValue(shader, is_light_enabled_loc, &is_light_enabled, SHADER_UNIFORM_INT);
+    SetShaderValue(shader, constant_color_loc, &constant_color_vec, SHADER_UNIFORM_VEC4);
 
     if (is_light_enabled) {
         int light_idx = 0;

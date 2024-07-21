@@ -111,38 +111,42 @@ void Tile::draw() {
     Mesh mesh = resources::PLANE_MESH;
 
     if (this->has_flags(TILE_FLOOR)) {
-        pbr::draw_mesh(mesh, this->materials.floor, this->get_floor_matrix());
+        pbr::draw_mesh(
+            mesh, this->materials.floor, this->constant_color, this->get_floor_matrix()
+        );
     }
 
     if (this->has_flags(TILE_CEIL)) {
-        pbr::draw_mesh(mesh, this->materials.ceil, this->get_ceil_matrix());
+        pbr::draw_mesh(
+            mesh, this->materials.ceil, this->constant_color, this->get_ceil_matrix()
+        );
     }
 
     if (this->has_flags(TILE_NORTH_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::NORTH, i);
-            pbr::draw_mesh(mesh, this->materials.wall, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 
     if (this->has_flags(TILE_SOUTH_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::SOUTH, i);
-            pbr::draw_mesh(mesh, this->materials.wall, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 
     if (this->has_flags(TILE_WEST_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::WEST, i);
-            pbr::draw_mesh(mesh, this->materials.wall, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 
     if (this->has_flags(TILE_EAST_WALL)) {
         for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::EAST, i);
-            pbr::draw_mesh(mesh, this->materials.wall, matrix);
+            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 }

@@ -47,6 +47,30 @@ void draw_tile_ghost(tile::Tile *tile, Color color) {
     DrawMesh(resources::PLANE_MESH, material, matrix);
 }
 
+void draw_tile_perimiter(tile::Tile *tile, Color color) {
+    static float e = 1e-2;
+    static float w = 0.2;
+    static float h = w + 1.0;
+
+    Vector2 center = world::get_tile_center(tile);
+
+    if (tile->has_flags(tile::TILE_NORTH_WALL)) {
+        DrawPlane({center.x, e, center.y - 0.5f}, {h, w}, color);
+    }
+
+    if (tile->has_flags(tile::TILE_SOUTH_WALL)) {
+        DrawPlane({center.x, e, center.y + 0.5f}, {h, w}, color);
+    }
+
+    if (tile->has_flags(tile::TILE_WEST_WALL)) {
+        DrawPlane({center.x - 0.5f, e, center.y}, {w, h}, color);
+    }
+
+    if (tile->has_flags(tile::TILE_EAST_WALL)) {
+        DrawPlane({center.x + 0.5f, e, center.y}, {w, h}, color);
+    }
+}
+
 void update_and_draw() {
     static bool is_loaded = false;
     if (!is_loaded) {
@@ -100,12 +124,11 @@ void update_and_draw() {
     }
 
     // ---------------------------------------------------------------
+    tile::Tile *tile_at_cursor = world::get_tile_at_cursor();
+
     if (ROOM_ID != -1) {
         static tile::Tile *start_tile = NULL;
         static tile::Tile *end_tile = NULL;
-
-        tile::Tile *tile_at_cursor = world::get_tile_at_cursor();
-        ROOM_ID_AT_CURSOR = world::get_tile_room_id(tile_at_cursor);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             start_tile = tile_at_cursor;
@@ -126,6 +149,7 @@ void update_and_draw() {
 
         for (auto tile : world::get_room_tiles(ROOM_ID)) {
             tile->materials = MATERIALS;
+            draw_tile_perimiter(tile, GREEN);
         }
 
         for (auto tile : GHOST_TILES) {
@@ -135,6 +159,11 @@ void update_and_draw() {
         if (tile_at_cursor != NULL) {
             draw_tile_ghost(tile_at_cursor, GREEN);
         }
+    } else {
+        // ROOM_ID_AT_CURSOR = world::get_tile_room_id(tile_at_cursor);
+        // for (auto tile : world::get_room_tiles(ROOM_ID)) {
+        //     tile->materials = MATERIALS;
+        // }
     }
 }
 

@@ -67,13 +67,20 @@ tile::Tile *get_tile_at_cursor() {
     return tile;
 }
 
+std::pair<int, int> get_tile_row_col(tile::Tile *tile) {
+    int id = tile->get_id();
+    int row = id / globals::WORLD_N_COLS;
+    int col = id % globals::WORLD_N_COLS;
+
+    return {row, col};
+}
+
 std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
     // TODO: wtf?
     std::array<tile::Tile *, 4> neighbors = {nullptr, nullptr, nullptr, nullptr};
-    uint32_t id = tile->get_id();
+    auto [row, col] = get_tile_row_col(tile);
 
-    int row = id / globals::WORLD_N_COLS;
-    int col = id % globals::WORLD_N_COLS;
+    uint32_t id = tile->get_id();
 
     if (row > 0) {
         neighbors[(int)CardinalDirection::NORTH] = &TILES[id - globals::WORLD_N_COLS];
@@ -97,14 +104,8 @@ std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
 std::vector<tile::Tile *> get_tiles_between_corners(
     tile::Tile *corner_0, tile::Tile *corner_1
 ) {
-    uint32_t id_0 = corner_0->get_id();
-    uint32_t id_1 = corner_1->get_id();
-
-    int row_0 = id_0 / globals::WORLD_N_COLS;
-    int col_0 = id_0 % globals::WORLD_N_COLS;
-
-    int row_1 = id_1 / globals::WORLD_N_COLS;
-    int col_1 = id_1 % globals::WORLD_N_COLS;
+    auto [row_0, col_0] = get_tile_row_col(corner_0);
+    auto [row_1, col_1] = get_tile_row_col(corner_1);
 
     int row_min = std::min(row_0, row_1);
     int row_max = std::max(row_0, row_1);
@@ -152,12 +153,14 @@ std::vector<int> get_room_ids() {
     return ids;
 }
 
-std::vector<tile::Tile *> get_room_tiles(int room_id) {
-    if (ROOM_ID_TO_TILES.count(room_id) == 0) {
-        return {};
-    }
+Rectangle get_tile_rect(tile::Tile *tile) {
+    auto [y, x] = get_tile_row_col(tile);
+    return {.x = (float)x, .y = (float)y, .width = 1.0, .height = 1.0};
+}
 
-    return ROOM_ID_TO_TILES[room_id];
+Vector2 get_tile_center(tile::Tile *tile) {
+    auto [y, x] = get_tile_row_col(tile);
+    return {.x = x + 0.5f, .y = y + 0.5f};
 }
 
 int get_tile_room_id(tile::Tile *tile) {
@@ -166,6 +169,34 @@ int get_tile_room_id(tile::Tile *tile) {
     }
 
     return TILE_TO_ROOM_ID[tile];
+}
+
+std::vector<tile::Tile *> get_room_tiles(int room_id) {
+    if (ROOM_ID_TO_TILES.count(room_id) == 0) {
+        return {};
+    }
+
+    return ROOM_ID_TO_TILES[room_id];
+}
+
+std::vector<tile::Tile *> get_not_room_tiles(int except_room_id) {
+    std::vector<tile::Tile *> tiles;
+    for (auto [room_id, room_tiles] : ROOM_ID_TO_TILES) {
+        if (room_id != except_room_id) {
+            tiles.insert(tiles.end(), room_tiles.begin(), room_tiles.end());
+        }
+    }
+
+    return tiles;
+}
+
+std::vector<tile::Tile *> get_all_rooms_tiles() {
+    std::vector<tile::Tile *> tiles;
+    for (auto [room_id, room_tiles] : ROOM_ID_TO_TILES) {
+        tiles.insert(tiles.end(), room_tiles.begin(), room_tiles.end());
+    }
+
+    return tiles;
 }
 
 static void set_room_tile_flags(tile::Tile *tile) {
