@@ -15,10 +15,15 @@ static int ROOM_ID = -1;
 static std::vector<tile::Tile *> GHOST_TILES;
 static tile::TileMaterials MATERIALS;
 
-static void update_material(pbr::MaterialPBR *material) {
+static void update_material_selector(pbr::MaterialPBR *material) {
     auto name = material->get_name();
 
     if (ImGui::BeginMenu(name.c_str())) {
+        if (gui::button("Apply to all")) {
+            MATERIALS = pbr::MaterialPBR(*material);
+        }
+        ImGui::Separator();
+
         for (auto &another_material : resources::MATERIALS_PBR) {
             auto another_name = another_material.get_name();
             bool is_selected = name == another_name;
@@ -68,17 +73,17 @@ void update_and_draw() {
             ImGui::BeginTabBar("Materials");
 
             if (ImGui::BeginTabItem("floor")) {
-                update_material(&MATERIALS.floor);
+                update_material_selector(&MATERIALS.floor);
                 ImGui::EndTabItem();
             }
 
             if (ImGui::BeginTabItem("wall")) {
-                update_material(&MATERIALS.wall);
+                update_material_selector(&MATERIALS.wall);
                 ImGui::EndTabItem();
             }
 
             if (ImGui::BeginTabItem("ceil")) {
-                update_material(&MATERIALS.ceil);
+                update_material_selector(&MATERIALS.ceil);
                 ImGui::EndTabItem();
             }
 
