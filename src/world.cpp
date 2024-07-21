@@ -51,6 +51,10 @@ tile::Tile *get_tile_at_row_col(int row, int col) {
     return tile;
 }
 
+tile::Tile *get_tile_at_position(Vector2 pos) {
+    return get_tile_at_row_col(pos.y, pos.x);
+}
+
 tile::Tile *get_tile_at_cursor() {
     RayCollision collision = utils::get_cursor_floor_rect_collision(
         world::get_bound_rect(), camera::CAMERA

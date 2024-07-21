@@ -1,10 +1,13 @@
+#include "../camera.hpp"
 #include "../resources.hpp"
 #include "../tile.hpp"
 #include "../world.hpp"
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
+#include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <string>
 
 namespace soft_tissues::editor::room_editor {
@@ -49,13 +52,13 @@ static void update_material_selector(pbr::MaterialPBR *material) {
     gui::image(material->get_texture(), 150.0);
 }
 
-void draw_tile_ghost(tile::Tile *tile, Color color) {
+static void draw_tile_ghost(tile::Tile *tile, Color color) {
     Material material = resources::get_color_material(color);
     Matrix matrix = tile->get_floor_matrix();
     DrawMesh(resources::PLANE_MESH, material, matrix);
 }
 
-void draw_tile_perimiter(tile::Tile *tile, Color color) {
+static void draw_tile_perimiter(tile::Tile *tile, Color color) {
     static float e = 1e-2;
     static float w = 0.2;
     static float h = w + 1.0;
@@ -94,8 +97,6 @@ void update_and_draw() {
         ROOM_ID = world::add_room();
     }
     ImGui::Separator();
-
-    // ---------------------------------------------------------------
 
     // ---------------------------------------------------------------
     tile::Tile *tile_at_cursor = world::get_tile_at_cursor();
@@ -171,6 +172,28 @@ void update_and_draw() {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             select_room(room_id);
         }
+    }
+
+    RayCollision collision = utils::get_cursor_floor_rect_collision(
+        world::get_bound_rect(), camera::CAMERA
+    );
+    if (collision.hit) {
+        float x = collision.point.x - (int)collision.point.x;
+        float y = collision.point.z - (int)collision.point.z;
+        Vector2 step;
+
+        step.x = x < 0.5 ? -1.0 : 1.0;
+        step.y = y < 0.5 ? -1.0 : 1.0;
+        if (step.x != 0 && step.y != 0) {
+            if (std::abs(x - 0.5) > std::abs(y - 0.5)) step.y = 0.0;
+            else step.x = 0.0;
+        }
+
+        Vector2 position = {collision.point.x + step.x, collision.point.z + step.y};
+        tile::Tile *nb = world::get_tile_at_position(position);
+
+        if (tile_at_cursor) draw_tile_ghost(tile_at_cursor, ORANGE);
+        if (nb) draw_tile_ghost(nb, ORANGE);
     }
 }
 

@@ -13,6 +13,7 @@ Vector2 get_center();
 Rectangle get_bound_rect();
 
 tile::Tile *get_tile_at_row_col(int row, int col);
+tile::Tile *get_tile_at_position(Vector2 pos);
 tile::Tile *get_tile_at_cursor();
 
 std::pair<int, int> get_tile_row_col(tile::Tile *tile);
