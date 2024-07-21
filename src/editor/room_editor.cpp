@@ -4,10 +4,8 @@
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
-#include <cstdint>
 #include <cstdio>
 #include <string>
-#include <unordered_set>
 
 namespace soft_tissues::editor::room_editor {
 
@@ -60,6 +58,9 @@ void update_and_draw() {
 
         if (id != ROOM_ID && gui::button(name.c_str())) {
             ROOM_ID = id;
+            auto tiles = world::get_room_tiles(id);
+            // NOTE: Assume that the room materials is the first tile materials
+            if (tiles.size() > 0) MATERIALS = tiles[0]->materials;
         }
 
         if (id == ROOM_ID) {
