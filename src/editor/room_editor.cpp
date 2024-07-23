@@ -57,6 +57,18 @@ static void draw_tile_ghost(tile::Tile *tile, Color color) {
     DrawMesh(resources::PLANE_MESH, material, matrix);
 }
 
+static void draw_tile_ghost(tile::Tile *tile, bool is_remove) {
+    int room_id = world::get_tile_room_id(tile);
+    bool can_remove = is_remove && room_id == ROOM_ID;
+    bool can_place = !is_remove && room_id == -1;
+    Color color = GRAY;
+    if (can_remove || can_place) {
+        color = is_remove ? RED : GREEN;
+    }
+
+    draw_tile_ghost(tile, color);
+}
+
 static void draw_tile_perimiter(tile::Tile *tile, Color color) {
     static float e = 1e-2;
     static float w = 0.2;
@@ -83,11 +95,13 @@ static void draw_tile_perimiter(tile::Tile *tile, Color color) {
 
 void update_and_draw() {
     static bool is_loaded = false;
+
     if (!is_loaded) {
         MATERIALS = tile::TileMaterials(resources::MATERIALS_PBR[0]);
         is_loaded = true;
     }
 
+    bool is_remove_down = IsKeyDown(KEY_R);
     if (IsKeyPressed(KEY_ESCAPE)) {
         ROOM_ID = -1;
     }
@@ -95,6 +109,14 @@ void update_and_draw() {
     if (gui::button("[N]ew Room") || IsKeyPressed(KEY_N)) {
         ROOM_ID = world::add_room();
     }
+    ImGui::SameLine();
+
+    if (ROOM_ID != -1) {
+        auto color = is_remove_down ? ImVec4(1.0, 0.0, 0.0, 1.0)
+                                    : ImVec4(0.5, 0.5, 0.5, 1.0);
+        ImGui::TextColored(color, "[R]emove");
+    }
+
     ImGui::Separator();
 
     // ---------------------------------------------------------------
@@ -124,7 +146,6 @@ void update_and_draw() {
 
         static tile::Tile *start_tile = NULL;
         static tile::Tile *end_tile = NULL;
-        bool is_remove = IsKeyDown(KEY_LEFT_CONTROL);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             start_tile = tile_at_cursor;
@@ -137,9 +158,9 @@ void update_and_draw() {
             for (auto tile : GHOST_TILES) {
                 int room_id = world::get_tile_room_id(tile);
 
-                if (room_id == ROOM_ID && is_remove) {
+                if (room_id == ROOM_ID && is_remove_down) {
                     world::clear_tile(tile);
-                } else if (room_id == -1 && !is_remove) {
+                } else if (room_id == -1 && !is_remove_down) {
                     world::add_tile_to_room(tile, ROOM_ID);
                 }
             }
@@ -154,14 +175,54 @@ void update_and_draw() {
             draw_tile_perimiter(tile, GREEN);
         }
 
-        Color ghost_color = is_remove ? RED : GREEN;
-
         for (auto tile : GHOST_TILES) {
-            draw_tile_ghost(tile, ghost_color);
+            draw_tile_ghost(tile, is_remove_down);
         }
 
-        if (tile_at_cursor != NULL) {
-            draw_tile_ghost(tile_at_cursor, ghost_color);
+        if (tile_at_cursor) {
+            draw_tile_ghost(tile_at_cursor, is_remove_down);
+            Vector2 pos = tile_at_cursor_pos;
+
+            float x = pos.x - (int)pos.x;
+            float y = pos.y - (int)pos.y;
+
+            Vector2 step;
+            step.x = x < 0.5 ? -1.0 : 1.0;
+            step.y = y < 0.5 ? -1.0 : 1.0;
+            if (step.x != 0 && step.y != 0) {
+                if (std::abs(x - 0.5) > std::abs(y - 0.5)) step.y = 0.0;
+                else step.x = 0.0;
+            }
+
+            Vector2 position = {pos.x + step.x, pos.y + step.y};
+            tile::Tile *nb = world::get_tile_at_position(position);
+
+            if (nb) {
+                int room_id_0 = world::get_tile_room_id(tile_at_cursor);
+                int room_id_1 = world::get_tile_room_id(nb);
+
+                if (room_id_0 != -1 && room_id_1 != -1 && room_id_0 != room_id_1
+                    && (room_id_0 == ROOM_ID || room_id_1 == ROOM_ID)) {
+                    draw_tile_ghost(tile_at_cursor, ORANGE);
+                    draw_tile_ghost(nb, ORANGE);
+
+                    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                        if (step.x == 1.0) {
+                            tile_at_cursor->clear_flags(tile::TILE_EAST_WALL);
+                            nb->clear_flags(tile::TILE_WEST_WALL);
+                        } else if (step.x == -1.0) {
+                            tile_at_cursor->clear_flags(tile::TILE_WEST_WALL);
+                            nb->clear_flags(tile::TILE_EAST_WALL);
+                        } else if (step.y == 1.0) {
+                            tile_at_cursor->clear_flags(tile::TILE_SOUTH_WALL);
+                            nb->clear_flags(tile::TILE_NORTH_WALL);
+                        } else if (step.y == -1.0) {
+                            tile_at_cursor->clear_flags(tile::TILE_NORTH_WALL);
+                            nb->clear_flags(tile::TILE_SOUTH_WALL);
+                        }
+                    }
+                }
+            }
         }
     } else {
         int room_id = world::get_tile_room_id(tile_at_cursor);
@@ -171,50 +232,6 @@ void update_and_draw() {
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             select_room(room_id);
-        }
-    }
-
-    if (tile_at_cursor) {
-        Vector2 pos = tile_at_cursor_pos;
-
-        float x = pos.x - (int)pos.x;
-        float y = pos.y - (int)pos.y;
-
-        Vector2 step;
-        step.x = x < 0.5 ? -1.0 : 1.0;
-        step.y = y < 0.5 ? -1.0 : 1.0;
-        if (step.x != 0 && step.y != 0) {
-            if (std::abs(x - 0.5) > std::abs(y - 0.5)) step.y = 0.0;
-            else step.x = 0.0;
-        }
-
-        Vector2 position = {pos.x + step.x, pos.y + step.y};
-        tile::Tile *nb = world::get_tile_at_position(position);
-
-        if (nb && IsKeyDown(KEY_LEFT_ALT)) {
-            int room_id_0 = world::get_tile_room_id(tile_at_cursor);
-            int room_id_1 = world::get_tile_room_id(nb);
-
-            if (room_id_0 != -1 && room_id_1 != -1 && room_id_0 != room_id_1) {
-                draw_tile_ghost(tile_at_cursor, ORANGE);
-                draw_tile_ghost(nb, ORANGE);
-
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                    if (step.x == 1.0) {
-                        tile_at_cursor->clear_flags(tile::TILE_EAST_WALL);
-                        nb->clear_flags(tile::TILE_WEST_WALL);
-                    } else if (step.x == -1.0) {
-                        tile_at_cursor->clear_flags(tile::TILE_WEST_WALL);
-                        nb->clear_flags(tile::TILE_EAST_WALL);
-                    } else if (step.y == 1.0) {
-                        tile_at_cursor->clear_flags(tile::TILE_SOUTH_WALL);
-                        nb->clear_flags(tile::TILE_NORTH_WALL);
-                    } else if (step.y == -1.0) {
-                        tile_at_cursor->clear_flags(tile::TILE_NORTH_WALL);
-                        nb->clear_flags(tile::TILE_SOUTH_WALL);
-                    }
-                }
-            }
         }
     }
 }
