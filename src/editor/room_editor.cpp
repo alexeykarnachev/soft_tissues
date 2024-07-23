@@ -1,4 +1,3 @@
-#include "../camera.hpp"
 #include "../resources.hpp"
 #include "../tile.hpp"
 #include "../world.hpp"
@@ -45,7 +44,7 @@ static void update_material_selector(pbr::MaterialPBR *material) {
         ImGui::EndMenu();
     }
 
-    if (gui::button("Apply to all")) {
+    if (gui::button("[A]pply to all") || IsKeyPressed(KEY_A)) {
         MATERIALS = pbr::MaterialPBR(*material);
     }
 
@@ -93,7 +92,7 @@ void update_and_draw() {
         ROOM_ID = -1;
     }
 
-    if (gui::button("New Room")) {
+    if (gui::button("[N]ew Room") || IsKeyPressed(KEY_N)) {
         ROOM_ID = world::add_room();
     }
     ImGui::Separator();

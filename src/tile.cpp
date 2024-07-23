@@ -7,6 +7,7 @@
 #include "resources.hpp"
 #include "utils.hpp"
 #include <cstdint>
+#include <stdexcept>
 
 namespace soft_tissues::tile {
 
@@ -18,6 +19,7 @@ TileFlags get_wall_tile_flag(CardinalDirection direction) {
         case utils::CardinalDirection::SOUTH: return TILE_SOUTH_WALL;
         case utils::CardinalDirection::WEST: return TILE_WEST_WALL;
         case utils::CardinalDirection::EAST: return TILE_EAST_WALL;
+        default: throw std::runtime_error("Unhandled CardinalDirection");
     }
 }
 

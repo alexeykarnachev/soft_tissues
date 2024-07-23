@@ -5,9 +5,28 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "raylib/raylib.h"
+#include <array>
 #include <cmath>
+#include <functional>
 
 namespace soft_tissues::editor {
+
+class Tab {
+public:
+    std::string name;
+    int key;
+    std::function<void()> fn;
+
+    Tab(std::string name, int key, std::function<void()> fn)
+        : name(name)
+        , key(key)
+        , fn(fn) {}
+};
+
+static std::array<Tab, 2> TABS = {
+    Tab("[1]Room", KEY_ONE, room_editor::update_and_draw),
+    Tab("[2]Light", KEY_TWO, light_editor::update_and_draw),
+};
 
 static void begin() {
     ImGui_ImplOpenGL3_NewFrame();
@@ -39,9 +58,26 @@ void unload() {
 void update_and_draw() {
     begin();
 
-    ImGui::Begin("Inspector", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+    static std::string active_tab_name = TABS[0].name;
+
+    ImGui::Begin("Editor", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     {
-        if (gui::collapsing_header("Room")) room_editor::update_and_draw();
+        ImGui::BeginTabBar("States");
+
+        for (const auto &tab : TABS) {
+            if (IsKeyPressed(tab.key)) active_tab_name = tab.name;
+        }
+
+        for (const auto &tab : TABS) {
+            bool is_open = (active_tab_name == tab.name);
+            int flag = is_open ? ImGuiTabItemFlags_SetSelected : 0;
+            if (ImGui::BeginTabItem(tab.name.c_str(), NULL, flag)) {
+                tab.fn();
+                ImGui::EndTabItem();
+            }
+        }
+
+        ImGui::EndTabBar();
     }
     ImGui::End();
 
