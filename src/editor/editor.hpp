@@ -17,12 +17,6 @@ void update_and_draw();
 
 }  // namespace room_editor
 
-namespace light_editor {
-
-void update_and_draw();
-
-}  // namespace light_editor
-
 // -----------------------------------------------------------------------
 namespace gui {
 

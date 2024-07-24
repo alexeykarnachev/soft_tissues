@@ -23,9 +23,11 @@ public:
         , fn(fn) {}
 };
 
+static void pass() {}
+
 static std::array<Tab, 2> TABS = {
     Tab("[1]Room", KEY_ONE, room_editor::update_and_draw),
-    Tab("[2]Light", KEY_TWO, light_editor::update_and_draw),
+    Tab("[2]TODO", KEY_TWO, pass),
 };
 
 static void begin() {
@@ -72,6 +74,7 @@ void update_and_draw() {
             bool is_open = (active_tab_name == tab.name);
             int flag = is_open ? ImGuiTabItemFlags_SetSelected : 0;
             if (ImGui::BeginTabItem(tab.name.c_str(), NULL, flag)) {
+                if (ImGui::IsItemActive()) active_tab_name = tab.name;
                 tab.fn();
                 ImGui::EndTabItem();
             }
