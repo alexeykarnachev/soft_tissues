@@ -1,5 +1,6 @@
 #include "editor.hpp"
 
+#include "../camera.hpp"
 #include "GLFW/glfw3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -47,15 +48,20 @@ void load() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460 core");
     ImGui::StyleColorsDark();
+
+    gizmo::load();
 }
 
 void unload() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    gizmo::unload();
 }
 
 void update_and_draw() {
+    BeginMode3D(camera::CAMERA);
     begin();
 
     static std::string active_tab_name = TABS[0].name;
@@ -83,6 +89,9 @@ void update_and_draw() {
     ImGui::End();
 
     end();
+    EndMode3D();
+
+    gizmo::update_and_draw();
 }
 
 }  // namespace soft_tissues::editor

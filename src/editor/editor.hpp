@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../tile.hpp"
+#include "entt/entity/fwd.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
 
@@ -46,5 +47,18 @@ void draw_tile_perimiter_walls(tile::Tile *tile, Color color);
 void draw_room_perimiter_walls(int room_id, Color color);
 
 }  // namespace utils
+
+// -----------------------------------------------------------------------
+namespace gizmo {
+
+void load();
+void unload();
+
+void attach_to_entity(entt::entity entity);
+void detach();
+
+void update_and_draw();
+
+}  // namespace gizmo
 
 }  // namespace soft_tissues::editor

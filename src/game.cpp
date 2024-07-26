@@ -130,15 +130,19 @@ void draw_cursor() {
 void draw_player() {
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
-    Matrix matrix = MatrixTranslate(tr.position.x, tr.position.y, tr.position.z);
+
+    Matrix t = MatrixTranslate(tr.position.x, tr.position.y, tr.position.z);
+    Matrix r = QuaternionToMatrix(tr.get_quaternion());
+    Matrix transform = MatrixMultiply(r, t);
 
     Model model = PLAYER_MODEL;
-    model.transform = MatrixMultiply(model.transform, matrix);
+    model.transform = MatrixMultiply(model.transform, transform);
     DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
 }
 
 static void draw() {
     BeginDrawing();
+    rlEnableDepthTest();
     ClearBackground(BLANK);
 
     BeginMode3D(camera::CAMERA);
@@ -157,9 +161,7 @@ static void draw() {
     }
 
     if (globals::GAME_STATE == globals::GameState::EDITOR) {
-        BeginMode3D(camera::CAMERA);
         editor::update_and_draw();
-        EndMode3D();
     }
 
     DrawFPS(0, 0);

@@ -1,8 +1,12 @@
+#include "../camera.hpp"
+#include "../component/component.hpp"
+#include "../globals.hpp"
 #include "../tile.hpp"
 #include "../world.hpp"
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 #include <cassert>
 #include <cstdio>
 
@@ -16,6 +20,8 @@ enum class State {
 
 static State STATE = State::NONE;
 static int ROOM_ID = -1;
+
+static Vector3 ENTITY_POSITION = Vector3Zero();
 
 void update_and_draw() {
     if (IsKeyPressed(KEY_ESCAPE)) {
@@ -36,11 +42,10 @@ void update_and_draw() {
 
             tile::Tile *tile_at_cursor = world::get_tile_at_cursor();
             int room_id = world::get_tile_room_id(tile_at_cursor);
-            if (room_id == -1) break;
 
             utils::draw_room_perimiter_walls(room_id, YELLOW);
 
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (room_id != -1 && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 ROOM_ID = room_id;
                 STATE = State::EDITING_OBJECT;
             }
@@ -49,6 +54,9 @@ void update_and_draw() {
             assert(ROOM_ID != -1);
 
             utils::draw_room_perimiter_walls(ROOM_ID, GREEN);
+
+            auto player = globals::registry.view<component::Player>().front();
+            gizmo::attach_to_entity(player);
         } break;
         default: {
             assert(ROOM_ID == -1);
