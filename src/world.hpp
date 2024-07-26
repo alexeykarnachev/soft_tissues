@@ -33,6 +33,8 @@ std::vector<tile::Tile *> get_room_tiles(int room_id);
 std::vector<tile::Tile *> get_not_room_tiles(int except_room_id);
 std::vector<tile::Tile *> get_all_rooms_tiles();
 
+void set_room_tile_materials(int room_id, tile::TileMaterials materials);
+
 void add_tile_to_room(tile::Tile *tile, int room_id);
 
 void draw_grid();

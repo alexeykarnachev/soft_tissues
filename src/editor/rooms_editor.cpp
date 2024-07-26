@@ -1,5 +1,4 @@
 #include "../resources.hpp"
-#include "../tile.hpp"
 #include "../world.hpp"
 #include "editor.hpp"
 #include "imgui/imgui.h"
@@ -9,9 +8,7 @@
 #include <cstdlib>
 #include <string>
 
-namespace soft_tissues::editor::room_editor {
-
-using namespace utils;
+namespace soft_tissues::editor::rooms_editor {
 
 static int ROOM_ID = -1;
 static std::vector<tile::Tile *> GHOST_TILES;
@@ -69,30 +66,6 @@ static void draw_tile_ghost(tile::Tile *tile, bool is_remove) {
     draw_tile_ghost(tile, color);
 }
 
-static void draw_tile_perimiter(tile::Tile *tile, Color color) {
-    static float e = 1e-2;
-    static float w = 0.2;
-    static float h = w + 1.0;
-
-    Vector2 center = world::get_tile_center(tile);
-
-    if (tile->has_flags(tile::TILE_NORTH_WALL)) {
-        DrawPlane({center.x, e, center.y - 0.5f}, {h, w}, color);
-    }
-
-    if (tile->has_flags(tile::TILE_SOUTH_WALL)) {
-        DrawPlane({center.x, e, center.y + 0.5f}, {h, w}, color);
-    }
-
-    if (tile->has_flags(tile::TILE_WEST_WALL)) {
-        DrawPlane({center.x - 0.5f, e, center.y}, {w, h}, color);
-    }
-
-    if (tile->has_flags(tile::TILE_EAST_WALL)) {
-        DrawPlane({center.x + 0.5f, e, center.y}, {w, h}, color);
-    }
-}
-
 void update_and_draw() {
     static bool is_loaded = false;
 
@@ -101,10 +74,12 @@ void update_and_draw() {
         is_loaded = true;
     }
 
-    bool is_remove_down = IsKeyDown(KEY_R);
     if (IsKeyPressed(KEY_ESCAPE)) {
         ROOM_ID = -1;
     }
+
+    // ---------------------------------------------------------------
+    bool is_remove_down = IsKeyDown(KEY_R);
 
     if (gui::button("[N]ew Room") || IsKeyPressed(KEY_N)) {
         ROOM_ID = world::add_room();
@@ -170,10 +145,8 @@ void update_and_draw() {
             end_tile = NULL;
         }
 
-        for (auto tile : world::get_room_tiles(ROOM_ID)) {
-            tile->materials = MATERIALS;
-            draw_tile_perimiter(tile, GREEN);
-        }
+        world::set_room_tile_materials(ROOM_ID, MATERIALS);
+        utils::draw_room_perimiter_walls(ROOM_ID, GREEN);
 
         for (auto tile : GHOST_TILES) {
             draw_tile_ghost(tile, is_remove_down);
@@ -226,9 +199,7 @@ void update_and_draw() {
         }
     } else {
         int room_id = world::get_tile_room_id(tile_at_cursor);
-        for (auto tile : world::get_room_tiles(room_id)) {
-            draw_tile_perimiter(tile, YELLOW);
-        }
+        utils::draw_room_perimiter_walls(room_id, YELLOW);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             select_room(room_id);
@@ -236,4 +207,4 @@ void update_and_draw() {
     }
 }
 
-}  // namespace soft_tissues::editor::room_editor
+}  // namespace soft_tissues::editor::rooms_editor

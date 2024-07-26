@@ -244,6 +244,12 @@ std::vector<tile::Tile *> get_all_rooms_tiles() {
     return tiles;
 }
 
+void set_room_tile_materials(int room_id, tile::TileMaterials materials) {
+    for (auto tile : get_room_tiles(room_id)) {
+        tile->materials = materials;
+    }
+}
+
 void add_tile_to_room(tile::Tile *tile, int room_id) {
     if (tile == NULL) {
         throw std::runtime_error("Can't add NULL tile to the room");

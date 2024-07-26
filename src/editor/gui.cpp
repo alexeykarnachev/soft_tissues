@@ -1,8 +1,11 @@
+#include "../tile.hpp"
+#include "../world.hpp"
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
 #include <cmath>
 #include <cstdio>
+#include <stdexcept>
 
 namespace soft_tissues::editor::gui {
 

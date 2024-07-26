@@ -23,11 +23,9 @@ public:
         , fn(fn) {}
 };
 
-static void pass() {}
-
 static std::array<Tab, 2> TABS = {
-    Tab("[1]Room", KEY_ONE, room_editor::update_and_draw),
-    Tab("[2]TODO", KEY_TWO, pass),
+    Tab("[1]Rooms", KEY_ONE, rooms_editor::update_and_draw),
+    Tab("[2]Lights", KEY_TWO, entities_editor::update_and_draw),
 };
 
 static void begin() {
