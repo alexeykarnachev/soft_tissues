@@ -6,6 +6,7 @@
 #include "raylib/raymath.h"
 #include "resources.hpp"
 #include "utils.hpp"
+#include "world.hpp"
 #include <cstdint>
 #include <stdexcept>
 
@@ -62,10 +63,10 @@ Vector2 Tile::get_floor_position() {
     uint32_t row = this->id / globals::WORLD_N_COLS;
     uint32_t col = this->id % globals::WORLD_N_COLS;
 
-    float x = static_cast<float>(col) + 0.5;
-    float y = static_cast<float>(row) + 0.5;
+    Vector2 pos = {(float)col + 0.5f, (float)row + 0.5f};
+    pos = Vector2Subtract(pos, Vector2Scale(world::get_size(), 0.5));
 
-    return {x, y};
+    return pos;
 }
 
 Matrix Tile::get_floor_matrix() {

@@ -12,7 +12,7 @@ void draw_tile_perimiter(tile::Tile *tile, Color color, bool only_walls) {
         throw std::runtime_error("Can't draw tile perimiter for the NULL tile");
     };
 
-    Vector2 center = world::get_tile_center(tile);
+    Vector2 center = tile->get_floor_position();
 
     if (!only_walls || tile->has_flags(tile::TILE_NORTH_WALL)) {
         DrawPlane({center.x, e, center.y - 0.5f}, {h, w}, color);

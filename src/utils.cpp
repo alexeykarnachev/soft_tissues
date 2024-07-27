@@ -96,12 +96,21 @@ int get_uniform_loc(Shader shader, std::string name, bool is_fail_allowed) {
 RayCollision get_cursor_floor_rect_collision(Rectangle rect, Camera camera) {
     Vector2 mouse_position = GetMousePosition();
     Ray ray = GetScreenToWorldRay(mouse_position, camera);
-    Vector3 p1 = {rect.x, 0.0, rect.y};
-    Vector3 p2 = {p1.x + rect.width, 0.0, p1.y};
-    Vector3 p3 = {p1.x + rect.width, 0.0, p1.y + rect.height};
-    Vector3 p4 = {rect.x, 0.0, p1.y + rect.height};
 
-    RayCollision collision = GetRayCollisionQuad(ray, p1, p2, p3, p4);
+    // TODO: factor these out into RectangleExt struct
+    float min_x = rect.x;
+    float max_x = rect.x + rect.width;
+    float min_y = rect.y;
+    float max_y = rect.y + rect.height;
+
+    Vector3 top_left = {min_x, 0.0, min_y};
+    Vector3 top_right = {max_x, 0.0, min_y};
+    Vector3 bot_right = {max_x, 0.0, max_y};
+    Vector3 bot_left = {min_x, 0.0, max_y};
+
+    RayCollision collision = GetRayCollisionQuad(
+        ray, top_left, top_right, bot_right, bot_left
+    );
     return collision;
 }
 

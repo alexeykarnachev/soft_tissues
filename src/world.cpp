@@ -3,10 +3,13 @@
 #include "camera.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 #include "tile.hpp"
 #include "utils.hpp"
 #include <algorithm>
 #include <array>
+#include <cassert>
+#include <cfloat>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -28,14 +31,31 @@ void load() {
     }
 }
 
+Vector2 get_size() {
+    float x = globals::WORLD_N_COLS;
+    float y = globals::WORLD_N_ROWS;
+    return {x, y};
+}
+
 Vector2 get_center() {
-    return {0.5f * globals::WORLD_N_COLS, 0.5f * globals::WORLD_N_ROWS};
+    return {0.0, 0.0};
+}
+
+std::pair<int, int> get_row_col_at_position(Vector2 pos) {
+    Vector2 size = get_size();
+
+    int row = std::floor(pos.y + 0.5 * size.y);
+    int col = std::floor(pos.x + 0.5 * size.x);
+
+    return {row, col};
 }
 
 Rectangle get_bound_rect() {
+    Vector2 size = get_size();
+
     return {
-        .x = 0.0,
-        .y = 0.0,
+        .x = -0.5f * size.x,
+        .y = -0.5f * size.y,
         .width = globals::WORLD_N_COLS,
         .height = globals::WORLD_N_ROWS,
     };
@@ -52,7 +72,8 @@ tile::Tile *get_tile_at_row_col(int row, int col) {
 }
 
 tile::Tile *get_tile_at_position(Vector2 pos) {
-    return get_tile_at_row_col(pos.y, pos.x);
+    auto [row, col] = get_row_col_at_position(pos);
+    return get_tile_at_row_col(row, col);
 }
 
 tile::Tile *get_tile_at_cursor(Vector2 *out_pos) {
@@ -63,25 +84,39 @@ tile::Tile *get_tile_at_cursor(Vector2 *out_pos) {
     tile::Tile *tile = NULL;
 
     if (collision.hit) {
-        int row = std::floor(collision.point.z);
-        int col = std::floor(collision.point.x);
+        Vector2 point = {collision.point.x, collision.point.z};
+        auto [row, col] = get_row_col_at_position(point);
         tile = get_tile_at_row_col(row, col);
 
-        if (out_pos != NULL) {
-            out_pos->x = collision.point.x;
-            out_pos->y = collision.point.z;
-        }
+        if (out_pos != NULL) *out_pos = point;
     }
 
     return tile;
 }
 
-std::pair<int, int> get_tile_row_col(tile::Tile *tile) {
-    int id = tile->get_id();
-    int row = id / globals::WORLD_N_COLS;
-    int col = id % globals::WORLD_N_COLS;
+tile::Tile *get_nearest_tile_neighbor_at_position(Vector2 pos) {
+    auto tile = get_tile_at_position(pos);
+    if (tile == NULL) return NULL;
 
-    return {row, col};
+    tile::Tile *nearest_nb = NULL;
+
+    float nearest_dist = FLT_MAX;
+    for (auto nb : get_tile_neighbors(tile)) {
+        if (nb == NULL) continue;
+
+        float dist = Vector2DistanceSqr(pos, nb->get_floor_position());
+        if (dist < nearest_dist) {
+            nearest_dist = dist;
+            nearest_nb = nb;
+        }
+    }
+
+    return nearest_nb;
+}
+
+std::pair<int, int> get_tile_row_col(tile::Tile *tile) {
+    Vector2 pos = tile->get_floor_position();
+    return get_row_col_at_position(pos);
 }
 
 std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
@@ -190,22 +225,34 @@ void clear_tile(tile::Tile *tile) {
     }
 }
 
+void remove_wall_between_neighbor_tiles(tile::Tile *tile0, tile::Tile *tile1) {
+    auto [row0, col0] = get_tile_row_col(tile0);
+    auto [row1, col1] = get_tile_row_col(tile1);
+
+    if (row0 - 1 == row1 && col0 == col1) {
+        tile0->clear_flags(tile::TILE_NORTH_WALL);
+        tile1->clear_flags(tile::TILE_SOUTH_WALL);
+    } else if (row0 == row1 && col0 + 1 == col1) {
+        tile0->clear_flags(tile::TILE_EAST_WALL);
+        tile1->clear_flags(tile::TILE_WEST_WALL);
+    } else if (row0 + 1 == row1 && col0 == col1) {
+        tile0->clear_flags(tile::TILE_SOUTH_WALL);
+        tile1->clear_flags(tile::TILE_NORTH_WALL);
+
+    } else if (row0 == row1 && col0 - 1 == col1) {
+        tile0->clear_flags(tile::TILE_WEST_WALL);
+        tile1->clear_flags(tile::TILE_EAST_WALL);
+    } else {
+        TraceLog(LOG_WARNING, "Can't remove wall between non-neigbor tiles");
+    }
+}
+
 std::vector<int> get_room_ids() {
     std::vector<int> ids;
     for (auto &pair : ROOM_ID_TO_TILES) {
         ids.push_back(pair.first);
     }
     return ids;
-}
-
-Rectangle get_tile_rect(tile::Tile *tile) {
-    auto [y, x] = get_tile_row_col(tile);
-    return {.x = (float)x, .y = (float)y, .width = 1.0, .height = 1.0};
-}
-
-Vector2 get_tile_center(tile::Tile *tile) {
-    auto [y, x] = get_tile_row_col(tile);
-    return {.x = x + 0.5f, .y = y + 0.5f};
 }
 
 int get_tile_room_id(tile::Tile *tile) {
@@ -283,26 +330,38 @@ void draw_grid() {
     float n_cols = globals::WORLD_N_COLS;
     float n_rows = globals::WORLD_N_ROWS;
 
+    Rectangle rect = get_bound_rect();
+
+    // TODO: factor these out into RectangleExt struct
+    float min_x = rect.x;
+    float max_x = rect.x + rect.width;
+    float min_y = rect.y;
+    float max_y = rect.y + rect.height;
+
+    Vector3 top_left = {min_x, 0.0, min_y};
+    Vector3 top_right = {max_x, 0.0, min_y};
+    Vector3 bot_right = {max_x, 0.0, max_y};
+    Vector3 bot_left = {min_x, 0.0, max_y};
+
     // z lines
-    for (float x = 1.0; x < n_cols; x += 1.0) {
-        Vector3 start_pos = {x, 0.0, 0.0};
-        Vector3 end_pos = {x, 0.0, n_rows};
+    for (float x = min_x + 1.0; x < max_x; x += 1.0) {
+        Vector3 start_pos = {x, 0.0, min_y};
+        Vector3 end_pos = {x, 0.0, max_y};
         DrawLine3D(start_pos, end_pos, WHITE);
     }
 
     // x lines
-    for (float z = 1.0; z < globals::WORLD_N_ROWS; z += 1.0) {
-        Vector3 start_pos = {0.0, 0.0, z};
-        Vector3 end_pos = {n_cols, 0.0, z};
+    for (float z = min_y + 1.0; z < max_y; z += 1.0) {
+        Vector3 start_pos = {min_x, 0.0, z};
+        Vector3 end_pos = {max_x, 0.0, z};
         DrawLine3D(start_pos, end_pos, WHITE);
     }
 
     // perimiter
-    DrawLine3D({0.0, 0.0, 0.0}, {n_cols, 0.0, 0.0}, RED);
-    DrawLine3D({0.0, 0.0, n_rows}, {n_cols, 0.0, n_rows}, RED);
-
-    DrawLine3D({0.0, 0.0, 0.0}, {0.0, 0.0, n_rows}, RED);
-    DrawLine3D({n_cols, 0.0, 0.0}, {n_cols, 0.0, n_rows}, RED);
+    DrawLine3D(top_left, top_right, RED);
+    DrawLine3D(top_right, bot_right, RED);
+    DrawLine3D(bot_right, bot_left, RED);
+    DrawLine3D(bot_left, top_left, RED);
 }
 
 void draw_tiles() {

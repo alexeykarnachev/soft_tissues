@@ -154,23 +154,12 @@ void update_and_draw() {
 
         if (tile_at_cursor) {
             draw_tile_ghost(tile_at_cursor, is_remove_down);
-            Vector2 pos = tile_at_cursor_pos;
 
-            float x = pos.x - (int)pos.x;
-            float y = pos.y - (int)pos.y;
+            tile::Tile *nb = world::get_nearest_tile_neighbor_at_position(
+                tile_at_cursor_pos
+            );
 
-            Vector2 step;
-            step.x = x < 0.5 ? -1.0 : 1.0;
-            step.y = y < 0.5 ? -1.0 : 1.0;
-            if (step.x != 0 && step.y != 0) {
-                if (std::abs(x - 0.5) > std::abs(y - 0.5)) step.y = 0.0;
-                else step.x = 0.0;
-            }
-
-            Vector2 position = {pos.x + step.x, pos.y + step.y};
-            tile::Tile *nb = world::get_tile_at_position(position);
-
-            if (nb) {
+            if (nb && !is_remove_down) {
                 int room_id_0 = world::get_tile_room_id(tile_at_cursor);
                 int room_id_1 = world::get_tile_room_id(nb);
 
@@ -180,19 +169,7 @@ void update_and_draw() {
                     draw_tile_ghost(nb, ORANGE);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                        if (step.x == 1.0) {
-                            tile_at_cursor->clear_flags(tile::TILE_EAST_WALL);
-                            nb->clear_flags(tile::TILE_WEST_WALL);
-                        } else if (step.x == -1.0) {
-                            tile_at_cursor->clear_flags(tile::TILE_WEST_WALL);
-                            nb->clear_flags(tile::TILE_EAST_WALL);
-                        } else if (step.y == 1.0) {
-                            tile_at_cursor->clear_flags(tile::TILE_SOUTH_WALL);
-                            nb->clear_flags(tile::TILE_NORTH_WALL);
-                        } else if (step.y == -1.0) {
-                            tile_at_cursor->clear_flags(tile::TILE_NORTH_WALL);
-                            nb->clear_flags(tile::TILE_SOUTH_WALL);
-                        }
+                        world::remove_wall_between_neighbor_tiles(tile_at_cursor, nb);
                     }
                 }
             }
