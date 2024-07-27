@@ -19,8 +19,8 @@ enum class State {
 static State STATE = State::NONE;
 static int ROOM_ID = -1;
 
-static void reset() {
-    STATE = State::NONE;
+static void reset_state(State state) {
+    STATE = state;
     ROOM_ID = -1;
     gizmo::detach();
 }
@@ -51,14 +51,14 @@ static void update_and_draw_transformation(transform::Transform *tr) {
 
 void update_and_draw() {
     if (IsKeyPressed(KEY_ESCAPE)) {
-        reset();
+        reset_state(State::NONE);
     }
 
     // ---------------------------------------------------------------
     bool is_remove_down = IsKeyDown(KEY_R);
 
     if (gui::button("[N]ew Object") || IsKeyPressed(KEY_N)) {
-        STATE = State::SELECTING_ROOM;
+        reset_state(State::SELECTING_ROOM);
     }
 
     // ---------------------------------------------------------------
