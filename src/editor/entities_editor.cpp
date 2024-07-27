@@ -1,4 +1,3 @@
-#include "../camera.hpp"
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../tile.hpp"
@@ -6,7 +5,6 @@
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
-#include "raylib/raymath.h"
 #include <cassert>
 #include <cstdio>
 
@@ -21,11 +19,39 @@ enum class State {
 static State STATE = State::NONE;
 static int ROOM_ID = -1;
 
-static Vector3 ENTITY_POSITION = Vector3Zero();
+static void reset() {
+    STATE = State::NONE;
+    ROOM_ID = -1;
+    gizmo::detach();
+}
+
+static void update_and_draw_transformation(transform::Transform *tr) {
+    ImGui::SeparatorText("Transformation");
+
+    {
+        static float speed = 0.1;
+        float *v = (float *)&tr->position;
+
+        ImGui::PushID(&tr->position);
+        ImGui::DragFloat3("Position", v, speed);
+        ImGui::PopID();
+    }
+
+    {
+        static float speed = PI / 16.0;
+        static float min = -2.0 * PI;
+        static float max = 2.0 * PI;
+        float *v = (float *)&tr->rotation;
+
+        ImGui::PushID(&tr->rotation);
+        ImGui::DragFloat3("Rotation", v, speed, min, max);
+        ImGui::PopID();
+    }
+}
 
 void update_and_draw() {
     if (IsKeyPressed(KEY_ESCAPE)) {
-        STATE = State::NONE;
+        reset();
     }
 
     // ---------------------------------------------------------------
@@ -56,6 +82,10 @@ void update_and_draw() {
             utils::draw_room_perimiter_walls(ROOM_ID, GREEN);
 
             auto player = globals::registry.view<component::Player>().front();
+            auto &tr = globals::registry.get<component::Transform>(player);
+
+            update_and_draw_transformation(&tr);
+
             gizmo::attach(player);
         } break;
         default: {

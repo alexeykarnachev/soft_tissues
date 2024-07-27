@@ -18,7 +18,7 @@ namespace rooms_editor {
 void update_and_draw();
 
 }  // namespace rooms_editor
-//
+
 // -----------------------------------------------------------------------
 namespace entities_editor {
 

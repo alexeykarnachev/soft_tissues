@@ -469,8 +469,13 @@ static void update() {
 
     // -------------------------------------------------------------------
     // update entity
-    tr.position = Vector3Add(tr.position, UPDATE.translation);
-    tr.rotation = Vector3Add(tr.rotation, Vector3Scale(UPDATE.axis, UPDATE.angle));
+    if (Vector3Length(UPDATE.translation) > EPSILON) {
+        tr.position = Vector3Add(tr.position, UPDATE.translation);
+    }
+
+    if (std::abs(UPDATE.angle) > EPSILON) {
+        tr.rotate_by_axis_angle(UPDATE.axis, UPDATE.angle);
+    }
 }
 
 void update_and_draw() {

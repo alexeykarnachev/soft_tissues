@@ -36,4 +36,11 @@ Vector3 Transform::get_right() {
     return Vector3RotateByQuaternion({1.0, 0.0, 0.0}, this->get_quaternion());
 }
 
+void Transform::rotate_by_axis_angle(Vector3 axis, float angle) {
+    auto new_q = QuaternionFromAxisAngle(axis, angle);
+    auto my_q = this->get_quaternion();
+    auto q = QuaternionMultiply(new_q, my_q);
+    this->rotation = QuaternionToEuler(q);
+}
+
 }  // namespace soft_tissues::transform

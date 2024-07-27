@@ -26,7 +26,7 @@ public:
 
 static std::array<Tab, 2> TABS = {
     Tab("[1]Rooms", KEY_ONE, rooms_editor::update_and_draw),
-    Tab("[2]Lights", KEY_TWO, entities_editor::update_and_draw),
+    Tab("[2]Entities", KEY_TWO, entities_editor::update_and_draw),
 };
 
 static void begin() {

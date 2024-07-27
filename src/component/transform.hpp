@@ -22,6 +22,8 @@ public:
     Quaternion get_quaternion();
     Vector3 get_forward();
     Vector3 get_right();
+
+    void rotate_by_axis_angle(Vector3 axis, float angle);
 };
 
 }  // namespace soft_tissues::transform
