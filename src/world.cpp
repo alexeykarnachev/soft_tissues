@@ -20,9 +20,9 @@ namespace soft_tissues::world {
 using namespace utils;
 
 int const HEIGHT = 3;
-int const N_ROWS = 11;
-int const N_COLS = 8;
-Vector2 const ORIGIN = {3.0, 3.0};
+int const N_ROWS = 16;
+int const N_COLS = 16;
+Vector2 const ORIGIN = {0.0, 0.0};
 
 static int const N_TILES = N_ROWS * N_COLS;
 static Vector2 const SIZE = {N_COLS, N_ROWS};
