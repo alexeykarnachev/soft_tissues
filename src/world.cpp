@@ -19,15 +19,30 @@ namespace soft_tissues::world {
 
 using namespace utils;
 
-std::array<tile::Tile, N_TILES> TILES;
+int const HEIGHT = 3;
+int const N_ROWS = 11;
+int const N_COLS = 8;
+Vector2 const ORIGIN = {3.0, 3.0};
 
-std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
-std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
+static int const N_TILES = N_ROWS * N_COLS;
+static Vector2 const SIZE = {N_COLS, N_ROWS};
+
+static std::array<tile::Tile, N_TILES> TILES;
+static std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
+static std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
 
 void load() {
     for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
+}
+
+int get_tiles_count() {
+    return N_TILES;
+}
+
+Vector2 get_size() {
+    return SIZE;
 }
 
 std::pair<int, int> get_row_col_at_position(Vector2 pos) {
@@ -41,9 +56,11 @@ std::pair<int, int> get_row_col_at_position(Vector2 pos) {
 }
 
 Rectangle get_bound_rect() {
+    Vector2 top_left = Vector2Subtract(ORIGIN, Vector2Scale(SIZE, 0.5));
+
     return {
-        .x = -0.5f * SIZE.x + ORIGIN.x,
-        .y = -0.5f * SIZE.y + ORIGIN.y,
+        .x = top_left.x,
+        .y = top_left.y,
         .width = N_COLS,
         .height = N_ROWS,
     };

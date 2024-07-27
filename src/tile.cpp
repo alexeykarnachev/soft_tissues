@@ -63,7 +63,7 @@ Vector2 Tile::get_floor_position() {
     uint32_t col = this->id % world::N_COLS;
 
     Vector2 pos = {col + 0.5f, row + 0.5f};
-    pos = Vector2Subtract(pos, Vector2Scale(world::SIZE, 0.5));
+    pos = Vector2Subtract(pos, Vector2Scale(world::get_size(), 0.5));
     pos = Vector2Add(pos, world::ORIGIN);
 
     return pos;

@@ -7,14 +7,15 @@
 
 namespace soft_tissues::world {
 
-static constexpr int HEIGHT = 3;
-static constexpr int N_ROWS = 5;
-static constexpr int N_COLS = 5;
-static constexpr int N_TILES = N_ROWS * N_COLS;
-static constexpr Vector2 SIZE = {N_ROWS, N_COLS};
-static constexpr Vector2 ORIGIN = {3.0, 3.0};
+extern const int HEIGHT;
+extern const int N_ROWS;
+extern const int N_COLS;
+extern const Vector2 ORIGIN;
 
 void load();
+
+int get_tiles_count();
+Vector2 get_size();
 
 std::pair<int, int> get_row_col_at_position(Vector2 pos);
 Rectangle get_bound_rect();
