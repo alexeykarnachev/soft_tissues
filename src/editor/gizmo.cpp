@@ -264,7 +264,7 @@ void unload(void) {
     TraceLog(LOG_INFO, "RAYGIZMO: Gizmo unloaded");
 }
 
-void attach_to_entity(entt::entity entity) {
+void attach(entt::entity entity) {
     ENTITY = entity;
 }
 

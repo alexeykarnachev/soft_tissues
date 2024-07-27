@@ -54,7 +54,7 @@ namespace gizmo {
 void load();
 void unload();
 
-void attach_to_entity(entt::entity entity);
+void attach(entt::entity entity);
 void detach();
 
 void update_and_draw();

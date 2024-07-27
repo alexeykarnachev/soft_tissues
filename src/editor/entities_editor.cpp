@@ -56,7 +56,7 @@ void update_and_draw() {
             utils::draw_room_perimiter_walls(ROOM_ID, GREEN);
 
             auto player = globals::registry.view<component::Player>().front();
-            gizmo::attach_to_entity(player);
+            gizmo::attach(player);
         } break;
         default: {
             assert(ROOM_ID == -1);
