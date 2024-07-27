@@ -1,7 +1,6 @@
 #include "world.hpp"
 
 #include "camera.hpp"
-#include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "tile.hpp"
@@ -20,51 +19,40 @@ namespace soft_tissues::world {
 
 using namespace utils;
 
-std::array<tile::Tile, globals::WORLD_N_TILES> TILES;
+std::array<tile::Tile, N_TILES> TILES;
 
 std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
 std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
 
 void load() {
-    for (int i = 0; i < globals::WORLD_N_TILES; ++i) {
+    for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
 }
 
-Vector2 get_size() {
-    float x = globals::WORLD_N_COLS;
-    float y = globals::WORLD_N_ROWS;
-    return {x, y};
-}
-
-Vector2 get_center() {
-    return {0.0, 0.0};
-}
-
 std::pair<int, int> get_row_col_at_position(Vector2 pos) {
-    Vector2 size = get_size();
+    Vector2 a = Vector2Subtract(pos, ORIGIN);
+    Vector2 b = Vector2Add(a, Vector2Scale(SIZE, 0.5));
 
-    int row = std::floor(pos.y + 0.5 * size.y);
-    int col = std::floor(pos.x + 0.5 * size.x);
+    int col = std::floor(b.x);
+    int row = std::floor(b.y);
 
     return {row, col};
 }
 
 Rectangle get_bound_rect() {
-    Vector2 size = get_size();
-
     return {
-        .x = -0.5f * size.x,
-        .y = -0.5f * size.y,
-        .width = globals::WORLD_N_COLS,
-        .height = globals::WORLD_N_ROWS,
+        .x = -0.5f * SIZE.x + ORIGIN.x,
+        .y = -0.5f * SIZE.y + ORIGIN.y,
+        .width = N_COLS,
+        .height = N_ROWS,
     };
 }
 
 tile::Tile *get_tile_at_row_col(int row, int col) {
-    uint32_t idx = row * globals::WORLD_N_COLS + col;
+    uint32_t idx = row * N_COLS + col;
     tile::Tile *tile = NULL;
-    if (idx < globals::WORLD_N_TILES) {
+    if (idx < N_TILES) {
         tile = &TILES[idx];
     }
 
@@ -77,9 +65,8 @@ tile::Tile *get_tile_at_position(Vector2 pos) {
 }
 
 tile::Tile *get_tile_at_cursor(Vector2 *out_pos) {
-    RayCollision collision = utils::get_cursor_floor_rect_collision(
-        world::get_bound_rect(), camera::CAMERA
-    );
+    Rectangle rect = world::get_bound_rect();
+    RayCollision collision = utils::get_cursor_floor_rect_collision(rect, camera::CAMERA);
 
     tile::Tile *tile = NULL;
 
@@ -120,25 +107,24 @@ std::pair<int, int> get_tile_row_col(tile::Tile *tile) {
 }
 
 std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
-    // TODO: wtf?
-    std::array<tile::Tile *, 4> neighbors = {nullptr, nullptr, nullptr, nullptr};
+    std::array<tile::Tile *, 4> neighbors = {nullptr};
     auto [row, col] = get_tile_row_col(tile);
 
     uint32_t id = tile->get_id();
 
     if (row > 0) {
-        neighbors[(int)CardinalDirection::NORTH] = &TILES[id - globals::WORLD_N_COLS];
+        neighbors[(int)CardinalDirection::NORTH] = &TILES[id - N_COLS];
     }
 
-    if (row < (globals::WORLD_N_ROWS - 1)) {
-        neighbors[(int)CardinalDirection::SOUTH] = &TILES[id + globals::WORLD_N_COLS];
+    if (row < (N_ROWS - 1)) {
+        neighbors[(int)CardinalDirection::SOUTH] = &TILES[id + N_COLS];
     }
 
     if (col > 0) {
         neighbors[(int)CardinalDirection::WEST] = &TILES[id - 1];
     }
 
-    if (col < (globals::WORLD_N_COLS - 1)) {
+    if (col < (N_COLS - 1)) {
         neighbors[(int)CardinalDirection::EAST] = &TILES[id + 1];
     }
 
@@ -327,9 +313,6 @@ void add_tile_to_room(tile::Tile *tile, int room_id) {
 }
 
 void draw_grid() {
-    float n_cols = globals::WORLD_N_COLS;
-    float n_rows = globals::WORLD_N_ROWS;
-
     Rectangle rect = get_bound_rect();
 
     // TODO: factor these out into RectangleExt struct

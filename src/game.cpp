@@ -38,7 +38,7 @@ static void load() {
     editor::load();
     world::load();
 
-    prefabs::spawn_player(world::get_center());
+    prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
     // light

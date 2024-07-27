@@ -1,6 +1,5 @@
 #include "tile.hpp"
 
-#include "globals.hpp"
 #include "pbr.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -60,11 +59,12 @@ void Tile::clear_flags(uint16_t flags) {
 }
 
 Vector2 Tile::get_floor_position() {
-    uint32_t row = this->id / globals::WORLD_N_COLS;
-    uint32_t col = this->id % globals::WORLD_N_COLS;
+    uint32_t row = this->id / world::N_COLS;
+    uint32_t col = this->id % world::N_COLS;
 
-    Vector2 pos = {(float)col + 0.5f, (float)row + 0.5f};
-    pos = Vector2Subtract(pos, Vector2Scale(world::get_size(), 0.5));
+    Vector2 pos = {col + 0.5f, row + 0.5f};
+    pos = Vector2Subtract(pos, Vector2Scale(world::SIZE, 0.5));
+    pos = Vector2Add(pos, world::ORIGIN);
 
     return pos;
 }
@@ -79,7 +79,7 @@ Matrix Tile::get_floor_matrix() {
 Matrix Tile::get_ceil_matrix() {
     Vector2 position = this->get_floor_position();
 
-    Matrix t = MatrixTranslate(position.x, globals::WORLD_HEIGHT, position.y);
+    Matrix t = MatrixTranslate(position.x, world::HEIGHT, position.y);
     Matrix r = MatrixRotateX(PI);
     Matrix matrix = MatrixMultiply(r, t);
 
@@ -139,28 +139,28 @@ void Tile::draw() {
     }
 
     if (this->has_flags(TILE_NORTH_WALL)) {
-        for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
+        for (int i = 0; i < world::HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::NORTH, i);
             pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 
     if (this->has_flags(TILE_SOUTH_WALL)) {
-        for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
+        for (int i = 0; i < world::HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::SOUTH, i);
             pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 
     if (this->has_flags(TILE_WEST_WALL)) {
-        for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
+        for (int i = 0; i < world::HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::WEST, i);
             pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
     }
 
     if (this->has_flags(TILE_EAST_WALL)) {
-        for (int i = 0; i < globals::WORLD_HEIGHT; ++i) {
+        for (int i = 0; i < world::HEIGHT; ++i) {
             Matrix matrix = this->get_wall_matrix(CardinalDirection::EAST, i);
             pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
         }
