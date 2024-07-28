@@ -69,7 +69,7 @@ void update_and_draw() {
             tile::Tile *tile_at_cursor = world::get_tile_at_cursor();
             int room_id = world::get_tile_room_id(tile_at_cursor);
 
-            utils::draw_room_perimiter_walls(room_id, YELLOW);
+            utils::draw_room_perimiter(room_id, YELLOW);
 
             if (room_id != -1 && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 ROOM_ID = room_id;
@@ -79,7 +79,7 @@ void update_and_draw() {
         case State::EDITING_OBJECT: {
             assert(ROOM_ID != -1);
 
-            utils::draw_room_perimiter_walls(ROOM_ID, GREEN);
+            utils::draw_room_perimiter(ROOM_ID, GREEN, ORANGE);
 
             auto player = globals::registry.view<component::Player>().front();
             auto &tr = globals::registry.get<component::Transform>(player);

@@ -35,7 +35,7 @@ int add_room();
 
 void remove_room(int room_id);
 void clear_tile(tile::Tile *tile);
-void remove_wall_between_neighbor_tiles(tile::Tile *tile0, tile::Tile *tile1);
+void set_door_between_neighbor_tiles(tile::Tile *tile0, tile::Tile *tile1);
 
 std::vector<int> get_room_ids();
 int get_tile_room_id(tile::Tile *tile);

@@ -42,9 +42,8 @@ void image(Texture texture, float width, float height = 0.0);
 // -----------------------------------------------------------------------
 namespace utils {
 
-void draw_tile_perimiter(tile::Tile *tile, Color color, bool only_walls = false);
-void draw_tile_perimiter_walls(tile::Tile *tile, Color color);
-void draw_room_perimiter_walls(int room_id, Color color);
+void draw_room_perimiter(int room_id, Color color);
+void draw_room_perimiter(int room_id, Color solid_color, Color door_color);
 
 }  // namespace utils
 

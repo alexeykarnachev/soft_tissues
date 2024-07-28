@@ -146,7 +146,7 @@ void update_and_draw() {
         }
 
         world::set_room_tile_materials(ROOM_ID, MATERIALS);
-        utils::draw_room_perimiter_walls(ROOM_ID, GREEN);
+        utils::draw_room_perimiter(ROOM_ID, GREEN, ORANGE);
 
         for (auto tile : GHOST_TILES) {
             draw_tile_ghost(tile, is_remove_down);
@@ -169,14 +169,14 @@ void update_and_draw() {
                     draw_tile_ghost(nb, ORANGE);
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                        world::remove_wall_between_neighbor_tiles(tile_at_cursor, nb);
+                        world::set_door_between_neighbor_tiles(tile_at_cursor, nb);
                     }
                 }
             }
         }
     } else {
         int room_id = world::get_tile_room_id(tile_at_cursor);
-        utils::draw_room_perimiter_walls(room_id, YELLOW);
+        utils::draw_room_perimiter(room_id, YELLOW);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             select_room(room_id);

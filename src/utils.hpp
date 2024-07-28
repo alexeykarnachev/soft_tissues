@@ -1,18 +1,21 @@
 #pragma once
 
 #include "raylib/raylib.h"
+#include <cstdint>
 #include <string>
 
 namespace soft_tissues::utils {
 
 // -----------------------------------------------------------------------
 // enums
-enum class CardinalDirection {
+enum Direction : uint8_t {
     NORTH = 0,
     SOUTH,
     WEST,
     EAST,
 };
+
+Direction flip_direction(Direction direction);
 
 // -----------------------------------------------------------------------
 // texture

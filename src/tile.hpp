@@ -3,22 +3,12 @@
 #include "pbr.hpp"
 #include "raylib/raylib.h"
 #include "utils.hpp"
+#include <array>
 #include <cstdint>
 
 namespace soft_tissues::tile {
 
 using namespace utils;
-
-enum TileFlags : uint16_t {
-    TILE_FLOOR = 1 << 0,
-    TILE_CEIL = 1 << 1,
-    TILE_NORTH_WALL = 1 << 2,
-    TILE_SOUTH_WALL = 1 << 3,
-    TILE_WEST_WALL = 1 << 4,
-    TILE_EAST_WALL = 1 << 5
-};
-
-TileFlags get_wall_tile_flag(CardinalDirection direction);
 
 class TileMaterials {
 public:
@@ -31,12 +21,18 @@ public:
     TileMaterials(pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil);
 };
 
+enum class TileWall {
+    NONE,
+    DOOR,
+    SOLID,
+};
+
 class Tile {
 private:
     uint32_t id;
+    std::array<TileWall, 4> walls = {TileWall::NONE};
 
 public:
-    uint16_t flags = 0;
     TileMaterials materials;
     Color constant_color = {0, 0, 0, 0};
 
@@ -44,17 +40,24 @@ public:
     Tile(uint32_t id);
 
     uint32_t get_id();
-    bool is_empty();
-    bool has_flags(uint16_t flags);
 
-    void clear_flags(uint16_t flags);
+    void remove_wall(Direction direction);
+    void remove_all_walls();
+
+    void set_solid_wall(Direction direction);
+    void set_door_wall(Direction direction);
+
+    bool has_any_wall(Direction direction);
+    bool has_solid_wall(Direction direction);
+    bool has_door_wall(Direction direction);
+    bool has_any_wall();
+    bool has_solid_wall();
+    bool has_door_wall();
 
     Vector2 get_floor_position();
     Matrix get_floor_matrix();
     Matrix get_ceil_matrix();
-    Matrix get_wall_matrix(CardinalDirection side, int elevation);
-
-    void draw();
+    Matrix get_wall_matrix(Direction direction, int elevation);
 };
 
 }  // namespace soft_tissues::tile

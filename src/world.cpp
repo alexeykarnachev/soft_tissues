@@ -3,6 +3,7 @@
 #include "camera.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include "resources.hpp"
 #include "tile.hpp"
 #include "utils.hpp"
 #include <algorithm>
@@ -130,19 +131,19 @@ std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
     uint32_t id = tile->get_id();
 
     if (row > 0) {
-        neighbors[(int)CardinalDirection::NORTH] = &TILES[id - N_COLS];
+        neighbors[(int)Direction::NORTH] = &TILES[id - N_COLS];
     }
 
     if (row < (N_ROWS - 1)) {
-        neighbors[(int)CardinalDirection::SOUTH] = &TILES[id + N_COLS];
+        neighbors[(int)Direction::SOUTH] = &TILES[id + N_COLS];
     }
 
     if (col > 0) {
-        neighbors[(int)CardinalDirection::WEST] = &TILES[id - 1];
+        neighbors[(int)Direction::WEST] = &TILES[id - 1];
     }
 
     if (col < (N_COLS - 1)) {
-        neighbors[(int)CardinalDirection::EAST] = &TILES[id + 1];
+        neighbors[(int)Direction::EAST] = &TILES[id + 1];
     }
 
     return neighbors;
@@ -187,66 +188,78 @@ void remove_room(int room_id) {
     }
 
     for (auto tile : ROOM_ID_TO_TILES[room_id]) {
-        tile->flags = 0;
+        tile->remove_all_walls();
         TILE_TO_ROOM_ID.erase(tile);
     }
 
     ROOM_ID_TO_TILES.erase(room_id);
 }
 
-static void set_room_tile_flags(tile::Tile *tile) {
+static void fix_tile_walls(tile::Tile *tile) {
+    if (tile == NULL) return;
+
     int room_id = get_tile_room_id(tile);
-    tile->flags = tile::TileFlags::TILE_FLOOR | tile::TileFlags::TILE_CEIL;
+    if (room_id == -1) return;
 
     auto neighbors = world::get_tile_neighbors(tile);
-    for (int i = 0; i < neighbors.size(); ++i) {
-        auto nb = neighbors[i];
-        int nb_room_id = get_tile_room_id(nb);
-        bool has_nb = nb != NULL && !nb->is_empty() && room_id == nb_room_id;
 
-        if (!has_nb) {
-            tile->flags |= tile::get_wall_tile_flag((CardinalDirection)i);
+    for (int i = 0; i < neighbors.size(); ++i) {
+        Direction tile_direction = (Direction)i;
+        Direction nb_direction = flip_direction(tile_direction);
+        auto nb = neighbors[i];
+
+        if (nb == NULL || get_tile_room_id(nb) == -1) {
+            tile->set_solid_wall(tile_direction);
+        } else {
+            bool is_door_between = tile->has_door_wall(tile_direction)
+                                   && nb->has_door_wall(nb_direction);
+            int nb_room_id = get_tile_room_id(nb);
+            bool is_same_room = room_id == nb_room_id;
+
+            if (!is_same_room && !is_door_between) {
+                tile->set_solid_wall(tile_direction);
+            } else if (is_same_room) {
+                tile->remove_wall(tile_direction);
+            }
         }
     }
 }
 
 void clear_tile(tile::Tile *tile) {
-    tile->flags = 0;
+    tile->remove_all_walls();
 
     if (TILE_TO_ROOM_ID.count(tile) != 0) {
         int room_id = TILE_TO_ROOM_ID[tile];
 
         auto &tiles = ROOM_ID_TO_TILES[room_id];
         tiles.erase(std::remove(tiles.begin(), tiles.end(), tile), tiles.end());
+
         TILE_TO_ROOM_ID.erase(tile);
     }
 
     for (auto nb : world::get_tile_neighbors(tile)) {
-        if (nb && !nb->is_empty()) {
-            set_room_tile_flags(nb);
-        }
+        fix_tile_walls(nb);
     }
 }
 
-void remove_wall_between_neighbor_tiles(tile::Tile *tile0, tile::Tile *tile1) {
+void set_door_between_neighbor_tiles(tile::Tile *tile0, tile::Tile *tile1) {
     auto [row0, col0] = get_tile_row_col(tile0);
     auto [row1, col1] = get_tile_row_col(tile1);
 
     if (row0 - 1 == row1 && col0 == col1) {
-        tile0->clear_flags(tile::TILE_NORTH_WALL);
-        tile1->clear_flags(tile::TILE_SOUTH_WALL);
+        tile0->set_door_wall(Direction::NORTH);
+        tile1->set_door_wall(Direction::SOUTH);
     } else if (row0 == row1 && col0 + 1 == col1) {
-        tile0->clear_flags(tile::TILE_EAST_WALL);
-        tile1->clear_flags(tile::TILE_WEST_WALL);
+        tile0->set_door_wall(Direction::EAST);
+        tile1->set_door_wall(Direction::WEST);
     } else if (row0 + 1 == row1 && col0 == col1) {
-        tile0->clear_flags(tile::TILE_SOUTH_WALL);
-        tile1->clear_flags(tile::TILE_NORTH_WALL);
-
+        tile0->set_door_wall(Direction::SOUTH);
+        tile1->set_door_wall(Direction::NORTH);
     } else if (row0 == row1 && col0 - 1 == col1) {
-        tile0->clear_flags(tile::TILE_WEST_WALL);
-        tile1->clear_flags(tile::TILE_EAST_WALL);
+        tile0->set_door_wall(Direction::WEST);
+        tile1->set_door_wall(Direction::EAST);
     } else {
-        TraceLog(LOG_WARNING, "Can't remove wall between non-neigbor tiles");
+        TraceLog(LOG_WARNING, "Can't set a door between non-neigbor tiles");
     }
 }
 
@@ -305,10 +318,6 @@ void add_tile_to_room(tile::Tile *tile, int room_id) {
         throw std::runtime_error("Can't add NULL tile to the room");
     }
 
-    if (!tile->is_empty()) {
-        throw std::runtime_error("Can't add unempty tile to the room");
-    }
-
     if (TILE_TO_ROOM_ID.count(tile) != 0) {
         throw std::runtime_error("Can't add already added tile to the room");
     }
@@ -320,13 +329,10 @@ void add_tile_to_room(tile::Tile *tile, int room_id) {
     ROOM_ID_TO_TILES[room_id].push_back(tile);
     TILE_TO_ROOM_ID[tile] = room_id;
 
-    set_room_tile_flags(tile);
+    fix_tile_walls(tile);
     for (auto nb : world::get_tile_neighbors(tile)) {
-        if (nb && !nb->is_empty()) {
-            set_room_tile_flags(nb);
-        }
+        fix_tile_walls(nb);
     }
-    set_room_tile_flags(tile);
 }
 
 void draw_grid() {
@@ -366,7 +372,34 @@ void draw_grid() {
 
 void draw_tiles() {
     for (tile::Tile &tile : TILES) {
-        tile.draw();
+        // don't draw tile which doesn't belong to any room
+        if (get_tile_room_id(&tile) == -1) continue;
+
+        Mesh mesh = resources::PLANE_MESH;
+
+        // draw floor
+        pbr::draw_mesh(
+            mesh, tile.materials.floor, tile.constant_color, tile.get_floor_matrix()
+        );
+
+        // draw ceil
+        pbr::draw_mesh(
+            mesh, tile.materials.ceil, tile.constant_color, tile.get_ceil_matrix()
+        );
+
+        // draw solid walls
+        for (int i_direction = 0; i_direction < 4; ++i_direction) {
+            Direction direction = (Direction)i_direction;
+
+            if (tile.has_solid_wall(direction)) {
+                for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {
+                    Matrix matrix = tile.get_wall_matrix(direction, i_height);
+                    pbr::draw_mesh(
+                        mesh, tile.materials.wall, tile.constant_color, matrix
+                    );
+                }
+            }
+        }
     }
 }
 

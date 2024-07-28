@@ -12,6 +12,17 @@
 namespace soft_tissues::utils {
 
 // -----------------------------------------------------------------------
+// enums
+Direction flip_direction(Direction direction) {
+    switch (direction) {
+        case NORTH: return SOUTH;
+        case SOUTH: return NORTH;
+        case WEST: return EAST;
+        case EAST: return WEST;
+    }
+}
+
+// -----------------------------------------------------------------------
 // texture
 Texture load_texture(std::string dir_path, std::string file_name) {
     Texture texture;

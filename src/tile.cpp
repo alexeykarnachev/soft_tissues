@@ -7,21 +7,10 @@
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
-#include <stdexcept>
 
 namespace soft_tissues::tile {
 
 using namespace utils;
-
-TileFlags get_wall_tile_flag(CardinalDirection direction) {
-    switch (direction) {
-        case utils::CardinalDirection::NORTH: return TILE_NORTH_WALL;
-        case utils::CardinalDirection::SOUTH: return TILE_SOUTH_WALL;
-        case utils::CardinalDirection::WEST: return TILE_WEST_WALL;
-        case utils::CardinalDirection::EAST: return TILE_EAST_WALL;
-        default: throw std::runtime_error("Unhandled CardinalDirection");
-    }
-}
 
 TileMaterials::TileMaterials() = default;
 
@@ -46,16 +35,56 @@ uint32_t Tile::get_id() {
     return this->id;
 }
 
-bool Tile::is_empty() {
-    return this->flags == 0;
+void Tile::remove_wall(Direction direction) {
+    this->walls[direction] = TileWall::NONE;
 }
 
-bool Tile::has_flags(uint16_t flags) {
-    return (this->flags & flags) == flags;
+void Tile::remove_all_walls() {
+    this->remove_wall(Direction::NORTH);
+    this->remove_wall(Direction::SOUTH);
+    this->remove_wall(Direction::WEST);
+    this->remove_wall(Direction::EAST);
 }
 
-void Tile::clear_flags(uint16_t flags) {
-    this->flags &= ~flags;
+void Tile::set_solid_wall(Direction direction) {
+    this->walls[direction] = TileWall::SOLID;
+}
+
+void Tile::set_door_wall(Direction direction) {
+    this->walls[direction] = TileWall::DOOR;
+}
+
+bool Tile::has_any_wall(Direction direction) {
+    return this->walls[direction] != TileWall::NONE;
+}
+
+bool Tile::has_solid_wall(Direction direction) {
+    return this->walls[direction] == TileWall::SOLID;
+}
+
+bool Tile::has_door_wall(Direction direction) {
+    return this->walls[direction] == TileWall::DOOR;
+}
+
+bool Tile::has_any_wall() {
+    for (int i = 0; i < 4; ++i) {
+        if (this->has_any_wall((Direction)i)) return true;
+    }
+    return false;
+}
+
+bool Tile::has_solid_wall() {
+    for (int i = 0; i < 4; ++i) {
+        if (this->has_solid_wall((Direction)i)) return true;
+    }
+    return false;
+}
+
+bool Tile::has_door_wall() {
+    for (int i = 0; i < 4; ++i) {
+        if (this->has_door_wall((Direction)i)) return true;
+    }
+    return false;
 }
 
 Vector2 Tile::get_floor_position() {
@@ -86,30 +115,30 @@ Matrix Tile::get_ceil_matrix() {
     return matrix;
 }
 
-Matrix Tile::get_wall_matrix(CardinalDirection side, int elevation) {
+Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     Vector2 position = this->get_floor_position();
     float y = elevation + 0.5;
 
     Matrix matrix;
-    switch (side) {
-        case CardinalDirection::NORTH: {
+    switch (direction) {
+        case Direction::NORTH: {
             Matrix t = MatrixTranslate(position.x, y, position.y - 0.5);
             Matrix r = MatrixRotateX(0.5 * PI);
             matrix = MatrixMultiply(r, t);
         } break;
-        case CardinalDirection::SOUTH: {
+        case Direction::SOUTH: {
             Matrix t = MatrixTranslate(position.x, y, position.y + 0.5);
             Matrix r = MatrixRotateX(-0.5 * PI);
             matrix = MatrixMultiply(r, t);
         } break;
-        case CardinalDirection::WEST: {
+        case Direction::WEST: {
             Matrix t = MatrixTranslate(position.x - 0.5, y, position.y);
             Matrix rx = MatrixRotateX(0.5 * PI);
             Matrix ry = MatrixRotateY(0.5 * PI);
             Matrix r = MatrixMultiply(rx, ry);
             matrix = MatrixMultiply(r, t);
         } break;
-        case CardinalDirection::EAST: {
+        case Direction::EAST: {
             Matrix t = MatrixTranslate(position.x + 0.5, y, position.y);
             Matrix rx = MatrixRotateX(0.5 * PI);
             Matrix ry = MatrixRotateY(-0.5 * PI);
@@ -119,52 +148,6 @@ Matrix Tile::get_wall_matrix(CardinalDirection side, int elevation) {
     }
 
     return matrix;
-}
-
-void Tile::draw() {
-    if (this->is_empty()) return;
-
-    Mesh mesh = resources::PLANE_MESH;
-
-    if (this->has_flags(TILE_FLOOR)) {
-        pbr::draw_mesh(
-            mesh, this->materials.floor, this->constant_color, this->get_floor_matrix()
-        );
-    }
-
-    if (this->has_flags(TILE_CEIL)) {
-        pbr::draw_mesh(
-            mesh, this->materials.ceil, this->constant_color, this->get_ceil_matrix()
-        );
-    }
-
-    if (this->has_flags(TILE_NORTH_WALL)) {
-        for (int i = 0; i < world::HEIGHT; ++i) {
-            Matrix matrix = this->get_wall_matrix(CardinalDirection::NORTH, i);
-            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
-        }
-    }
-
-    if (this->has_flags(TILE_SOUTH_WALL)) {
-        for (int i = 0; i < world::HEIGHT; ++i) {
-            Matrix matrix = this->get_wall_matrix(CardinalDirection::SOUTH, i);
-            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
-        }
-    }
-
-    if (this->has_flags(TILE_WEST_WALL)) {
-        for (int i = 0; i < world::HEIGHT; ++i) {
-            Matrix matrix = this->get_wall_matrix(CardinalDirection::WEST, i);
-            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
-        }
-    }
-
-    if (this->has_flags(TILE_EAST_WALL)) {
-        for (int i = 0; i < world::HEIGHT; ++i) {
-            Matrix matrix = this->get_wall_matrix(CardinalDirection::EAST, i);
-            pbr::draw_mesh(mesh, this->materials.wall, this->constant_color, matrix);
-        }
-    }
 }
 
 }  // namespace soft_tissues::tile
