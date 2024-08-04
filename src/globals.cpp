@@ -24,11 +24,9 @@ void update() {
     if (IsKeyPressed(KEY_F1)) {
         if (GAME_STATE == GameState::PLAY) {
             GAME_STATE = GameState::EDITOR;
-            GRAPHICS_OPTIONS.is_light_enabled = false;
             EnableCursor();
         } else if (GAME_STATE == GameState::EDITOR) {
             GAME_STATE = GameState::PLAY;
-            GRAPHICS_OPTIONS.is_light_enabled = true;
             DisableCursor();
         }
     }

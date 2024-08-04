@@ -49,4 +49,6 @@ public:
     void set_shader_uniform(Shader shader, int idx);
 };
 
+std::string get_type_name(Type type);
+
 }  // namespace soft_tissues::light

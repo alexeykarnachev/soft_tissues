@@ -1,6 +1,7 @@
 #include "editor.hpp"
 
 #include "../camera.hpp"
+#include "../globals.hpp"
 #include "GLFW/glfw3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -60,31 +61,42 @@ void unload() {
     gizmo::unload();
 }
 
+static void update_and_draw_tabs() {
+    static std::string active_tab_name = TABS[0].name;
+
+    ImGui::BeginTabBar("Tabs");
+
+    for (const auto &tab : TABS) {
+        if (IsKeyPressed(tab.key)) active_tab_name = tab.name;
+    }
+
+    for (const auto &tab : TABS) {
+        bool is_open = (active_tab_name == tab.name);
+        int flag = is_open ? ImGuiTabItemFlags_SetSelected : 0;
+        if (ImGui::BeginTabItem(tab.name.c_str(), NULL, flag)) {
+            if (ImGui::IsItemActive()) active_tab_name = tab.name;
+            tab.fn();
+            ImGui::EndTabItem();
+        }
+    }
+
+    ImGui::EndTabBar();
+}
+
+static void update_and_draw_debug() {
+    ImGui::SeparatorText("Graphics");
+
+    ImGui::Checkbox("is_light_enabled", &globals::GRAPHICS_OPTIONS.is_light_enabled);
+}
+
 void update_and_draw() {
     BeginMode3D(camera::CAMERA);
     begin();
 
-    static std::string active_tab_name = TABS[0].name;
-
     ImGui::Begin("Editor", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     {
-        ImGui::BeginTabBar("States");
-
-        for (const auto &tab : TABS) {
-            if (IsKeyPressed(tab.key)) active_tab_name = tab.name;
-        }
-
-        for (const auto &tab : TABS) {
-            bool is_open = (active_tab_name == tab.name);
-            int flag = is_open ? ImGuiTabItemFlags_SetSelected : 0;
-            if (ImGui::BeginTabItem(tab.name.c_str(), NULL, flag)) {
-                if (ImGui::IsItemActive()) active_tab_name = tab.name;
-                tab.fn();
-                ImGui::EndTabItem();
-            }
-        }
-
-        ImGui::EndTabBar();
+        update_and_draw_tabs();
+        update_and_draw_debug();
     }
     ImGui::End();
 

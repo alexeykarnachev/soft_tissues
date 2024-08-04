@@ -155,7 +155,8 @@ static void draw(HandleColors colors) {
     auto tr = globals::registry.get<component::Transform>(ENTITY);
     Camera3D camera = camera::CAMERA;
 
-    float radius = SIZE * Vector3Distance(camera.position, tr.position);
+    Vector3 position = tr.get_position();
+    float radius = SIZE * Vector3Distance(camera.position, position);
 
     BeginMode3D(camera);
     rlSetLineWidth(HANDLE_DRAW_THICKNESS);
@@ -167,9 +168,9 @@ static void draw(HandleColors colors) {
         float offset = radius * PLANE_HANDLE_OFFSET;
         float size = radius * PLANE_HANDLE_SIZE;
 
-        Vector3 px = Vector3Add(tr.position, {0.0f, offset, offset});
-        Vector3 py = Vector3Add(tr.position, {offset, 0.0f, offset});
-        Vector3 pz = Vector3Add(tr.position, {offset, offset, 0.0f});
+        Vector3 px = Vector3Add(position, {0.0f, offset, offset});
+        Vector3 py = Vector3Add(position, {offset, 0.0f, offset});
+        Vector3 pz = Vector3Add(position, {offset, offset, 0.0f});
 
         Handle hx = {px, Z_AXIS, colors.plane.x, Vector3DistanceSqr(px, camera.position)};
         Handle hy = {py, Y_AXIS, colors.plane.y, Vector3DistanceSqr(py, camera.position)};
@@ -194,12 +195,10 @@ static void draw(HandleColors colors) {
         SetShaderValue(
             SHADER, SHADER_CAMERA_POSITION_LOC, &camera.position, SHADER_UNIFORM_VEC3
         );
-        SetShaderValue(
-            SHADER, SHADER_GIZMO_POSITION_LOC, &tr.position, SHADER_UNIFORM_VEC3
-        );
-        DrawCircle3D(tr.position, radius, Y_AXIS, 90.0f, colors.rot.x);
-        DrawCircle3D(tr.position, radius, X_AXIS, 90.0f, colors.rot.y);
-        DrawCircle3D(tr.position, radius, X_AXIS, 0.0f, colors.rot.z);
+        SetShaderValue(SHADER, SHADER_GIZMO_POSITION_LOC, &position, SHADER_UNIFORM_VEC3);
+        DrawCircle3D(position, radius, Y_AXIS, 90.0f, colors.rot.x);
+        DrawCircle3D(position, radius, X_AXIS, 90.0f, colors.rot.y);
+        DrawCircle3D(position, radius, X_AXIS, 0.0f, colors.rot.z);
         EndShaderMode();
     }
 
@@ -210,9 +209,9 @@ static void draw(HandleColors colors) {
         float tip_length = radius * AXIS_HANDLE_TIP_LENGTH;
         float tip_radius = radius * AXIS_HANDLE_TIP_RADIUS;
 
-        Vector3 px = Vector3Add(tr.position, Vector3Scale(X_AXIS, length));
-        Vector3 py = Vector3Add(tr.position, Vector3Scale(Y_AXIS, length));
-        Vector3 pz = Vector3Add(tr.position, Vector3Scale(Z_AXIS, length));
+        Vector3 px = Vector3Add(position, Vector3Scale(X_AXIS, length));
+        Vector3 py = Vector3Add(position, Vector3Scale(Y_AXIS, length));
+        Vector3 pz = Vector3Add(position, Vector3Scale(Z_AXIS, length));
 
         Handle hx = {px, X_AXIS, colors.axis.x, Vector3DistanceSqr(px, camera.position)};
         Handle hy = {py, Y_AXIS, colors.axis.y, Vector3DistanceSqr(py, camera.position)};
@@ -222,7 +221,7 @@ static void draw(HandleColors colors) {
         for (int i = 0; i < 3; ++i) {
             Handle *h = &handles.arr[i];
             Vector3 tip_end = Vector3Add(h->position, Vector3Scale(h->axis, tip_length));
-            DrawLine3D(tr.position, h->position, h->color);
+            DrawLine3D(position, h->position, h->color);
             DrawCylinderEx(h->position, tip_end, tip_radius, 0.0f, 16, h->color);
         }
     }
@@ -235,8 +234,8 @@ static void draw(HandleColors colors) {
         rlSetLineWidth(ACTIVE_AXIS_DRAW_THICKNESS);
         Vector3 halfAxisLine = Vector3Scale(UPDATE.axis, 1000.0f);
         DrawLine3D(
-            Vector3Subtract(tr.position, halfAxisLine),
-            Vector3Add(tr.position, halfAxisLine),
+            Vector3Subtract(position, halfAxisLine),
+            Vector3Add(position, halfAxisLine),
             WHITE
         );
         EndMode3D();
@@ -246,7 +245,7 @@ static void draw(HandleColors colors) {
     // Draw white line from the gizmo's center to the mouse cursor when rotating
     if (STATE == ACTIVE_ROT) {
         rlSetLineWidth(ACTIVE_AXIS_DRAW_THICKNESS);
-        DrawLineV(GetWorldToScreen(tr.position, camera), GetMousePosition(), WHITE);
+        DrawLineV(GetWorldToScreen(position, camera), GetMousePosition(), WHITE);
     }
 }
 
@@ -389,11 +388,12 @@ static void update() {
     bool is_mouse_moved = (fabs(delta.x) + fabs(delta.y)) > EPSILON;
     if (!is_mouse_moved) return;
 
+    Vector3 position = tr.get_position();
     Camera3D camera = camera::CAMERA;
     switch (STATE) {
         case ACTIVE_ROT: {
             Vector2 p1 = Vector2Subtract(
-                GetMousePosition(), GetWorldToScreen(tr.position, camera)
+                GetMousePosition(), GetWorldToScreen(position, camera)
             );
             Vector2 p0 = Vector2Subtract(p1, GetMouseDelta());
 
@@ -409,7 +409,7 @@ static void update() {
             }
 
             // If we look at the gizmo from behind, we should flip the rotation
-            if (Vector3DotProduct(UPDATE.axis, tr.position)
+            if (Vector3DotProduct(UPDATE.axis, position)
                 > Vector3DotProduct(UPDATE.axis, camera.position)) {
                 angle *= -1;
             }
@@ -417,15 +417,13 @@ static void update() {
             UPDATE.angle = angle;
         } break;
         case ACTIVE_AXIS: {
-            Vector2 p = Vector2Add(
-                GetWorldToScreen(tr.position, camera), GetMouseDelta()
-            );
+            Vector2 p = Vector2Add(GetWorldToScreen(position, camera), GetMouseDelta());
             Ray r = GetMouseRay(p, camera);
 
             // Get two lines nearest point
             Vector3 line0point0 = camera.position;
             Vector3 line0point1 = Vector3Add(line0point0, r.direction);
-            Vector3 line1point0 = tr.position;
+            Vector3 line1point0 = position;
             Vector3 line1point1 = Vector3Add(line1point0, UPDATE.axis);
             Vector3 vec0 = Vector3Subtract(line0point1, line0point0);
             Vector3 vec1 = Vector3Subtract(line1point1, line1point0);
@@ -438,12 +436,12 @@ static void update() {
                 Vector3 w = Vector3Subtract(line1point0, line0point0);
                 float k = -Vector3DotProduct(plane_normal, w) / dot;
                 Vector3 isect = Vector3Add(line1point0, Vector3Scale(vec1, k));
-                UPDATE.translation = Vector3Subtract(isect, tr.position);
+                UPDATE.translation = Vector3Subtract(isect, position);
             }
         } break;
         case ACTIVE_PLANE: {
             Vector2 p = Vector2Add(
-                GetWorldToScreen(tr.position, camera), GetMouseDelta()
+                GetWorldToScreen(position, camera), GetMouseDelta()
             );
             Ray r = GetMouseRay(p, camera);
 
@@ -453,14 +451,14 @@ static void update() {
                                 + r.direction.z * UPDATE.axis.z;
 
             if (fabs(denominator) > EPSILON) {
-                float t = ((tr.position.x - r.position.x) * UPDATE.axis.x
-                           + (tr.position.y - r.position.y) * UPDATE.axis.y
-                           + (tr.position.z - r.position.z) * UPDATE.axis.z)
+                float t = ((position.x - r.position.x) * UPDATE.axis.x
+                           + (position.y - r.position.y) * UPDATE.axis.y
+                           + (position.z - r.position.z) * UPDATE.axis.z)
                           / denominator;
 
                 if (t > 0) {
                     Vector3 c = Vector3Add(r.position, Vector3Scale(r.direction, t));
-                    UPDATE.translation = Vector3Subtract(c, tr.position);
+                    UPDATE.translation = Vector3Subtract(c, position);
                 }
             }
         } break;
@@ -470,7 +468,7 @@ static void update() {
     // -------------------------------------------------------------------
     // update entity
     if (Vector3Length(UPDATE.translation) > EPSILON) {
-        tr.position = Vector3Add(tr.position, UPDATE.translation);
+        tr._position = Vector3Add(tr._position, UPDATE.translation);
     }
 
     if (std::abs(UPDATE.angle) > EPSILON) {

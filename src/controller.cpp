@@ -35,7 +35,7 @@ void update_translation() {
 
     Vector3 step = Vector3Scale(dir, globals::FRAME_DT * globals::PLAYER_MOVEMENT_SPEED);
 
-    tr.position = Vector3Add(tr.position, step);
+    tr.step(step);
 }
 
 void update_rotation() {
@@ -52,12 +52,12 @@ void update_rotation() {
     auto player = globals::registry.view<component::Player>().front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
-    float pitch = tr.rotation.x + pitch_delta;
+    float pitch = tr._rotation.x + pitch_delta;
     pitch = Clamp(pitch, -0.5 * PI + 0.025, 0.5 * PI - 0.025);
-    float yaw = tr.rotation.y + yaw_delta;
+    float yaw = tr._rotation.y + yaw_delta;
 
-    tr.rotation.x = pitch;
-    tr.rotation.y = yaw;
+    tr._rotation.x = pitch;
+    tr._rotation.y = yaw;
 }
 
 void update() {

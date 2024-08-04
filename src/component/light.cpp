@@ -33,7 +33,8 @@ void Light::set_shader_uniform(Shader shader, int idx) {
     int color_loc = get_uniform_loc(shader, idx, "color");
     int intensity_loc = get_uniform_loc(shader, idx, "intensity");
 
-    SetShaderValue(shader, position_loc, &tr.position, SHADER_UNIFORM_VEC3);
+    Vector3 position = tr.get_position();
+    SetShaderValue(shader, position_loc, &position, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, type_loc, &this->type, SHADER_UNIFORM_INT);
     SetShaderValue(shader, color_loc, &color, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, intensity_loc, &this->intensity, SHADER_UNIFORM_FLOAT);
@@ -75,6 +76,15 @@ void Light::set_shader_uniform(Shader shader, int idx) {
         } break;
         case Type::AMBIENT: {
         } break;
+    }
+}
+
+std::string get_type_name(Type type) {
+    switch (type) {
+        case Type::POINT: return "POINT";
+        case Type::DIRECTIONAL: return "DIRECTIONAL";
+        case Type::SPOT: return "SPOT";
+        case Type::AMBIENT: return "AMBIENT";
     }
 }
 

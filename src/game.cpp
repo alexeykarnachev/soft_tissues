@@ -38,20 +38,12 @@ static void load() {
     editor::load();
     world::load();
 
-    prefabs::spawn_player(world::ORIGIN);
+    auto player = prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
-    // light
+    // flashlight
     {
-        // Vector3 position = {10, 10, 10};
-        // light::Type type = light::Type::POINT;
-        // Color color = BLUE;
-        // float intensity = 5.0;
-        // Vector3 attenuation = {1.0, 0.1, 0.01};
-        // light::Params params = {.point = {.attenuation = attenuation}};
-        // prefabs::spawn_light(position, type, color, intensity, params);
-
-        Vector3 position = Vector3Zero();
+        Vector3 position = {0.0, globals::PLAYER_HEIGHT, 0.0};
         auto type = light::Type::SPOT;
         Color color = {255, 255, 220, 255};
         auto intensity = 50.0;
@@ -67,10 +59,11 @@ static void load() {
                    .inner_cutoff = inner_cutoff,
                    .outer_cutoff = outer_cutoff,
                }};
-        prefabs::spawn_light(position, type, color, intensity, params);
-
-        prefabs::spawn_ambient_light(WHITE, 0.1);
+        auto light = prefabs::spawn_light(position, type, color, intensity, params);
+        globals::registry.emplace<component::Parent>(light, player);
     }
+
+    prefabs::spawn_ambient_light(WHITE, 0.1);
 }
 
 static void unload() {
@@ -102,19 +95,12 @@ static void update() {
 
     camera::update();
 
-    // --------------------------
-    // TODO: move this from here
-    auto player = globals::registry.view<component::Player>().front();
-    auto player_tr = globals::registry.get<component::Transform>(player);
     for (auto entity : globals::registry.view<light::Light>()) {
         auto &light_tr = globals::registry.get<component::Transform>(entity);
-        light_tr.position = player_tr.position;
-        light_tr.position.y += globals::PLAYER_HEIGHT;
-
         auto &light = globals::registry.get<component::Light>(entity);
-        light.params.spot.direction = player_tr.get_forward();
+
+        light.params.spot.direction = light_tr.get_forward();
     }
-    // --------------------------
 }
 
 void draw_cursor() {
@@ -130,7 +116,8 @@ void draw_player() {
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
 
-    Matrix t = MatrixTranslate(tr.position.x, tr.position.y, tr.position.z);
+    Vector3 position = tr.get_position();
+    Matrix t = MatrixTranslate(position.x, position.y, position.z);
     Matrix r = QuaternionToMatrix(tr.get_quaternion());
     Matrix transform = MatrixMultiply(r, t);
 

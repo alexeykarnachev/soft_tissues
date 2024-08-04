@@ -59,7 +59,7 @@ static void update_first_person_mode() {
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
 
-    Vector3 position = tr.position;
+    Vector3 position = tr.get_position();
     position.y += globals::PLAYER_HEIGHT;
 
     Vector3 forward = tr.get_forward();
