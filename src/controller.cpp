@@ -7,7 +7,7 @@
 #include "raylib/rcamera.h"
 #include <cstdio>
 
-namespace soft_tissues::movement {
+namespace soft_tissues::controller {
 
 void update_translation() {
     Vector3 dir = Vector3Zero();
@@ -65,4 +65,4 @@ void update() {
     update_rotation();
 }
 
-}  // namespace soft_tissues::movement
+}  // namespace soft_tissues::controller

@@ -97,7 +97,7 @@ static void update() {
     globals::update();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
-        movement::update();
+        controller::update();
     }
 
     camera::update();
@@ -106,7 +106,6 @@ static void update() {
     // TODO: move this from here
     auto player = globals::registry.view<component::Player>().front();
     auto player_tr = globals::registry.get<component::Transform>(player);
-    int light_idx = 0;
     for (auto entity : globals::registry.view<light::Light>()) {
         auto &light_tr = globals::registry.get<component::Transform>(entity);
         light_tr.position = player_tr.position;

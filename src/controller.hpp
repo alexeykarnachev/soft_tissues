@@ -1,6 +1,6 @@
 #pragma once
 
-namespace soft_tissues::movement {
+namespace soft_tissues::controller {
 
 void update();
 

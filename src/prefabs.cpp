@@ -9,6 +9,15 @@
 
 namespace soft_tissues::prefabs {
 
+entt::entity spawn_entity() {
+    auto entity = globals::registry.create();
+    auto transform = component::Transform(entity, {0.0, 0.0, 0.0});
+
+    globals::registry.emplace<component::Transform>(entity, transform);
+
+    return entity;
+}
+
 entt::entity spawn_player(Vector2 position) {
     auto entity = globals::registry.create();
     auto transform = component::Transform(entity, {position.x, 0.0, position.y});

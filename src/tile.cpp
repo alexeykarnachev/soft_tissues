@@ -3,7 +3,6 @@
 #include "pbr.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
-#include "resources.hpp"
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
