@@ -63,7 +63,7 @@ float mock_usage() {
         f += u_lights[0].intensity;
     }
 
-    return abs(0.0000001 * f);
+    return abs(EPSILON * f);
 }
 
 vec3 SchlickFresnel(float hDotV, vec3 refl) {
@@ -74,7 +74,7 @@ float GgxDistribution(float nDotH, float roughness) {
     float a = roughness * roughness * roughness * roughness;
     float d = nDotH * nDotH * (a - 1.0) + 1.0;
     d = PI * d * d;
-    return a / max(d, 0.0000001);
+    return a / max(d, EPSILON);
 }
 
 float GeomSmith(float nDotV, float nDotL, float roughness) {
@@ -167,7 +167,7 @@ vec3 get_pbr_color() {
         float G = GeomSmith(nDotV, nDotL, roughness);
         vec3 F = SchlickFresnel(hDotV, base_reflection);
 
-        vec3 spec = (D * G * F) / (4.0 * nDotV * nDotL);
+        vec3 spec = (D * G * F) / max(4.0 * nDotV * nDotL, EPSILON);
         vec3 kD = (1.0 - F) * (1.0 - metallic);
 
         light_total += (kD * albedo / PI + spec) * radiance * nDotL;
