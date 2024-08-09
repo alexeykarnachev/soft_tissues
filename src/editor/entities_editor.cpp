@@ -68,8 +68,53 @@ static void update_and_draw_light() {
         ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
 
         // type
-        auto type_name = light::get_type_name(light->type);
-        ImGui::Text("Type: %s", type_name.c_str());
+        auto selected_type_name = light::get_type_name(light->type);
+        if (ImGui::BeginCombo("Type", selected_type_name.c_str())) {
+            auto type = light::Type::POINT;
+            auto type_name = light::get_type_name(type);
+            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
+                light->type = type;
+                light->params.point.attenuation = {1.0, 1.5, 0.75};
+
+                light->color = GREEN;
+                light->intensity = 20.0;
+            }
+
+            type = light::Type::DIRECTIONAL;
+            type_name = light::get_type_name(type);
+            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
+                light->type = type;
+                light->params.directional.direction = {0.0, -1.0, 0.0};
+
+                light->color = YELLOW;
+                light->intensity = 5.0;
+            }
+
+            type = light::Type::SPOT;
+            type_name = light::get_type_name(type);
+            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
+                light->type = type;
+                light->params.spot.attenuation = {1.0, 1.2, 0.2};
+                light->params.spot.direction = {0.0, -1.0, 0.0};
+                light->params.spot.inner_cutoff = 0.95;
+                light->params.spot.outer_cutoff = 0.8;
+
+                light->color = {255, 255, 220, 255};
+                light->intensity = 50.0;
+            }
+
+            type = light::Type::AMBIENT;
+            type_name = light::get_type_name(type);
+            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
+                light->type = type;
+                light->params.ambient = {};
+
+                light->color = WHITE;
+                light->intensity = 0.1;
+            }
+
+            ImGui::EndCombo();
+        }
 
         switch (light->type) {
             case light::Type::POINT: {

@@ -30,6 +30,7 @@ struct Spot {
 };
 
 typedef union {
+    Ambient ambient;
     Point point;
     Directional directional;
     Spot spot;
@@ -38,7 +39,7 @@ typedef union {
 class Light {
 public:
     const entt::entity entity;
-    const Type type;
+    Type type;
 
     Color color;
     float intensity;
