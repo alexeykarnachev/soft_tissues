@@ -48,14 +48,12 @@ static void load() {
         Color color = {255, 255, 220, 255};
         auto intensity = 50.0;
         Vector3 attenuation = {1.0, 1.2, 0.2};
-        Vector3 direction = {0.0, 0.0, -1.0};
         float inner_cutoff = 0.95;
         float outer_cutoff = 0.80;
 
         light::Params params
             = {.spot = {
                    .attenuation = attenuation,
-                   .direction = direction,
                    .inner_cutoff = inner_cutoff,
                    .outer_cutoff = outer_cutoff,
                }};
@@ -94,13 +92,6 @@ static void update() {
     }
 
     camera::update();
-
-    for (auto entity : globals::registry.view<light::Light>()) {
-        auto &light_tr = globals::registry.get<component::Transform>(entity);
-        auto &light = globals::registry.get<component::Light>(entity);
-
-        light.params.spot.direction = light_tr.get_forward();
-    }
 }
 
 void draw_cursor() {

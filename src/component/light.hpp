@@ -12,28 +12,24 @@ enum class Type {
     AMBIENT,
 };
 
-struct Ambient {};
-
 struct Point {
     Vector3 attenuation;
 };
 
-struct Directional {
-    Vector3 direction;
-};
+struct Directional {};
 
 struct Spot {
     Vector3 attenuation;
-    Vector3 direction;
     float inner_cutoff;
     float outer_cutoff;
 };
+struct Ambient {};
 
 typedef union {
-    Ambient ambient;
     Point point;
     Directional directional;
     Spot spot;
+    Ambient ambient;
 } Params;
 
 class Light {

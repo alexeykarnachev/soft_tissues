@@ -4,6 +4,7 @@
 #include "../utils.hpp"
 #include "component.hpp"
 #include "raylib/raylib.h"
+#include <stdexcept>
 #include <string>
 
 namespace soft_tissues::light {
@@ -24,6 +25,7 @@ static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
 
 void Light::set_shader_uniform(Shader shader, int idx) {
     auto tr = globals::registry.get<component::Transform>(this->entity);
+    Vector3 direction = tr.get_forward();
     Vector4 color = ColorNormalize(this->color);
 
     // -------------------------------------------------------------------
@@ -52,9 +54,6 @@ void Light::set_shader_uniform(Shader shader, int idx) {
         case Type::DIRECTIONAL: {
             int direction_loc = get_uniform_loc(shader, idx, "direction");
 
-            // TODO: provide direction via light transform component
-            Vector3 direction = this->params.directional.direction;
-
             SetShaderValue(shader, direction_loc, &direction, SHADER_UNIFORM_VEC3);
         } break;
         case Type::SPOT: {
@@ -64,8 +63,6 @@ void Light::set_shader_uniform(Shader shader, int idx) {
             int outer_cutoff_loc = get_uniform_loc(shader, idx, "outer_cutoff");
 
             Vector3 attenuation = this->params.spot.attenuation;
-            // TODO: provide direction via light transform component
-            Vector3 direction = this->params.spot.direction;
             float inner_cutoff = this->params.spot.inner_cutoff;
             float outer_cutoff = this->params.spot.outer_cutoff;
 
@@ -85,6 +82,11 @@ std::string get_type_name(Type type) {
         case Type::DIRECTIONAL: return "DIRECTIONAL";
         case Type::SPOT: return "SPOT";
         case Type::AMBIENT: return "AMBIENT";
+        default: {
+            throw std::runtime_error(
+                "get_type_name is not implemented for this light type"
+            );
+        }
     }
 }
 

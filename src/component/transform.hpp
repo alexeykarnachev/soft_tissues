@@ -24,6 +24,8 @@ public:
     Vector3 get_forward();
     Vector3 get_right();
 
+    void set_forward(Vector3 forward);
+
     void step(Vector3 step);
     void rotate_by_axis_angle(Vector3 axis, float angle);
 };

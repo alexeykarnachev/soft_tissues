@@ -62,6 +62,16 @@ Vector3 Transform::get_right() {
     return Vector3RotateByQuaternion({1.0, 0.0, 0.0}, this->get_quaternion());
 }
 
+void Transform::set_forward(Vector3 forward) {
+    Vector3 old_forward = this->get_forward();
+    auto new_q = QuaternionFromVector3ToVector3(old_forward, forward);
+    auto my_q = QuaternionFromEuler(
+        this->_rotation.x, this->_rotation.y, this->_rotation.z
+    );
+    auto q = QuaternionMultiply(new_q, my_q);
+    this->_rotation = QuaternionToEuler(q);
+}
+
 void Transform::step(Vector3 step) {
     this->_position = Vector3Add(this->_position, step);
 }
