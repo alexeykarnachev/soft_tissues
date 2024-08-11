@@ -62,9 +62,17 @@ void update_rotation() {
     tr._rotation.y = yaw;
 }
 
+void update_flashlight() {
+    auto flashlight = globals::registry.view<component::Flashlight>().front();
+    auto &light = globals::registry.get<component::Light>(flashlight);
+
+    if (IsKeyPressed(KEY_L)) light.toggle();
+}
+
 void update() {
     update_translation();
     update_rotation();
+    update_flashlight();
 }
 
 }  // namespace soft_tissues::controller

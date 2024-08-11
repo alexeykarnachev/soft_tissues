@@ -10,6 +10,7 @@ using Transform = transform::Transform;
 using Light = light::Light;
 
 struct Player {};
+struct Flashlight {};
 struct Parent {
     entt::entity entity;
 };

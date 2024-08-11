@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../component/component.hpp"
 #include "entt/entity/fwd.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
@@ -43,6 +44,8 @@ namespace utils {
 
 void draw_room_perimiter(int room_id, Color color);
 void draw_room_perimiter(int room_id, Color solid_color, Color door_color);
+void update_and_draw_common_light_params(component::Light *light);
+void update_and_draw_spot_light_params(component::Light *light);
 
 }  // namespace utils
 

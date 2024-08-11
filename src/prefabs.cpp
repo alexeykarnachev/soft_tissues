@@ -2,6 +2,7 @@
 
 #include "component/component.hpp"
 #include "component/light.hpp"
+#include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
@@ -38,6 +39,27 @@ entt::entity spawn_light(
 
     globals::registry.emplace<component::Transform>(entity, transform);
     globals::registry.emplace<component::Light>(entity, light);
+
+    return entity;
+}
+
+entt::entity spawn_flashlight(Vector3 position) {
+    static const light::Type type = light::Type::SPOT;
+    static const Color color = {255, 255, 220, 255};
+    static const auto intensity = 50.0;
+
+    static const Vector3 attenuation = {1.0, 1.2, 0.2};
+    static const float inner_cutoff = 0.95;
+    static const float outer_cutoff = 0.80;
+
+    light::Params params
+        = {.spot = {
+               .attenuation = attenuation,
+               .inner_cutoff = inner_cutoff,
+               .outer_cutoff = outer_cutoff,
+           }};
+    auto entity = spawn_light(position, type, color, intensity, params);
+    globals::registry.emplace<component::Flashlight>(entity);
 
     return entity;
 }

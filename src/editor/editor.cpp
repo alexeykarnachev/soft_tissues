@@ -1,6 +1,7 @@
 #include "editor.hpp"
 
 #include "../camera.hpp"
+#include "../component/component.hpp"
 #include "../globals.hpp"
 #include "GLFW/glfw3.h"
 #include "imgui/imgui.h"
@@ -84,9 +85,19 @@ static void update_and_draw_tabs() {
 }
 
 static void update_and_draw_debug() {
+    // -------------------------------------------------------------------
+    // graphics
     ImGui::SeparatorText("Graphics");
-
     ImGui::Checkbox("is_light_enabled", &globals::GRAPHICS_OPTIONS.is_light_enabled);
+
+    // -------------------------------------------------------------------
+    // flashlight
+    ImGui::SeparatorText("Flashlight");
+    auto flashlight = globals::registry.view<component::Flashlight>().front();
+    auto &light = globals::registry.get<component::Light>(flashlight);
+
+    utils::update_and_draw_common_light_params(&light);
+    utils::update_and_draw_spot_light_params(&light);
 }
 
 void update_and_draw() {

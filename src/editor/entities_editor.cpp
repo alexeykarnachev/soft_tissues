@@ -57,16 +57,7 @@ static void update_and_draw_light() {
             globals::registry.emplace<component::Light>(ENTITY, light);
         }
     } else {
-        // color
-        auto color = ColorNormalize(light->color);
-        float *color_p = (float *)&color;
-        if (ImGui::ColorEdit3("Color", color_p)) {
-            light->color = ColorFromNormalized(color);
-        }
-
-        // intensity
-        float *v = &light->intensity;
-        ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
+        utils::update_and_draw_common_light_params(light);
 
         // type
         auto selected_type_name = light::get_type_name(light->type);
@@ -126,14 +117,7 @@ static void update_and_draw_light() {
                 ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
             } break;
             case light::Type::SPOT: {
-                float *attenuation = (float *)&light->params.spot.attenuation;
-                ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
-
-                float *inner_cutoff = &light->params.spot.inner_cutoff;
-                ImGui::SliderFloat("Inner cutoff", inner_cutoff, 0.0, 1.0);
-
-                float *outer_cutoff = &light->params.spot.outer_cutoff;
-                ImGui::SliderFloat("Outer cutoff", outer_cutoff, 0.0, 1.0);
+                utils::update_and_draw_spot_light_params(light);
             }
             default: {
                 ImGui::TextColored({1.0, 1.0, 0.0, 1.0}, "TODO: Not implemented");

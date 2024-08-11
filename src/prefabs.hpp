@@ -11,6 +11,7 @@ entt::entity spawn_player(Vector2 position);
 entt::entity spawn_light(
     Vector3 position, light::Type type, Color color, float intensity, light::Params params
 );
+entt::entity spawn_flashlight(Vector3 position);
 entt::entity spawn_ambient_light(Color color, float intenstiy);
 
 }  // namespace soft_tissues::prefabs

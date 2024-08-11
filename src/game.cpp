@@ -38,30 +38,16 @@ static void load() {
     editor::load();
     world::load();
 
+    // player
     auto player = prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
-// flashlight
-#if 0
+    // flashlight
     {
         Vector3 position = {0.0, globals::PLAYER_HEIGHT, 0.0};
-        auto type = light::Type::SPOT;
-        Color color = {255, 255, 220, 255};
-        auto intensity = 50.0;
-        Vector3 attenuation = {1.0, 1.2, 0.2};
-        float inner_cutoff = 0.95;
-        float outer_cutoff = 0.80;
-
-        light::Params params
-            = {.spot = {
-                   .attenuation = attenuation,
-                   .inner_cutoff = inner_cutoff,
-                   .outer_cutoff = outer_cutoff,
-               }};
-        auto light = prefabs::spawn_light(position, type, color, intensity, params);
+        auto light = prefabs::spawn_flashlight(position);
         globals::registry.emplace<component::Parent>(light, player);
     }
-#endif
 
     prefabs::spawn_ambient_light(WHITE, 0.1);
 }

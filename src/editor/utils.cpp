@@ -1,6 +1,8 @@
 #include "../utils.hpp"
 
+#include "../component/component.hpp"
 #include "../world.hpp"
+#include "imgui/imgui.h"
 #include <stdexcept>
 
 namespace soft_tissues::editor::utils {
@@ -73,6 +75,30 @@ void draw_room_perimiter(int room_id, Color solid_color, Color door_color) {
 
 void draw_room_perimiter(int room_id, Color color) {
     draw_room_perimiter(room_id, color, color);
+}
+
+void update_and_draw_common_light_params(component::Light *light) {
+    // color
+    auto color = ColorNormalize(light->color);
+    float *color_p = (float *)&color;
+    if (ImGui::ColorEdit3("Color", color_p)) {
+        light->color = ColorFromNormalized(color);
+    }
+
+    // intensity
+    float *v = &light->intensity;
+    ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
+}
+
+void update_and_draw_spot_light_params(component::Light *light) {
+    float *attenuation = (float *)&light->params.spot.attenuation;
+    ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
+
+    float *inner_cutoff = &light->params.spot.inner_cutoff;
+    ImGui::SliderFloat("Inner cutoff", inner_cutoff, 0.0, 1.0);
+
+    float *outer_cutoff = &light->params.spot.outer_cutoff;
+    ImGui::SliderFloat("Outer cutoff", outer_cutoff, 0.0, 1.0);
 }
 
 }  // namespace soft_tissues::editor::utils
