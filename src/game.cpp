@@ -41,7 +41,8 @@ static void load() {
     auto player = prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
-    // flashlight
+// flashlight
+#if 0
     {
         Vector3 position = {0.0, globals::PLAYER_HEIGHT, 0.0};
         auto type = light::Type::SPOT;
@@ -60,6 +61,7 @@ static void load() {
         auto light = prefabs::spawn_light(position, type, color, intensity, params);
         globals::registry.emplace<component::Parent>(light, player);
     }
+#endif
 
     prefabs::spawn_ambient_light(WHITE, 0.1);
 }

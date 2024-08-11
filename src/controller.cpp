@@ -10,6 +10,8 @@
 namespace soft_tissues::controller {
 
 void update_translation() {
+    // -------------------------------------------------------------------
+    // moving
     Vector3 dir = Vector3Zero();
     if (IsKeyDown(KEY_W)) dir.z -= 1.0;
     if (IsKeyDown(KEY_S)) dir.z += 1.0;

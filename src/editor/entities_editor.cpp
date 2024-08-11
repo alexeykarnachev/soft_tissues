@@ -98,7 +98,7 @@ static void update_and_draw_light() {
                 light->type = type;
                 light->params.spot.attenuation = {1.0, 1.2, 0.2};
                 light->params.spot.inner_cutoff = 0.95;
-                light->params.spot.outer_cutoff = 0.8;
+                light->params.spot.outer_cutoff = 0.80;
 
                 light->color = {255, 255, 220, 255};
                 light->intensity = 50.0;
@@ -125,6 +125,16 @@ static void update_and_draw_light() {
                 float *attenuation = (float *)&light->params.point.attenuation;
                 ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
             } break;
+            case light::Type::SPOT: {
+                float *attenuation = (float *)&light->params.spot.attenuation;
+                ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
+
+                float *inner_cutoff = &light->params.spot.inner_cutoff;
+                ImGui::SliderFloat("Inner cutoff", inner_cutoff, 0.0, 1.0);
+
+                float *outer_cutoff = &light->params.spot.outer_cutoff;
+                ImGui::SliderFloat("Outer cutoff", outer_cutoff, 0.0, 1.0);
+            }
             default: {
                 ImGui::TextColored({1.0, 1.0, 0.0, 1.0}, "TODO: Not implemented");
             } break;

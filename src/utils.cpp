@@ -20,6 +20,8 @@ Direction flip_direction(Direction direction) {
         case WEST: return EAST;
         case EAST: return WEST;
     }
+
+    return NORTH;
 }
 
 // -----------------------------------------------------------------------

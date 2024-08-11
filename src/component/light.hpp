@@ -35,6 +35,8 @@ typedef union {
 class Light {
 public:
     const entt::entity entity;
+    bool is_enabled = true;
+
     Type type;
 
     Color color;
@@ -43,6 +45,7 @@ public:
 
     Light(entt::entity entity, Type type, Color color, float intensity, Params params);
 
+    void toggle();
     void set_shader_uniform(Shader shader, int idx);
 };
 

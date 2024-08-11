@@ -23,6 +23,10 @@ static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
     return utils::get_uniform_loc(shader, name);
 }
 
+void Light::toggle() {
+    this->is_enabled ^= true;
+}
+
 void Light::set_shader_uniform(Shader shader, int idx) {
     auto tr = globals::registry.get<component::Transform>(this->entity);
     Vector3 direction = tr.get_forward();

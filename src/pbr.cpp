@@ -104,6 +104,8 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
         int light_idx = 0;
         for (auto entity : globals::registry.view<light::Light>()) {
             auto light = globals::registry.get<light::Light>(entity);
+            if (!light.is_enabled) continue;
+
             light.set_shader_uniform(shader, light_idx++);
         }
 
