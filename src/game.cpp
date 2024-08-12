@@ -2,7 +2,6 @@
 
 #include "camera.hpp"
 #include "component/component.hpp"
-#include "component/light.hpp"
 #include "component/transform.hpp"
 #include "controller.hpp"
 #include "editor/editor.hpp"
@@ -13,6 +12,7 @@
 #include "raylib/rlgl.h"
 #include "resources.hpp"
 #include "world.hpp"
+#include <cstdio>
 
 namespace soft_tissues::game {
 
@@ -91,6 +91,14 @@ void draw_cursor() {
     DrawCircle(x, y, radius, color);
 }
 
+void draw_light_shells() {
+    auto view = globals::registry.view<component::Light>();
+    for (auto entity : view) {
+        auto tr = globals::registry.get<component::Transform>(entity);
+        DrawSphere(tr.get_position(), 0.2, WHITE);
+    }
+}
+
 void draw_player() {
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
@@ -106,6 +114,14 @@ void draw_player() {
 }
 
 static void draw() {
+    // -------------------------------------------------------------------
+    // entity picking
+    if (globals::GAME_STATE == globals::GameState::EDITOR) {
+        editor::update_hovered_entity();
+    }
+
+    // -------------------------------------------------------------------
+    // main screen
     BeginDrawing();
     rlEnableDepthTest();
     ClearBackground(BLANK);
@@ -114,6 +130,7 @@ static void draw() {
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
+            draw_light_shells();
             world::draw_grid();
         }
 

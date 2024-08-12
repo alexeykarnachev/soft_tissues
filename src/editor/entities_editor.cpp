@@ -51,7 +51,7 @@ static void update_and_draw_light() {
     ImGui::SeparatorText("Light");
 
     if (light == NULL) {
-        if (ImGui::Button("Add [L]ight")) {
+        if (gui::button("Add [L]ight") || IsKeyPressed(KEY_L)) {
             light::Params params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
             light::Light light(ENTITY, light::Type::POINT, GREEN, 20.0, params);
             globals::registry.emplace<component::Light>(ENTITY, light);

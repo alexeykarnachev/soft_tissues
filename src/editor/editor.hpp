@@ -7,10 +7,13 @@
 
 namespace soft_tissues::editor {
 
+extern entt::entity HOVERED_ENTITY;
+
 void load();
 void unload();
 
 void update_and_draw();
+void update_hovered_entity();
 
 // -----------------------------------------------------------------------
 namespace rooms_editor {
@@ -22,6 +25,7 @@ void update_and_draw();
 // -----------------------------------------------------------------------
 namespace entities_editor {
 
+void update_entity_picking();
 void update_and_draw();
 
 }  // namespace entities_editor
