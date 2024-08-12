@@ -57,22 +57,6 @@ void main() {
 }
 )frag";
 
-enum State {
-    COLD,
-
-    HOT,
-
-    HOT_ROT,
-    HOT_AXIS,
-    HOT_PLANE,
-
-    ACTIVE,
-
-    ACTIVE_ROT,
-    ACTIVE_AXIS,
-    ACTIVE_PLANE,
-};
-
 struct Update {
     Vector3 translation;
     Vector3 axis;
@@ -129,10 +113,11 @@ static int SHADER_GIZMO_POSITION_LOC;
 static unsigned int PICKING_FBO;
 static unsigned int PICKING_TEXTURE;
 
-static State STATE;
 static Update UPDATE;
 static bool IS_LOADED = false;
 static entt::entity ENTITY = entt::null;
+
+State STATE = State::COLD;
 
 static Handles sort_handles(Handle h0, Handle h1, Handle h2) {
     if (h0.distToCamera < h1.distToCamera) std::swap(h0, h1);
@@ -440,9 +425,7 @@ static void update() {
             }
         } break;
         case ACTIVE_PLANE: {
-            Vector2 p = Vector2Add(
-                GetWorldToScreen(position, camera), GetMouseDelta()
-            );
+            Vector2 p = Vector2Add(GetWorldToScreen(position, camera), GetMouseDelta());
             Ray r = GetMouseRay(p, camera);
 
             // Collide ray and plane

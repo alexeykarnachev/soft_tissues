@@ -8,6 +8,7 @@
 namespace soft_tissues::editor {
 
 extern entt::entity HOVERED_ENTITY;
+extern bool IS_GUI_INTERACTED;
 
 void load();
 void unload();
@@ -55,6 +56,26 @@ void update_and_draw_spot_light_params(component::Light *light);
 
 // -----------------------------------------------------------------------
 namespace gizmo {
+
+// TODO: Rename options like "GIZMO_COLD, ..." to avoid enum names collisions,
+// or refactor using "enum class"
+enum State {
+    COLD,
+
+    HOT,
+
+    HOT_ROT,
+    HOT_AXIS,
+    HOT_PLANE,
+
+    ACTIVE,
+
+    ACTIVE_ROT,
+    ACTIVE_AXIS,
+    ACTIVE_PLANE,
+};
+
+extern State STATE;
 
 void load();
 void unload();

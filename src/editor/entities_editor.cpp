@@ -128,17 +128,20 @@ static void update_and_draw_light() {
 }
 
 void update_and_draw() {
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        ENTITY = entt::null;
-    }
-
     // ---------------------------------------------------------------
-    bool is_remove_down = IsKeyDown(KEY_R);
+    // entity picking
+    bool is_hovered_picked = IsMouseButtonPressed(MOUSE_LEFT_BUTTON)
+                             && gizmo::STATE == gizmo::COLD && !IS_GUI_INTERACTED;
 
     if (gui::button("[N]ew Entity") || IsKeyPressed(KEY_N)) {
         ENTITY = prefabs::spawn_entity();
-        gizmo::attach(ENTITY);
+    } else if (is_hovered_picked) {
+        ENTITY = editor::HOVERED_ENTITY;
+    } else if (IsKeyPressed(KEY_ESCAPE)) {
+        ENTITY = entt::null;
     }
+
+    gizmo::attach(ENTITY);
 
     // ---------------------------------------------------------------
     // components

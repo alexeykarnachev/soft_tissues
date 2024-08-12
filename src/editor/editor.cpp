@@ -17,6 +17,8 @@
 namespace soft_tissues::editor {
 
 entt::entity HOVERED_ENTITY = entt::null;
+bool IS_GUI_INTERACTED = false;
+
 static const int PICKING_FBO_SIZE = 1024;
 static unsigned int PICKING_FBO;
 static unsigned int PICKING_TEXTURE;
@@ -139,6 +141,9 @@ static void update_and_draw_debug() {
 }
 
 void update_and_draw() {
+    auto io = ImGui::GetIO();
+    IS_GUI_INTERACTED = io.WantCaptureMouse;
+
     BeginMode3D(camera::CAMERA);
     begin();
 
