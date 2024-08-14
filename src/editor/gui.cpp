@@ -1,3 +1,5 @@
+#include "../resources.hpp"
+#include "../tile.hpp"
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
@@ -67,6 +69,60 @@ void image(Texture texture, float width, float height) {
         height = width / aspect;
     }
     ImGui::Image((ImTextureID)(long)texture.id, {width, height});
+}
+
+void material_picker(pbr::MaterialPBR *material) {
+    auto name = material->get_name();
+
+    if (ImGui::BeginMenu(name.c_str())) {
+        ImGui::Separator();
+
+        for (auto &another_material : resources::MATERIALS_PBR) {
+            auto another_name = another_material.get_name();
+            bool is_selected = name == another_name;
+
+            if (ImGui::MenuItem(another_name.c_str(), NULL, is_selected)) {
+                *material = another_material;
+            }
+            gui::image(another_material.get_texture(), 30.0);
+            ImGui::Separator();
+        }
+        ImGui::EndMenu();
+    }
+    gui::image(material->get_texture(), 150.0);
+}
+
+void tile_material_picker(
+    pbr::MaterialPBR *target_material, tile::TileMaterials *tile_materials
+) {
+    material_picker(target_material);
+    if (gui::button("[A]pply to all") || IsKeyPressed(KEY_A)) {
+        *tile_materials = pbr::MaterialPBR(*target_material);
+    }
+}
+
+void common_light_params(component::Light *light) {
+    // color
+    auto color = ColorNormalize(light->color);
+    float *color_p = (float *)&color;
+    if (ImGui::ColorEdit3("Color", color_p)) {
+        light->color = ColorFromNormalized(color);
+    }
+
+    // intensity
+    float *v = &light->intensity;
+    ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
+}
+
+void spot_light_params(component::Light *light) {
+    float *attenuation = (float *)&light->params.spot.attenuation;
+    ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
+
+    float *inner_cutoff = &light->params.spot.inner_cutoff;
+    ImGui::SliderFloat("Inner cutoff", inner_cutoff, 0.0, 1.0);
+
+    float *outer_cutoff = &light->params.spot.outer_cutoff;
+    ImGui::SliderFloat("Outer cutoff", outer_cutoff, 0.0, 1.0);
 }
 
 }  // namespace soft_tissues::editor::gui

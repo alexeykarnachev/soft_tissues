@@ -136,8 +136,8 @@ static void update_and_draw_debug() {
     auto flashlight = globals::registry.view<component::Flashlight>().front();
     auto &light = globals::registry.get<component::Light>(flashlight);
 
-    utils::update_and_draw_common_light_params(&light);
-    utils::update_and_draw_spot_light_params(&light);
+    gui::common_light_params(&light);
+    gui::spot_light_params(&light);
 }
 
 void update_and_draw() {

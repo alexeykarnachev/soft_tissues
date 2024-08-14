@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../component/component.hpp"
+#include "../tile.hpp"
 #include "entt/entity/fwd.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
@@ -41,6 +42,12 @@ bool button_color(const char *name, ImVec4 color, bool is_enabled = true);
 bool button_cancel(bool is_enabled = true);
 bool button_accept(bool is_enabled = true);
 void image(Texture texture, float width, float height = 0.0);
+void material_picker(pbr::MaterialPBR *material);
+void tile_material_picker(
+    pbr::MaterialPBR *target_material, tile::TileMaterials *tile_materials
+);
+void common_light_params(component::Light *light);
+void spot_light_params(component::Light *light);
 
 }  // namespace gui
 
@@ -49,8 +56,6 @@ namespace utils {
 
 void draw_room_perimiter(int room_id, Color color);
 void draw_room_perimiter(int room_id, Color solid_color, Color door_color);
-void update_and_draw_common_light_params(component::Light *light);
-void update_and_draw_spot_light_params(component::Light *light);
 
 }  // namespace utils
 

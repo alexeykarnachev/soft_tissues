@@ -6,7 +6,6 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <string>
 
 namespace soft_tissues::editor::rooms_editor {
 
@@ -20,32 +19,6 @@ static void select_room(int id) {
 
     // NOTE: Assume that the room materials is the first tile materials
     if (tiles.size() > 0) MATERIALS = tiles[0]->materials;
-}
-
-static void update_material_selector(pbr::MaterialPBR *material) {
-    auto name = material->get_name();
-
-    if (ImGui::BeginMenu(name.c_str())) {
-        ImGui::Separator();
-
-        for (auto &another_material : resources::MATERIALS_PBR) {
-            auto another_name = another_material.get_name();
-            bool is_selected = name == another_name;
-
-            if (ImGui::MenuItem(another_name.c_str(), NULL, is_selected)) {
-                *material = another_material;
-            }
-            gui::image(another_material.get_texture(), 30.0);
-            ImGui::Separator();
-        }
-        ImGui::EndMenu();
-    }
-
-    if (gui::button("[A]pply to all") || IsKeyPressed(KEY_A)) {
-        MATERIALS = pbr::MaterialPBR(*material);
-    }
-
-    gui::image(material->get_texture(), 150.0);
 }
 
 static void draw_tile_ghost(tile::Tile *tile, Color color) {
@@ -102,17 +75,17 @@ void update_and_draw() {
         ImGui::BeginTabBar("Materials");
 
         if (ImGui::BeginTabItem("floor")) {
-            update_material_selector(&MATERIALS.floor);
+            gui::tile_material_picker(&MATERIALS.floor, &MATERIALS);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("wall")) {
-            update_material_selector(&MATERIALS.wall);
+            gui::tile_material_picker(&MATERIALS.wall, &MATERIALS);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("ceil")) {
-            update_material_selector(&MATERIALS.ceil);
+            gui::tile_material_picker(&MATERIALS.ceil, &MATERIALS);
             ImGui::EndTabItem();
         }
 

@@ -1,6 +1,7 @@
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../prefabs.hpp"
+#include "../resources.hpp"
 #include "editor.hpp"
 #include "entt/entity/entity.hpp"
 #include "imgui/imgui.h"
@@ -41,6 +42,26 @@ static void update_and_draw_transformation() {
     }
 }
 
+static void update_and_draw_mesh() {
+    assert(ENTITY != entt::null);
+
+    auto mesh = globals::registry.try_get<component::MyMesh>(ENTITY);
+    ImGui::PushID(mesh);
+
+    ImGui::SeparatorText("Mesh");
+
+    if (mesh == NULL) {
+        if (gui::button("Add [M]esh") || IsKeyPressed(KEY_M)) {
+            mesh::MyMesh mesh(ENTITY, resources::CUBE_MESH, resources::MATERIALS_PBR[0]);
+            globals::registry.emplace<component::MyMesh>(ENTITY, mesh);
+        }
+    } else {
+        gui::material_picker(&mesh->material);
+    }
+
+    ImGui::PopID();
+}
+
 static void update_and_draw_light() {
     assert(ENTITY != entt::null);
 
@@ -57,7 +78,7 @@ static void update_and_draw_light() {
             globals::registry.emplace<component::Light>(ENTITY, light);
         }
     } else {
-        utils::update_and_draw_common_light_params(light);
+        gui::common_light_params(light);
 
         // type
         auto selected_type_name = light::get_type_name(light->type);
@@ -117,13 +138,14 @@ static void update_and_draw_light() {
                 ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
             } break;
             case light::Type::SPOT: {
-                utils::update_and_draw_spot_light_params(light);
+                gui::spot_light_params(light);
             }
             default: {
                 ImGui::TextColored({1.0, 1.0, 0.0, 1.0}, "TODO: Not implemented");
             } break;
         }
     }
+
     ImGui::PopID();
 }
 
@@ -147,6 +169,7 @@ void update_and_draw() {
     // components
     if (ENTITY != entt::null) {
         update_and_draw_transformation();
+        update_and_draw_mesh();
         update_and_draw_light();
     }
 }
