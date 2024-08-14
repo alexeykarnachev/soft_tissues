@@ -11,6 +11,7 @@ entt::entity spawn_entity();
 entt::entity spawn_player(Vector2 position);
 entt::entity spawn_mesh(Vector3 position, Mesh mesh, pbr::MaterialPBR material);
 entt::entity spawn_cube(Vector3 position, pbr::MaterialPBR material);
+entt::entity spawn_sphere(Vector3 position, pbr::MaterialPBR material);
 entt::entity spawn_light(
     Vector3 position, light::Type type, Color color, float intensity, light::Params params
 );

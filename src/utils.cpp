@@ -3,6 +3,7 @@
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
+#include <cstdio>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -267,6 +268,16 @@ Mesh gen_mesh_plane(int resolution) {
 Mesh gen_mesh_cube() {
     Mesh mesh = GenMeshCube(1.0, 1.0, 1.0);
     gen_mesh_tangents(&mesh);
+
+    return mesh;
+}
+
+Mesh gen_mesh_sphere(int n_rings, int n_slices) {
+    Mesh mesh = GenMeshSphere(0.5, n_rings, n_slices);
+
+    // TODO: Fix my gen_mesh_tangents function,
+    // for some reason it doesn't work for sphere now, then use it here.
+    GenMeshTangents(&mesh);
 
     return mesh;
 }

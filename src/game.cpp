@@ -50,11 +50,11 @@ static void load() {
         globals::registry.emplace<component::Parent>(light, player);
     }
 
-    // cube
+    // mesh
     {
-        Vector3 position = {0.0, 1.5, -3.0};
+        Vector3 position = {0.0, 1.5, -6.0};
         pbr::MaterialPBR material = resources::MATERIALS_PBR[0];
-        prefabs::spawn_cube(position, material);
+        prefabs::spawn_sphere(position, material);
     }
 
     // ambient light

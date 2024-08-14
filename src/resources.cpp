@@ -19,6 +19,7 @@ std::vector<pbr::MaterialPBR> MATERIALS_PBR;
 
 Mesh PLANE_MESH;
 Mesh CUBE_MESH;
+Mesh SPHERE_MESH;
 
 void load() {
     DEFAULT_MATERIAL = LoadMaterialDefault();
@@ -33,6 +34,7 @@ void load() {
 
     PLANE_MESH = gen_mesh_plane(2);
     CUBE_MESH = gen_mesh_cube();
+    SPHERE_MESH = gen_mesh_sphere(64, 64);
 }
 
 void unload() {

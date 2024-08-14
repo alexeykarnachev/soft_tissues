@@ -45,6 +45,10 @@ entt::entity spawn_cube(Vector3 position, pbr::MaterialPBR material) {
     return spawn_mesh(position, resources::CUBE_MESH, material);
 }
 
+entt::entity spawn_sphere(Vector3 position, pbr::MaterialPBR material) {
+    return spawn_mesh(position, resources::SPHERE_MESH, material);
+}
+
 entt::entity spawn_light(
     Vector3 position, light::Type type, Color color, float intensity, light::Params params
 ) {
