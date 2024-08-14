@@ -6,8 +6,8 @@ CXXFLAGS := -Wall -pedantic -std=c++2a -I./deps/include
 LDFLAGS := -L./deps/lib/linux -lraylib -limgui -lGL -lpthread -ldl
 
 CXXFLAGS += -O3
-CXXFLAGS += -fsanitize=address -g
-LDFLAGS += -fsanitize=address
+# CXXFLAGS += -fsanitize=address -g
+# LDFLAGS += -fsanitize=address
 
 # Directories
 SRCDIR := ./src

@@ -13,7 +13,7 @@ namespace soft_tissues::resources {
 
 using namespace utils;
 
-static Material DEFAULT_MATERIAL;
+Material DEFAULT_MATERIAL;
 
 std::vector<pbr::MaterialPBR> MATERIALS_PBR;
 
@@ -45,6 +45,8 @@ void unload() {
     }
 
     UnloadMesh(PLANE_MESH);
+    UnloadMesh(CUBE_MESH);
+    UnloadMesh(SPHERE_MESH);
 }
 
 Material get_color_material(Color color) {

@@ -3,6 +3,7 @@
 #include "../camera.hpp"
 #include "../component/component.hpp"
 #include "../globals.hpp"
+#include "../resources.hpp"
 #include "GLFW/glfw3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -177,9 +178,25 @@ void update_hovered_entity() {
     rlDisableColorBlend();
     BeginMode3D(camera::CAMERA);
     {
+        // meshes
+        auto meshes = globals::registry.view<component::MyMesh>();
+        for (auto entity : meshes) {
+            auto tr = globals::registry.get<component::Transform>(entity);
+            auto mesh = globals::registry.get<component::MyMesh>(entity);
+
+            Matrix matrix = tr.get_matrix();
+            Material material = resources::DEFAULT_MATERIAL;
+            material.maps[0].color = {id, 0, 0, 255};
+            DrawMesh(mesh.mesh, material, matrix);
+
+            entities.push_back(entity);
+            // TODO: Check for overflow
+            id += 1;
+        }
+
         // light shells
-        auto view = globals::registry.view<component::Light>();
-        for (auto entity : view) {
+        auto lights = globals::registry.view<component::Light>();
+        for (auto entity : lights) {
             auto tr = globals::registry.get<component::Transform>(entity);
             Color color = {id, 0, 0, 255};
             DrawSphere(tr.get_position(), 0.2, color);

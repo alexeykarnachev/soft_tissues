@@ -6,6 +6,8 @@
 
 namespace soft_tissues::resources {
 
+extern Material DEFAULT_MATERIAL;
+
 extern std::vector<pbr::MaterialPBR> MATERIALS_PBR;
 
 extern Mesh PLANE_MESH;
