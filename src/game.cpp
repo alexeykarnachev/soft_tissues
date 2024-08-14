@@ -6,6 +6,7 @@
 #include "controller.hpp"
 #include "editor/editor.hpp"
 #include "globals.hpp"
+#include "pbr.hpp"
 #include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -49,6 +50,14 @@ static void load() {
         globals::registry.emplace<component::Parent>(light, player);
     }
 
+    // cube
+    {
+        Vector3 position = {0.0, 1.5, -3.0};
+        pbr::MaterialPBR material = resources::MATERIALS_PBR[0];
+        prefabs::spawn_cube(position, material);
+    }
+
+    // ambient light
     prefabs::spawn_ambient_light(WHITE, 0.1);
 }
 
@@ -82,7 +91,7 @@ static void update() {
     camera::update();
 }
 
-void draw_cursor() {
+static void draw_cursor() {
     static float radius = 5.0;
     static Color color = WHITE;
 
@@ -91,7 +100,7 @@ void draw_cursor() {
     DrawCircle(x, y, radius, color);
 }
 
-void draw_light_shells() {
+static void draw_light_shells() {
     auto view = globals::registry.view<component::Light>();
     for (auto entity : view) {
         auto tr = globals::registry.get<component::Transform>(entity);
@@ -99,7 +108,7 @@ void draw_light_shells() {
     }
 }
 
-void draw_player() {
+static void draw_player() {
     auto player = globals::registry.view<component::Player>().front();
     auto tr = globals::registry.get<component::Transform>(player);
 
@@ -111,6 +120,18 @@ void draw_player() {
     Model model = PLAYER_MODEL;
     model.transform = MatrixMultiply(model.transform, transform);
     DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
+}
+
+static void draw_meshes() {
+    auto view = globals::registry.view<component::MyMesh>();
+
+    for (auto entity : view) {
+        auto mesh = globals::registry.get<component::MyMesh>(entity);
+        auto tr = globals::registry.get<component::Transform>(entity);
+        Matrix matrix = tr.get_matrix();
+
+        pbr::draw_mesh(mesh.mesh, mesh.material, mesh.constant_color, matrix);
+    }
 }
 
 static void draw() {
@@ -135,6 +156,7 @@ static void draw() {
         }
 
         world::draw_tiles();
+        draw_meshes();
     }
     EndMode3D();
 

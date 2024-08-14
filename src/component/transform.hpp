@@ -20,6 +20,7 @@ public:
     Transform(entt::entity entity, Vector3 position, Vector3 scale, Vector3 rotation);
 
     Quaternion get_quaternion();
+    Matrix get_matrix();
     Vector3 get_position();
     Vector3 get_forward();
     Vector3 get_right();

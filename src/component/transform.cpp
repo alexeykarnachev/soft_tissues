@@ -42,6 +42,18 @@ Quaternion Transform::get_quaternion() {
     return q;
 }
 
+Matrix Transform::get_matrix() {
+    Vector3 pos = this->get_position();
+    Quaternion q = this->get_quaternion();
+
+    Matrix t = MatrixTranslate(pos.x, pos.y, pos.z);
+    Matrix r = QuaternionToMatrix(q);
+
+    Matrix mat = MatrixMultiply(r, t);
+
+    return mat;
+}
+
 Vector3 Transform::get_position() {
     auto parent = globals::registry.try_get<component::Parent>(this->entity);
     Vector3 parent_pos = Vector3Zero();

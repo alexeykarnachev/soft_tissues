@@ -264,4 +264,11 @@ Mesh gen_mesh_plane(int resolution) {
     return mesh;
 }
 
+Mesh gen_mesh_cube() {
+    Mesh mesh = GenMeshCube(1.0, 1.0, 1.0);
+    gen_mesh_tangents(&mesh);
+
+    return mesh;
+}
+
 }  // namespace soft_tissues::utils

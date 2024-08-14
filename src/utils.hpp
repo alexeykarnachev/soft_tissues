@@ -40,5 +40,6 @@ RayCollision get_cursor_floor_rect_collision(Rectangle rect, Camera camera);
 // mesh
 void gen_mesh_tangents(Mesh *mesh);
 Mesh gen_mesh_plane(int resolution);
+Mesh gen_mesh_cube();
 
 }  // namespace soft_tissues::utils

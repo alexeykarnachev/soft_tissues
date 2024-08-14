@@ -7,6 +7,7 @@
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include "resources.hpp"
 
 namespace soft_tissues::prefabs {
 
@@ -27,6 +28,21 @@ entt::entity spawn_player(Vector2 position) {
     globals::registry.emplace<component::Player>(entity);
 
     return entity;
+}
+
+entt::entity spawn_mesh(Vector3 position, Mesh mesh, pbr::MaterialPBR material) {
+    auto entity = globals::registry.create();
+    auto transform = component::Transform(entity, position);
+    auto my_mesh = component::MyMesh(entity, mesh, material);
+
+    globals::registry.emplace<component::Transform>(entity, transform);
+    globals::registry.emplace<component::MyMesh>(entity, my_mesh);
+
+    return entity;
+}
+
+entt::entity spawn_cube(Vector3 position, pbr::MaterialPBR material) {
+    return spawn_mesh(position, resources::CUBE_MESH, material);
 }
 
 entt::entity spawn_light(
