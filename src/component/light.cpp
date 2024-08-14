@@ -11,6 +11,8 @@ namespace soft_tissues::light {
 
 Light::Light(entt::entity entity, Type type, Color color, float intensity, Params params)
     : entity(entity)
+    , is_enabled(true)
+    , casts_shadows(false)
     , type(type)
     , color(color)
     , intensity(intensity)

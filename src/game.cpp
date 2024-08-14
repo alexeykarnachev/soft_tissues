@@ -23,8 +23,9 @@ static void load_window() {
 
     // InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
     // ToggleFullscreen();
+    // 1920x1080
 
-    InitWindow(2560 / 1.5, 1440 / 1.5, "Soft Tissues");
+    InitWindow(1920, 1080, "Soft Tissues");
 
     DisableCursor();
     SetTargetFPS(60);

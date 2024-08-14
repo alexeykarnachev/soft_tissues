@@ -17,6 +17,9 @@ struct GraphicsOptions {
 static constexpr int SCREEN_WIDTH = 0;
 static constexpr int SCREEN_HEIGHT = 0;
 
+static constexpr int SHADOW_MAP_SIZE = 512;
+static constexpr int MAX_N_SHADOW_MAPS = 8;
+
 static constexpr float PLAYER_HEIGHT = 1.8;
 static constexpr float PLAYER_MOVEMENT_SPEED = 2.0;
 static constexpr float PLAYER_CAMERA_SENSETIVITY = 0.0015;

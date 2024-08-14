@@ -35,7 +35,8 @@ typedef union {
 class Light {
 public:
     const entt::entity entity;
-    bool is_enabled = true;
+    bool is_enabled;
+    bool casts_shadows;
 
     Type type;
 

@@ -102,6 +102,11 @@ void tile_material_picker(
 }
 
 void common_light_params(component::Light *light) {
+    push_id();
+
+    // casts_shadows
+    ImGui::Checkbox("Casts Shadows", &light->casts_shadows);
+
     // color
     auto color = ColorNormalize(light->color);
     float *color_p = (float *)&color;
@@ -112,6 +117,8 @@ void common_light_params(component::Light *light) {
     // intensity
     float *v = &light->intensity;
     ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
+
+    pop_id();
 }
 
 void spot_light_params(component::Light *light) {
