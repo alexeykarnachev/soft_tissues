@@ -1,6 +1,8 @@
 #include "world.hpp"
 
 #include "camera.hpp"
+#include "component/component.hpp"
+#include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "resources.hpp"
@@ -400,6 +402,18 @@ void draw_tiles() {
                 }
             }
         }
+    }
+}
+
+void draw_meshes() {
+    auto view = globals::registry.view<component::MyMesh>();
+
+    for (auto entity : view) {
+        auto mesh = globals::registry.get<component::MyMesh>(entity);
+        auto tr = globals::registry.get<component::Transform>(entity);
+        Matrix matrix = tr.get_matrix();
+
+        pbr::draw_mesh(mesh.mesh, mesh.material, mesh.constant_color, matrix);
     }
 }
 

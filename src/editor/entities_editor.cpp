@@ -131,11 +131,14 @@ static void update_and_draw_light() {
             ImGui::EndCombo();
         }
 
+        if (light->is_enabled && light->casts_shadows) {
+            auto shadow_map = light->shadow_map;
+            gui::image(shadow_map.texture, 150.0, 150.0);
+        }
+
         switch (light->type) {
             case light::Type::POINT: {
-                // attenuation
-                float *attenuation = (float *)&light->params.point.attenuation;
-                ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
+                gui::point_light_params(light);
             } break;
             case light::Type::SPOT: {
                 gui::spot_light_params(light);

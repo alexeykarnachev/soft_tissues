@@ -63,6 +63,10 @@ bool button_accept(bool is_enabled) {
     return button_color("Accept", COLOR_ACCEPT, is_enabled);
 }
 
+void image(unsigned int texture, float width, float height) {
+    ImGui::Image((ImTextureID)(long)texture, {width, height});
+}
+
 void image(Texture texture, float width, float height) {
     if (height <= 0.0) {
         float aspect = (float)texture.width / texture.height;
@@ -130,6 +134,11 @@ void spot_light_params(component::Light *light) {
 
     float *outer_cutoff = &light->params.spot.outer_cutoff;
     ImGui::SliderFloat("Outer cutoff", outer_cutoff, 0.0, 1.0);
+}
+
+void point_light_params(component::Light *light) {
+    float *attenuation = (float *)&light->params.point.attenuation;
+    ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
 }
 
 }  // namespace soft_tissues::editor::gui

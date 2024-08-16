@@ -41,6 +41,7 @@ bool button(const char *name, bool is_enabled = true);
 bool button_color(const char *name, ImVec4 color, bool is_enabled = true);
 bool button_cancel(bool is_enabled = true);
 bool button_accept(bool is_enabled = true);
+void image(unsigned int texture, float width, float height);
 void image(Texture texture, float width, float height = 0.0);
 void material_picker(pbr::MaterialPBR *material);
 void tile_material_picker(
@@ -48,6 +49,7 @@ void tile_material_picker(
 );
 void common_light_params(component::Light *light);
 void spot_light_params(component::Light *light);
+void point_light_params(component::Light *light);
 
 }  // namespace gui
 

@@ -63,6 +63,31 @@ entt::entity spawn_light(
     return entity;
 }
 
+entt::entity spawn_spot_light(
+    Vector3 position,
+    Vector3 direction,
+    Color color,
+    float intensity,
+    Vector3 attenuation,
+    float inner_cutoff,
+    float outer_cutoff
+) {
+    direction = Vector3Normalize(direction);
+
+    light::Params params
+        = {.spot = {
+               .attenuation = attenuation,
+               .inner_cutoff = inner_cutoff,
+               .outer_cutoff = outer_cutoff,
+           }};
+
+    auto entity = spawn_light(position, light::Type::SPOT, color, intensity, params);
+    auto &tr = globals::registry.get<component::Transform>(entity);
+    tr.set_forward(direction);
+
+    return entity;
+}
+
 entt::entity spawn_flashlight(Vector3 position) {
     static const light::Type type = light::Type::SPOT;
     static const Color color = {255, 255, 220, 255};

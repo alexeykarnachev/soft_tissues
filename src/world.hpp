@@ -49,5 +49,6 @@ void add_tile_to_room(tile::Tile *tile, int room_id);
 
 void draw_grid();
 void draw_tiles();
+void draw_meshes();
 
 }  // namespace soft_tissues::world

@@ -12,6 +12,7 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
+#include "shadows.hpp"
 #include "world.hpp"
 #include <cstdio>
 
@@ -39,6 +40,7 @@ static void load() {
     resources::load();
     editor::load();
     world::load();
+    shadows::load();
 
     // player
     auto player = prefabs::spawn_player(world::ORIGIN);
@@ -58,11 +60,21 @@ static void load() {
         prefabs::spawn_sphere(position, material);
     }
 
+    // spot light
+    {
+        Vector3 position = {-2.0, 2.0, -6.0f};
+        Vector3 direction = {1.0, -0.2, 0.0};
+        prefabs::spawn_spot_light(
+            position, direction, RED, 20.0, {1.0, 0.2, 0.02}, 0.9, 0.8
+        );
+    }
+
     // ambient light
     prefabs::spawn_ambient_light(WHITE, 0.1);
 }
 
 static void unload() {
+    shadows::unload();
     editor::unload();
     resources::unload();
     CloseWindow();
@@ -123,19 +135,11 @@ static void draw_player() {
     DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
 }
 
-static void draw_meshes() {
-    auto view = globals::registry.view<component::MyMesh>();
-
-    for (auto entity : view) {
-        auto mesh = globals::registry.get<component::MyMesh>(entity);
-        auto tr = globals::registry.get<component::Transform>(entity);
-        Matrix matrix = tr.get_matrix();
-
-        pbr::draw_mesh(mesh.mesh, mesh.material, mesh.constant_color, matrix);
-    }
-}
-
 static void draw() {
+    // -------------------------------------------------------------------
+    // shadow maps
+    shadows::draw();
+
     // -------------------------------------------------------------------
     // entity picking
     if (globals::GAME_STATE == globals::GameState::EDITOR) {
@@ -157,7 +161,7 @@ static void draw() {
         }
 
         world::draw_tiles();
-        draw_meshes();
+        world::draw_meshes();
     }
     EndMode3D();
 
