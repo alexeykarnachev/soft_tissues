@@ -46,7 +46,7 @@ public:
 
     // runtime values
     RenderTexture2D shadow_map;
-    Matrix view_proj;
+    Matrix vp_mat;
 
     Light(entt::entity entity, Type type, Color color, float intensity, Params params);
 

@@ -110,12 +110,26 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
 
         int is_light_enabled_loc = get_uniform_loc(shader, "u_is_light_enabled");
         int constant_color_loc = get_uniform_loc(shader, "u_constant_color");
+        int shadow_map_bias_loc = get_uniform_loc(shader, "u_shadow_map_bias");
+        int shadow_map_max_dist_loc = get_uniform_loc(shader, "u_shadow_map_max_dist");
 
         SetShaderValue(
             shader, is_light_enabled_loc, &is_light_enabled, SHADER_UNIFORM_INT
         );
         SetShaderValue(
             shader, constant_color_loc, &constant_color_vec, SHADER_UNIFORM_VEC4
+        );
+        SetShaderValue(
+            shader,
+            shadow_map_bias_loc,
+            &globals::RENDER_OPTIONS.shadow_map_bias,
+            SHADER_UNIFORM_FLOAT
+        );
+        SetShaderValue(
+            shader,
+            shadow_map_max_dist_loc,
+            &globals::RENDER_OPTIONS.shadow_map_max_dist,
+            SHADER_UNIFORM_FLOAT
         );
 
         if (is_light_enabled) {

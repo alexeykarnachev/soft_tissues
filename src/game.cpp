@@ -24,7 +24,6 @@ static void load_window() {
 
     // InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
     // ToggleFullscreen();
-    // 1920x1080
 
     InitWindow(1920, 1080, "Soft Tissues");
 

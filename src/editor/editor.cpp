@@ -128,9 +128,14 @@ static void update_and_draw_tabs() {
 static void update_and_draw_debug() {
     // -------------------------------------------------------------------
     // graphics
+    auto options = &globals::RENDER_OPTIONS;
     ImGui::SeparatorText("Graphics");
-    ImGui::Checkbox("is_light_enabled", &globals::RENDER_OPTIONS.is_light_enabled);
-    ImGui::Checkbox("is_shadow_map_pass", &globals::RENDER_OPTIONS.is_shadow_map_pass);
+    ImGui::Checkbox("is_light_enabled", &options->is_light_enabled);
+    ImGui::Checkbox("is_shadow_map_pass", &options->is_shadow_map_pass);
+    ImGui::SliderFloat("shadow_map_bias", &options->shadow_map_bias, -0.5, 0.0);
+    ImGui::SliderFloat(
+        "shadow_map_max_dist", &options->shadow_map_max_dist, 10.0, 1000.0
+    );
 
     // -------------------------------------------------------------------
     // flashlight

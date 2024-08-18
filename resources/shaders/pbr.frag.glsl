@@ -1,31 +1,21 @@
-// Constants
-const int MAX_N_LIGHTS = 8;
-const int POINT_LIGHT = 0;
-const int DIRECTIONAL_LIGHT = 1;
-const int SPOT_LIGHT = 2;
-const int AMBIENT_LIGHT = 3;
-
-// Structs
-struct Light {
-    int type;
-
-    float intensity;
-    float inner_cutoff;
-    float outer_cutoff;
-
-    vec3 position;
-    vec3 attenuation;
-    vec3 direction;
-    vec3 color;
-};
-
+// -----------------------------------------------------------------------
 // Inputs
 in vec3 v_world_pos;
 in vec2 v_tex_coord;
 in vec3 v_normal;
 in mat3 v_tbn;
 
+// NOTE: This represents vertex position in a ndc light space.
+// Since there are more than 1 light, these positions are stored in the array.
+in vec4 v_light_positions[MAX_N_LIGHTS];
+
+// -----------------------------------------------------------------------
 // Uniforms
+// NOTE: In the extreme cases all lights are point lights,
+// since a point light has 6 shadowmap planes,
+// the max number of shadow maps is MAX_N_LIGHTS * 6
+uniform sampler2D u_shadow_maps[MAX_N_LIGHTS * 6];
+
 uniform sampler2D u_albedo_map;
 uniform sampler2D u_metalness_map;
 uniform sampler2D u_normal_map;
@@ -36,6 +26,8 @@ uniform vec4 u_constant_color;
 
 uniform int u_is_shadow_map_pass;
 uniform int u_is_light_enabled;
+uniform float u_shadow_map_bias;
+uniform float u_shadow_map_max_dist;
 uniform vec3 u_camera_pos;
 uniform int u_n_lights;
 uniform Light u_lights[MAX_N_LIGHTS];
@@ -89,7 +81,7 @@ float GeomSmith(float nDotV, float nDotL, float roughness) {
 
 vec3 get_shadow_map_color() {
     float dist_to_camera = distance(u_camera_pos, v_world_pos);
-    float depth = dist_to_camera / 10.0;
+    float depth = dist_to_camera / u_shadow_map_max_dist;
     return vec3(depth);
 }
 
@@ -125,13 +117,27 @@ vec3 get_pbr_color() {
     vec3 ambient_total = vec3(0.0, 0.0, 0.0);
     for (int i = 0; i < u_n_lights; ++i) {
         Light light = u_lights[i];
+        float dist = length(v_world_pos - light.position);
+
+        bool is_in_shadow = false;
+        if (light.casts_shadows == 1) {
+            vec4 ndc = v_light_positions[i];
+            vec2 uv = 0.5 * ((ndc.xy / ndc.w) + 1.0);
+            if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) {
+                is_in_shadow = true;
+            } else {
+                float depth = u_shadow_map_max_dist * texture(u_shadow_maps[i * 6], uv).r;
+                is_in_shadow = depth < (dist + u_shadow_map_bias);
+            }
+        }
+
+        if (is_in_shadow) continue;
 
         vec3 light_dir;
         float attenuation;
         switch (light.type) {
             case POINT_LIGHT:
             {
-                float dist = length(v_world_pos - light.position);
                 light_dir = normalize(v_world_pos - light.position);
                 attenuation = dot(light.attenuation, vec3(1.0, dist, dist * dist));
                 attenuation = 1.0 / attenuation;
@@ -145,7 +151,6 @@ vec3 get_pbr_color() {
             }
             case SPOT_LIGHT:
             {
-                float dist = length(v_world_pos - light.position);
                 light_dir = normalize(v_world_pos - light.position);
                 float theta = dot(light_dir, normalize(light.direction));
                 float epsilon = light.inner_cutoff - light.outer_cutoff;

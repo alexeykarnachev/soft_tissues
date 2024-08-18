@@ -19,11 +19,18 @@ uniform vec2 u_tiling;
 uniform sampler2D u_height_map;
 uniform float u_displacement_scale;
 
+uniform int u_n_lights;
+uniform Light u_lights[MAX_N_LIGHTS];
+
 // Outputs to fragment shader
 out vec3 v_world_pos;
 out vec2 v_tex_coord;
 out vec3 v_normal;
 out mat3 v_tbn;
+
+// NOTE: This represents vertex position in a ndc light space.
+// Since there are more than 1 light, these positions are stored in the array.
+out vec4 v_light_positions[MAX_N_LIGHTS];
 
 vec3 mat4_by_vec3(mat4 mat, vec3 vec) {
     return vec3(mat * vec4(vec, 1.0));
@@ -41,4 +48,10 @@ void main() {
     vec3 tangent = normalize(mat3(u_model_mat) * a_tangent.xyz);
     vec3 bitangent = normalize(cross(tangent, v_normal) * a_tangent.w);
     v_tbn = mat3(tangent, bitangent, v_normal);
+
+    for (int i = 0; i < u_n_lights; ++i) {
+        mat4 vp_mat = u_lights[i].vp_mat;
+        vec4 ndc = vp_mat * u_model_mat * vec4(a_position, 1.0);
+        v_light_positions[i] = ndc;
+    }
 }

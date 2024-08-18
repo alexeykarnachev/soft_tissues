@@ -4,6 +4,7 @@
 #include "../utils.hpp"
 #include "component.hpp"
 #include "raylib/raylib.h"
+#include "raylib/rlgl.h"
 #include <stdexcept>
 #include <string>
 
@@ -35,17 +36,44 @@ void Light::set_shader_uniform(Shader shader, int idx) {
     Vector4 color = ColorNormalize(this->color);
 
     // -------------------------------------------------------------------
+    // shadow map
+    if (this->casts_shadows) {
+        // NOTE: In the extreme cases all lights are point lights,
+        // since a point light has 6 shadowmap planes,
+        // the max number of shadow maps is MAX_N_LIGHTS * 6
+        // Also, this "10" is an arbitrary slot number,
+        // maybe I should factor out it somehow!
+
+        int slot = 10 + idx;
+        rlActiveTextureSlot(slot);
+        rlEnableTexture(this->shadow_map.texture.id);
+        int loc = GetShaderLocation(shader, "u_shadow_maps");
+        SetShaderValue(
+            shader,
+            GetShaderLocation(shader, TextFormat("u_shadow_maps[%d]", idx * 6)),
+            &slot,
+            SHADER_UNIFORM_INT
+        );
+    }
+
+    // -------------------------------------------------------------------
     // common params
     int position_loc = get_uniform_loc(shader, idx, "position");
     int type_loc = get_uniform_loc(shader, idx, "type");
     int color_loc = get_uniform_loc(shader, idx, "color");
     int intensity_loc = get_uniform_loc(shader, idx, "intensity");
+    int casts_shadows_loc = get_uniform_loc(shader, idx, "casts_shadows");
+    int vp_mat_loc = get_uniform_loc(shader, idx, "vp_mat");
+
+    int casts_shadows = (int)this->casts_shadows;
 
     Vector3 position = tr.get_position();
     SetShaderValue(shader, position_loc, &position, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, type_loc, &this->type, SHADER_UNIFORM_INT);
     SetShaderValue(shader, color_loc, &color, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, intensity_loc, &this->intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shader, casts_shadows_loc, &casts_shadows, SHADER_UNIFORM_INT);
+    SetShaderValueMatrix(shader, vp_mat_loc, this->vp_mat);
 
     // -------------------------------------------------------------------
     // type params

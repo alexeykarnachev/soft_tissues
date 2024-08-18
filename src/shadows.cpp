@@ -51,12 +51,14 @@ void draw() {
         Vector3 position = tr.get_position();
         Vector3 direction = tr.get_forward();
 
+        // TODO: Refactor shadow maps management (e.g 6 maps for point light, etc)
+        auto map = SHADOW_MAPS[map_idx];
+        map_idx += 6;
+
         switch (light->type) {
             case light::Type::SPOT: {
-                auto map = SHADOW_MAPS[map_idx++];
-
                 BeginTextureMode(map);
-                ClearBackground(BLANK);
+                ClearBackground(YELLOW);
 
                 Camera3D camera = {0};
                 camera.position = position;
@@ -71,7 +73,7 @@ void draw() {
                 // update runtime values
                 Matrix v = rlGetMatrixModelview();
                 Matrix p = rlGetMatrixProjection();
-                light->view_proj = MatrixMultiply(v, p);
+                light->vp_mat = MatrixMultiply(v, p);
                 light->shadow_map = map;
 
                 // draw scene
