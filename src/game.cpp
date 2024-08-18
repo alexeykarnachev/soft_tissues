@@ -62,10 +62,10 @@ static void load() {
 
     // spot light
     {
-        Vector3 position = {-2.0, 2.0, -6.0f};
+        Vector3 position = {-10.0, 2.0, -6.0f};
         Vector3 direction = {1.0, -0.2, 0.0};
         prefabs::spawn_spot_light(
-            position, direction, RED, 20.0, {1.0, 0.2, 0.02}, 0.9, 0.8
+            position, direction, GREEN, 40.0, {1.0, 0.2, 0.02}, 0.9, 0.8
         );
     }
 
@@ -152,6 +152,10 @@ static void draw() {
     rlEnableDepthTest();
     ClearBackground(BLANK);
 
+    // TODO: Maybe factor out BeginMode3D and EndMode3D, such that some
+    // global camera (e.g from RENDER_OPTIONS) will be assigned.
+    // It means, that the engine should control current camera via
+    // RENDER_OPTIONS (but not directly via BeginMode3D(camera::CAMERA)).
     BeginMode3D(camera::CAMERA);
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {

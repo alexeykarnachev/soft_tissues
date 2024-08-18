@@ -10,8 +10,9 @@ enum class GameState {
     PLAY,
 };
 
-struct GraphicsOptions {
+struct RenderOptions {
     bool is_light_enabled = true;
+    bool is_shadow_map_pass = false;
 };
 
 static constexpr int SCREEN_WIDTH = 0;
@@ -28,7 +29,7 @@ extern float TOTAL_TIME;
 extern float FRAME_DT;
 extern bool WINDOW_SHOULD_CLOSE;
 extern GameState GAME_STATE;
-extern GraphicsOptions GRAPHICS_OPTIONS;
+extern RenderOptions RENDER_OPTIONS;
 
 extern entt::registry registry;
 

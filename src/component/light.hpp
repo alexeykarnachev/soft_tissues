@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../shadows.hpp"
 #include "entt/entity/fwd.hpp"
 #include "raylib/raylib.h"
 
@@ -46,7 +45,7 @@ public:
     Params params;
 
     // runtime values
-    shadows::ShadowMap shadow_map;
+    RenderTexture2D shadow_map;
     Matrix view_proj;
 
     Light(entt::entity entity, Type type, Color color, float intensity, Params params);

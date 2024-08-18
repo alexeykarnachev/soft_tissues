@@ -64,7 +64,7 @@ bool button_accept(bool is_enabled) {
 }
 
 void image(unsigned int texture, float width, float height) {
-    ImGui::Image((ImTextureID)(long)texture, {width, height});
+    ImGui::Image((ImTextureID)(long)texture, {width, height}, {0, 1}, {1, 0});
 }
 
 void image(Texture texture, float width, float height) {
@@ -72,7 +72,7 @@ void image(Texture texture, float width, float height) {
         float aspect = (float)texture.width / texture.height;
         height = width / aspect;
     }
-    ImGui::Image((ImTextureID)(long)texture.id, {width, height});
+    return image(texture.id, width, height);
 }
 
 void material_picker(pbr::MaterialPBR *material) {

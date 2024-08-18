@@ -129,7 +129,8 @@ static void update_and_draw_debug() {
     // -------------------------------------------------------------------
     // graphics
     ImGui::SeparatorText("Graphics");
-    ImGui::Checkbox("is_light_enabled", &globals::GRAPHICS_OPTIONS.is_light_enabled);
+    ImGui::Checkbox("is_light_enabled", &globals::RENDER_OPTIONS.is_light_enabled);
+    ImGui::Checkbox("is_shadow_map_pass", &globals::RENDER_OPTIONS.is_shadow_map_pass);
 
     // -------------------------------------------------------------------
     // flashlight

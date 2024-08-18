@@ -13,38 +13,17 @@
 
 namespace soft_tissues::shadows {
 
-ShadowMap::ShadowMap() = default;
-
-void ShadowMap::load() {
-    this->fbo = rlLoadFramebuffer();
-    this->texture = rlLoadTextureDepth(
-        globals::SHADOW_MAP_SIZE, globals::SHADOW_MAP_SIZE, false
-    );
-    rlFramebufferAttach(
-        this->fbo, this->texture, RL_ATTACHMENT_DEPTH, RL_ATTACHMENT_TEXTURE2D, 0
-    );
-
-    if (!rlFramebufferComplete(this->fbo)) {
-        throw std::runtime_error("Failed to create shadow map fbo");
-    }
-}
-
-void ShadowMap::unload() {
-    rlUnloadFramebuffer(this->fbo);
-    rlUnloadTexture(this->texture);
-}
-
-static std::array<ShadowMap, globals::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
+static std::array<RenderTexture2D, globals::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
 
 void load() {
-    for (auto &shadow_map : SHADOW_MAPS) {
-        shadow_map.load();
+    for (auto &map : SHADOW_MAPS) {
+        map = LoadRenderTexture(globals::SHADOW_MAP_SIZE, globals::SHADOW_MAP_SIZE);
     }
 }
 
 void unload() {
-    for (auto &shadow_map : SHADOW_MAPS) {
-        shadow_map.unload();
+    for (auto &map : SHADOW_MAPS) {
+        UnloadRenderTexture(map);
     }
 }
 
@@ -76,8 +55,8 @@ void draw() {
             case light::Type::SPOT: {
                 auto map = SHADOW_MAPS[map_idx++];
 
-                rlBindFramebuffer(RL_DRAW_FRAMEBUFFER, map.fbo);
-                rlClearScreenBuffers();
+                BeginTextureMode(map);
+                ClearBackground(BLANK);
 
                 Camera3D camera = {0};
                 camera.position = position;
@@ -96,12 +75,18 @@ void draw() {
                 light->shadow_map = map;
 
                 // draw scene
+                // TODO: Maybe refactor into push_shadow_map_pass / pop_ ...
+                bool is_shadow_map_pass = globals::RENDER_OPTIONS.is_shadow_map_pass;
+                globals::RENDER_OPTIONS.is_shadow_map_pass = true;
+
                 // TODO: Maybe factor out into draw_scene()
                 world::draw_tiles();
                 world::draw_meshes();
 
+                globals::RENDER_OPTIONS.is_shadow_map_pass = is_shadow_map_pass;
+
                 EndMode3D();
-                rlBindFramebuffer(RL_DRAW_FRAMEBUFFER, 0);
+                EndTextureMode();
             } break;
             default: {
                 throw std::runtime_error(

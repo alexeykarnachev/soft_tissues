@@ -4,6 +4,8 @@
 #include "component/light.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
+#include "raylib/rlgl.h"
 #include "utils.hpp"
 #include <filesystem>
 
@@ -91,31 +93,44 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
     Material material = material_pbr.get_material();
     Shader shader = material.shader;
 
-    int is_light_enabled = globals::GRAPHICS_OPTIONS.is_light_enabled;
-    Vector4 constant_color_vec = ColorNormalize(constant_color);
+    int is_shadow_map_pass = globals::RENDER_OPTIONS.is_shadow_map_pass;
+    int is_shadow_map_pass_loc = get_uniform_loc(shader, "u_is_shadow_map_pass");
+    SetShaderValue(
+        shader, is_shadow_map_pass_loc, &is_shadow_map_pass, SHADER_UNIFORM_INT
+    );
 
-    int is_light_enabled_loc = get_uniform_loc(shader, "u_is_light_enabled");
-    int constant_color_loc = get_uniform_loc(shader, "u_constant_color");
+    Matrix mat = MatrixInvert(rlGetMatrixModelview());
+    Vector3 camera_pos = {mat.m12, mat.m13, mat.m14};
+    int camera_pos_loc = get_uniform_loc(shader, "u_camera_pos");
+    SetShaderValue(shader, camera_pos_loc, &camera_pos, SHADER_UNIFORM_VEC3);
 
-    SetShaderValue(shader, is_light_enabled_loc, &is_light_enabled, SHADER_UNIFORM_INT);
-    SetShaderValue(shader, constant_color_loc, &constant_color_vec, SHADER_UNIFORM_VEC4);
+    if (!is_shadow_map_pass) {
+        int is_light_enabled = globals::RENDER_OPTIONS.is_light_enabled;
+        Vector4 constant_color_vec = ColorNormalize(constant_color);
 
-    if (is_light_enabled) {
-        int light_idx = 0;
-        for (auto entity : globals::registry.view<light::Light>()) {
-            auto light = globals::registry.get<light::Light>(entity);
-            if (!light.is_enabled) continue;
-
-            light.set_shader_uniform(shader, light_idx++);
-        }
-
-        int camera_pos_loc = get_uniform_loc(shader, "u_camera_pos");
-        int n_lights_loc = get_uniform_loc(shader, "u_n_lights");
+        int is_light_enabled_loc = get_uniform_loc(shader, "u_is_light_enabled");
+        int constant_color_loc = get_uniform_loc(shader, "u_constant_color");
 
         SetShaderValue(
-            shader, camera_pos_loc, &camera::CAMERA.position, SHADER_UNIFORM_VEC3
+            shader, is_light_enabled_loc, &is_light_enabled, SHADER_UNIFORM_INT
         );
-        SetShaderValue(shader, n_lights_loc, &light_idx, SHADER_UNIFORM_INT);
+        SetShaderValue(
+            shader, constant_color_loc, &constant_color_vec, SHADER_UNIFORM_VEC4
+        );
+
+        if (is_light_enabled) {
+            int light_idx = 0;
+            for (auto entity : globals::registry.view<light::Light>()) {
+                auto light = globals::registry.get<light::Light>(entity);
+                if (!light.is_enabled) continue;
+
+                light.set_shader_uniform(shader, light_idx++);
+            }
+
+            int n_lights_loc = get_uniform_loc(shader, "u_n_lights");
+
+            SetShaderValue(shader, n_lights_loc, &light_idx, SHADER_UNIFORM_INT);
+        }
     }
 
     DrawMesh(mesh, material, matrix);

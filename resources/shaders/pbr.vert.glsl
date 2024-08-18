@@ -35,6 +35,7 @@ void main() {
     float height = texture(u_height_map, v_tex_coord).r;
     vec3 position = a_position + a_normal * height * u_displacement_scale;
     v_world_pos = mat4_by_vec3(u_model_mat, position);
+
     gl_Position = u_mvp_mat * vec4(position, 1.0);
 
     vec3 tangent = normalize(mat3(u_model_mat) * a_tangent.xyz);

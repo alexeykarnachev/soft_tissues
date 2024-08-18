@@ -34,6 +34,7 @@ uniform sampler2D u_occlusion_map;
 
 uniform vec4 u_constant_color;
 
+uniform int u_is_shadow_map_pass;
 uniform int u_is_light_enabled;
 uniform vec3 u_camera_pos;
 uniform int u_n_lights;
@@ -86,10 +87,18 @@ float GeomSmith(float nDotV, float nDotL, float roughness) {
     return ggx1 * ggx2;
 }
 
+vec3 get_shadow_map_color() {
+    float dist_to_camera = distance(u_camera_pos, v_world_pos);
+    float depth = dist_to_camera / 10.0;
+    return vec3(depth);
+}
+
 vec3 get_albedo_color() {
     vec2 uv = v_tex_coord;
-    vec3 albedo = texture(u_albedo_map, uv).rgb;
-    return albedo;
+    vec3 color = texture(u_albedo_map, uv).rgb;
+    color = mix(color, u_constant_color.rgb, u_constant_color.a);
+
+    return color;
 }
 
 vec3 get_pbr_color() {
@@ -174,18 +183,22 @@ vec3 get_pbr_color() {
     }
 
     vec3 color = ambient_total + light_total * occlusion;
+    color = mix(color, u_constant_color.rgb, u_constant_color.a);
+
     return color;
 }
 
 void main() {
     vec3 color;
-    if (u_is_light_enabled == 1) {
+
+    // TODO: Introduce render type enum: SHADOW_MAP, ALBEDO, PBR
+    if (u_is_shadow_map_pass == 1) {
+        color = get_shadow_map_color();
+    } else if (u_is_light_enabled == 1) {
         color = get_pbr_color();
     } else {
         color = get_albedo_color();
     }
-
-    color = mix(color, u_constant_color.rgb, u_constant_color.a);
 
     f_color = vec4(color, 1.0);
 }

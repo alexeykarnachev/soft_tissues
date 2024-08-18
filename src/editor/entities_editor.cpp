@@ -6,6 +6,7 @@
 #include "entt/entity/entity.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
+#include "raylib/rlgl.h"
 #include <cassert>
 #include <cstdio>
 #include <stdio.h>
@@ -13,6 +14,8 @@
 namespace soft_tissues::editor::entities_editor {
 
 entt::entity ENTITY = entt::null;
+// static int TMP = RL_PIXELFORMAT_UNCOMPRESSED_R32;
+// static int TMP = RL_PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
 
 static void update_and_draw_transformation() {
     assert(ENTITY != entt::null);
@@ -132,8 +135,7 @@ static void update_and_draw_light() {
         }
 
         if (light->is_enabled && light->casts_shadows) {
-            auto shadow_map = light->shadow_map;
-            gui::image(shadow_map.texture, 150.0, 150.0);
+            gui::image(light->shadow_map.texture, 150.0, 150.0);
         }
 
         switch (light->type) {
