@@ -205,7 +205,7 @@ static void fix_tile_walls(tile::Tile *tile) {
 
     auto neighbors = world::get_tile_neighbors(tile);
 
-    for (int i = 0; i < neighbors.size(); ++i) {
+    for (size_t i = 0; i < neighbors.size(); ++i) {
         Direction tile_direction = (Direction)i;
         Direction nb_direction = flip_direction(tile_direction);
         auto nb = neighbors[i];

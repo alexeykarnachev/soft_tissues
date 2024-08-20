@@ -125,26 +125,16 @@ static void update_and_draw_tabs() {
     ImGui::EndTabBar();
 }
 
-static void update_and_draw_debug() {
+static void update_and_draw_globals() {
     // -------------------------------------------------------------------
-    // graphics
-    auto options = &globals::RENDER_OPTIONS;
-    ImGui::SeparatorText("Graphics");
-    ImGui::Checkbox("is_light_enabled", &options->is_light_enabled);
-    ImGui::Checkbox("is_shadow_map_pass", &options->is_shadow_map_pass);
-    ImGui::SliderFloat("shadow_map_bias", &options->shadow_map_bias, -0.5, 0.0);
+    // globals
+    ImGui::SeparatorText("Globals");
+    ImGui::Checkbox("is_light_enabled", &globals::IS_LIGHT_ENABLED);
+    ImGui::Checkbox("is_shadow_map_pass", &globals::IS_SHADOW_MAP_PASS);
+    ImGui::SliderFloat("shadow_map_bias", &globals::SHADOW_MAP_BIAS, -0.5, 0.0);
     ImGui::SliderFloat(
-        "shadow_map_max_dist", &options->shadow_map_max_dist, 10.0, 1000.0
+        "shadow_map_max_dist", &globals::SHADOW_MAP_MAX_DIST, 10.0, 1000.0
     );
-
-    // -------------------------------------------------------------------
-    // flashlight
-    ImGui::SeparatorText("Flashlight");
-    auto flashlight = globals::registry.view<component::Flashlight>().front();
-    auto &light = globals::registry.get<component::Light>(flashlight);
-
-    gui::common_light_params(&light);
-    gui::spot_light_params(&light);
 }
 
 void update_and_draw() {
@@ -157,7 +147,7 @@ void update_and_draw() {
     ImGui::Begin("Editor", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     {
         update_and_draw_tabs();
-        update_and_draw_debug();
+        update_and_draw_globals();
     }
     ImGui::End();
 

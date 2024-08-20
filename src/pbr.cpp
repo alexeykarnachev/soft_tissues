@@ -1,6 +1,5 @@
 #include "pbr.hpp"
 
-#include "camera.hpp"
 #include "component/light.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
@@ -93,7 +92,7 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
     Material material = material_pbr.get_material();
     Shader shader = material.shader;
 
-    int is_shadow_map_pass = globals::RENDER_OPTIONS.is_shadow_map_pass;
+    int is_shadow_map_pass = globals::IS_SHADOW_MAP_PASS;
     int is_shadow_map_pass_loc = get_uniform_loc(shader, "u_is_shadow_map_pass");
     SetShaderValue(
         shader, is_shadow_map_pass_loc, &is_shadow_map_pass, SHADER_UNIFORM_INT
@@ -105,7 +104,7 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
     SetShaderValue(shader, camera_pos_loc, &camera_pos, SHADER_UNIFORM_VEC3);
 
     if (!is_shadow_map_pass) {
-        int is_light_enabled = globals::RENDER_OPTIONS.is_light_enabled;
+        int is_light_enabled = globals::IS_LIGHT_ENABLED;
         Vector4 constant_color_vec = ColorNormalize(constant_color);
 
         int is_light_enabled_loc = get_uniform_loc(shader, "u_is_light_enabled");
@@ -120,15 +119,12 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
             shader, constant_color_loc, &constant_color_vec, SHADER_UNIFORM_VEC4
         );
         SetShaderValue(
-            shader,
-            shadow_map_bias_loc,
-            &globals::RENDER_OPTIONS.shadow_map_bias,
-            SHADER_UNIFORM_FLOAT
+            shader, shadow_map_bias_loc, &globals::SHADOW_MAP_BIAS, SHADER_UNIFORM_FLOAT
         );
         SetShaderValue(
             shader,
             shadow_map_max_dist_loc,
-            &globals::RENDER_OPTIONS.shadow_map_max_dist,
+            &globals::SHADOW_MAP_MAX_DIST,
             SHADER_UNIFORM_FLOAT
         );
 
@@ -136,7 +132,7 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
             int light_idx = 0;
             for (auto entity : globals::registry.view<light::Light>()) {
                 auto light = globals::registry.get<light::Light>(entity);
-                if (!light.is_enabled) continue;
+                if (!light.is_on) continue;
 
                 light.set_shader_uniform(shader, light_idx++);
             }

@@ -35,6 +35,9 @@ void update_and_draw();
 // -----------------------------------------------------------------------
 namespace gui {
 
+void push_id();
+void pop_id();
+
 bool collapsing_header(const char *name, bool is_opened);
 bool collapsing_header(const char *name);
 bool button(const char *name, bool is_enabled = true);
@@ -47,7 +50,6 @@ void material_picker(pbr::MaterialPBR *material);
 void tile_material_picker(
     pbr::MaterialPBR *target_material, tile::TileMaterials *tile_materials
 );
-void common_light_params(component::Light *light);
 void spot_light_params(component::Light *light);
 void point_light_params(component::Light *light);
 

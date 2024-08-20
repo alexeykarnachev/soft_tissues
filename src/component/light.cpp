@@ -1,7 +1,9 @@
 #include "light.hpp"
 
 #include "../globals.hpp"
+#include "../resources.hpp"
 #include "../utils.hpp"
+#include "../world.hpp"
 #include "component.hpp"
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
@@ -10,14 +12,109 @@
 
 namespace soft_tissues::light {
 
-Light::Light(entt::entity entity, Type type, Color color, float intensity, Params params)
+Light::Light(
+    entt::entity entity, LightType light_type, Color color, float intensity, Params params
+)
     : entity(entity)
-    , is_enabled(true)
+    , is_on(true)
     , casts_shadows(false)
-    , type(type)
+    , light_type(light_type)
+    , shadow_type(ShadowType::DYNAMIC)
     , color(color)
     , intensity(intensity)
+    , shadow_map(NULL)
     , params(params) {}
+
+void Light::draw_shadow_map() {
+    if (!this->casts_shadows || !this->is_on) return;
+
+    // -------------------------------------------------------------------
+    // decide if the shadow map needs to be updated
+    static bool needs_update = true;
+
+    if (this->casts_shadows) {
+
+        if (this->shadow_type == ShadowType::DYNAMIC) {
+            needs_update = true;
+        }
+
+    } else {
+        needs_update = false;
+
+        if (this->shadow_map != NULL) {
+            resources::free_shadow_map(this->shadow_map);
+            this->shadow_map = NULL;
+        }
+    }
+
+    if (!needs_update) {
+        return;
+    }
+
+    // -------------------------------------------------------------------
+    // assign shadow map if not assigned yet
+    if (this->shadow_map == NULL) {
+        this->shadow_map = resources::get_shadow_map();
+
+        if (this->shadow_map == NULL) {
+            return;
+        }
+    }
+
+    // -------------------------------------------------------------------
+    // draw shadow map
+    auto tr = globals::registry.get<component::Transform>(this->entity);
+    Vector3 position = tr.get_position();
+    Vector3 direction = tr.get_forward();
+
+    switch (this->light_type) {
+        case LightType::SPOT: {
+            BeginTextureMode(*this->shadow_map);
+            ClearBackground(YELLOW);
+
+            Camera3D camera = {0};
+            camera.position = position;
+            camera.target = Vector3Add(position, direction);
+            // TODO: Implement and use tr.get_up or even tr.get_camera
+            camera.up = {0.0, 1.0, 0.0};
+            camera.fovy = 90.0;
+            camera.projection = CAMERA_PERSPECTIVE;
+
+            BeginMode3D(camera);
+
+            Matrix v = rlGetMatrixModelview();
+            Matrix p = rlGetMatrixProjection();
+            this->vp_mat = MatrixMultiply(v, p);
+
+            // draw scene
+            // TODO: Maybe refactor into push_shadow_map_pass / pop_ ...
+            // or maybe just use RenderTexture.depth
+            bool is_shadow_map_pass = globals::IS_SHADOW_MAP_PASS;
+            globals::IS_SHADOW_MAP_PASS = true;
+
+            // TODO: Maybe factor out into draw_scene()
+            world::draw_tiles();
+            world::draw_meshes();
+
+            globals::IS_SHADOW_MAP_PASS = is_shadow_map_pass;
+
+            EndMode3D();
+            EndTextureMode();
+        } break;
+        default: {
+            TraceLog(
+                LOG_WARNING, "Shadow mapping for this type of light is not implemented"
+            );
+
+            this->casts_shadows = false;
+        } break;
+    }
+
+    // render static shadow map only once
+    if (this->shadow_type == ShadowType::STATIC) {
+        needs_update = false;
+    }
+}
 
 static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
     std::string name = "u_lights[" + std::to_string(idx) + "]";
@@ -26,31 +123,27 @@ static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
     return utils::get_uniform_loc(shader, name);
 }
 
-void Light::toggle() {
-    this->is_enabled ^= true;
-}
-
 void Light::set_shader_uniform(Shader shader, int idx) {
+    if (!this->is_on) {
+        throw std::runtime_error("Can't set light shader uniform, is_on = false");
+    }
+
     auto tr = globals::registry.get<component::Transform>(this->entity);
     Vector3 direction = tr.get_forward();
     Vector4 color = ColorNormalize(this->color);
 
     // -------------------------------------------------------------------
     // shadow map
-    if (this->casts_shadows) {
-        // NOTE: In the extreme cases all lights are point lights,
-        // since a point light has 6 shadowmap planes,
-        // the max number of shadow maps is MAX_N_LIGHTS * 6
-        // Also, this "10" is an arbitrary slot number,
+    if (this->shadow_map != NULL) {
+        // NOTE: this "10" is an arbitrary slot number,
         // maybe I should factor out it somehow!
-
         int slot = 10 + idx;
+
         rlActiveTextureSlot(slot);
-        rlEnableTexture(this->shadow_map.texture.id);
-        int loc = GetShaderLocation(shader, "u_shadow_maps");
+        rlEnableTexture(this->shadow_map->texture.id);
         SetShaderValue(
             shader,
-            GetShaderLocation(shader, TextFormat("u_shadow_maps[%d]", idx * 6)),
+            GetShaderLocation(shader, TextFormat("u_shadow_maps[%d]", idx)),
             &slot,
             SHADER_UNIFORM_INT
         );
@@ -69,7 +162,7 @@ void Light::set_shader_uniform(Shader shader, int idx) {
 
     Vector3 position = tr.get_position();
     SetShaderValue(shader, position_loc, &position, SHADER_UNIFORM_VEC3);
-    SetShaderValue(shader, type_loc, &this->type, SHADER_UNIFORM_INT);
+    SetShaderValue(shader, type_loc, &this->light_type, SHADER_UNIFORM_INT);
     SetShaderValue(shader, color_loc, &color, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, intensity_loc, &this->intensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, casts_shadows_loc, &casts_shadows, SHADER_UNIFORM_INT);
@@ -77,20 +170,20 @@ void Light::set_shader_uniform(Shader shader, int idx) {
 
     // -------------------------------------------------------------------
     // type params
-    switch (this->type) {
-        case Type::POINT: {
+    switch (this->light_type) {
+        case LightType::POINT: {
             int attenuation_loc = get_uniform_loc(shader, idx, "attenuation");
 
             Vector3 attenuation = this->params.point.attenuation;
 
             SetShaderValue(shader, attenuation_loc, &attenuation, SHADER_UNIFORM_VEC3);
         } break;
-        case Type::DIRECTIONAL: {
+        case LightType::DIRECTIONAL: {
             int direction_loc = get_uniform_loc(shader, idx, "direction");
 
             SetShaderValue(shader, direction_loc, &direction, SHADER_UNIFORM_VEC3);
         } break;
-        case Type::SPOT: {
+        case LightType::SPOT: {
             int attenuation_loc = get_uniform_loc(shader, idx, "attenuation");
             int direction_loc = get_uniform_loc(shader, idx, "direction");
             int inner_cutoff_loc = get_uniform_loc(shader, idx, "inner_cutoff");
@@ -105,22 +198,25 @@ void Light::set_shader_uniform(Shader shader, int idx) {
             SetShaderValue(shader, inner_cutoff_loc, &inner_cutoff, SHADER_UNIFORM_FLOAT);
             SetShaderValue(shader, outer_cutoff_loc, &outer_cutoff, SHADER_UNIFORM_FLOAT);
         } break;
-        case Type::AMBIENT: {
-        } break;
+        default: break;
     }
 }
 
-std::string get_type_name(Type type) {
+std::string get_light_type_name(LightType type) {
     switch (type) {
-        case Type::POINT: return "POINT";
-        case Type::DIRECTIONAL: return "DIRECTIONAL";
-        case Type::SPOT: return "SPOT";
-        case Type::AMBIENT: return "AMBIENT";
-        default: {
-            throw std::runtime_error(
-                "get_type_name is not implemented for this light type"
-            );
-        }
+        case LightType::POINT: return "POINT";
+        case LightType::DIRECTIONAL: return "DIRECTIONAL";
+        case LightType::SPOT: return "SPOT";
+        case LightType::AMBIENT: return "AMBIENT";
+        default: throw std::runtime_error("Failed to get light type name");
+    }
+}
+
+std::string get_shadow_type_name(ShadowType type) {
+    switch (type) {
+        case ShadowType::STATIC: return "STATIC";
+        case ShadowType::DYNAMIC: return "DYNAMIC";
+        default: throw std::runtime_error("Failed to get shadow type name");
     }
 }
 

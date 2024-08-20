@@ -5,11 +5,28 @@
 
 namespace soft_tissues::light {
 
-enum class Type {
+enum class LightType {
     POINT = 0,
     DIRECTIONAL,
     SPOT,
     AMBIENT,
+};
+
+constexpr std::array<LightType, 4> LIGHT_TYPES = {
+    LightType::POINT,
+    LightType::DIRECTIONAL,
+    LightType::SPOT,
+    LightType::AMBIENT,
+};
+
+enum class ShadowType {
+    STATIC = 0,
+    DYNAMIC,
+};
+
+constexpr std::array<ShadowType, 2> SHADOW_TYPES = {
+    ShadowType::STATIC,
+    ShadowType::DYNAMIC,
 };
 
 struct Point {
@@ -35,25 +52,35 @@ typedef union {
 class Light {
 public:
     const entt::entity entity;
-    bool is_enabled;
+
+    bool is_on;
     bool casts_shadows;
 
-    Type type;
+    LightType light_type;
+    ShadowType shadow_type;
 
     Color color;
     float intensity;
-    Params params;
 
-    // runtime values
-    RenderTexture2D shadow_map;
+    RenderTexture2D *shadow_map;
     Matrix vp_mat;
 
-    Light(entt::entity entity, Type type, Color color, float intensity, Params params);
+    Params params;
 
-    void toggle();
+    Light(
+        entt::entity entity,
+        LightType light_type,
+        Color color,
+        float intensity,
+        Params params
+    );
+
+    void draw_shadow_map();
+
     void set_shader_uniform(Shader shader, int idx);
 };
 
-std::string get_type_name(Type type);
+std::string get_light_type_name(LightType type);
+std::string get_shadow_type_name(ShadowType type);
 
 }  // namespace soft_tissues::light

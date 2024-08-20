@@ -1,7 +1,9 @@
 const float PI = 3.14159265358979323846;
 const float EPSILON = 0.000001;
 
-const int MAX_N_LIGHTS = 4;
+const int MAX_N_LIGHTS = 8;
+const int MAX_N_SHADOW_MAPS = MAX_N_LIGHTS;
+
 const int POINT_LIGHT = 0;
 const int DIRECTIONAL_LIGHT = 1;
 const int SPOT_LIGHT = 2;

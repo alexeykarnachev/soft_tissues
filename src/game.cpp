@@ -12,7 +12,6 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
-#include "shadows.hpp"
 #include "world.hpp"
 #include <cstdio>
 
@@ -39,7 +38,6 @@ static void load() {
     resources::load();
     editor::load();
     world::load();
-    shadows::load();
 
     // player
     auto player = prefabs::spawn_player(world::ORIGIN);
@@ -73,7 +71,6 @@ static void load() {
 }
 
 static void unload() {
-    shadows::unload();
     editor::unload();
     resources::unload();
     CloseWindow();
@@ -137,7 +134,10 @@ static void draw_player() {
 static void draw() {
     // -------------------------------------------------------------------
     // shadow maps
-    shadows::draw();
+    for (auto entity : globals::registry.view<component::Light>()) {
+        auto &light = globals::registry.get<component::Light>(entity);
+        light.draw_shadow_map();
+    }
 
     // -------------------------------------------------------------------
     // entity picking

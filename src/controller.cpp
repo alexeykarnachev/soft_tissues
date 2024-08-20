@@ -1,6 +1,7 @@
 #include "controller.hpp"
 
 #include "component/component.hpp"
+#include "component/light.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -66,7 +67,8 @@ void update_flashlight() {
     auto flashlight = globals::registry.view<component::Flashlight>().front();
     auto &light = globals::registry.get<component::Light>(flashlight);
 
-    if (IsKeyPressed(KEY_L)) light.toggle();
+    // toggle
+    light.is_on ^= IsKeyPressed(KEY_L);
 }
 
 void update() {

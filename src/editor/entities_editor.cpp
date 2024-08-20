@@ -10,12 +10,11 @@
 #include <cassert>
 #include <cstdio>
 #include <stdio.h>
+#include <string>
 
 namespace soft_tissues::editor::entities_editor {
 
 entt::entity ENTITY = entt::null;
-// static int TMP = RL_PIXELFORMAT_UNCOMPRESSED_R32;
-// static int TMP = RL_PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
 
 static void update_and_draw_transformation() {
     assert(ENTITY != entt::null);
@@ -28,9 +27,9 @@ static void update_and_draw_transformation() {
         static float speed = 0.1;
         float *v = (float *)&tr._position;
 
-        ImGui::PushID(&tr._position);
+        gui::push_id();
         ImGui::DragFloat3("Position", v, speed);
-        ImGui::PopID();
+        gui::pop_id();
     }
 
     {
@@ -39,9 +38,9 @@ static void update_and_draw_transformation() {
         static float max = 2.0 * PI;
         float *v = (float *)&tr._rotation;
 
-        ImGui::PushID(v);
+        gui::push_id();
         ImGui::DragFloat3("Rotation", v, speed, min, max);
-        ImGui::PopID();
+        gui::pop_id();
     }
 }
 
@@ -49,8 +48,8 @@ static void update_and_draw_mesh() {
     assert(ENTITY != entt::null);
 
     auto mesh = globals::registry.try_get<component::MyMesh>(ENTITY);
-    ImGui::PushID(mesh);
 
+    gui::push_id();
     ImGui::SeparatorText("Mesh");
 
     if (mesh == NULL) {
@@ -62,7 +61,7 @@ static void update_and_draw_mesh() {
         gui::material_picker(&mesh->material);
     }
 
-    ImGui::PopID();
+    gui::pop_id();
 }
 
 static void update_and_draw_light() {
@@ -70,88 +69,124 @@ static void update_and_draw_light() {
 
     auto light = globals::registry.try_get<component::Light>(ENTITY);
     auto &tr = globals::registry.get<component::Transform>(ENTITY);
-    ImGui::PushID(light);
 
+    gui::push_id();
     ImGui::SeparatorText("Light");
 
     if (light == NULL) {
         if (gui::button("Add [L]ight") || IsKeyPressed(KEY_L)) {
             light::Params params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
-            light::Light light(ENTITY, light::Type::POINT, GREEN, 20.0, params);
+            light::Light light(ENTITY, light::LightType::POINT, GREEN, 20.0, params);
             globals::registry.emplace<component::Light>(ENTITY, light);
         }
     } else {
-        gui::common_light_params(light);
+        // ---------------------------------------------------------------
+        // common light params
+    
+        ImGui::Checkbox("is on", &light->is_on);
+        ImGui::Checkbox("casts shadows", &light->casts_shadows);
 
-        // type
-        auto selected_type_name = light::get_type_name(light->type);
-        if (ImGui::BeginCombo("Type", selected_type_name.c_str())) {
-            auto type = light::Type::POINT;
-            auto type_name = light::get_type_name(type);
-            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
-                light->type = type;
-                light->params.point.attenuation = {1.0, 1.5, 0.75};
+        // color
+        auto color = ColorNormalize(light->color);
+        float *color_p = (float *)&color;
+        if (ImGui::ColorEdit3("Color", color_p)) {
+            light->color = ColorFromNormalized(color);
+        }
 
-                light->color = GREEN;
-                light->intensity = 20.0;
+        // intensity
+        float *v = &light->intensity;
+        ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
+
+        // ---------------------------------------------------------------
+        // shadow type selection
+        gui::push_id();
+        auto selected_type_name = light::get_shadow_type_name(light->shadow_type);
+
+        if (ImGui::BeginCombo("Shadow type", selected_type_name.c_str())) {
+
+            for (auto type : light::SHADOW_TYPES) {
+                auto type_name = light::get_shadow_type_name(type);
+                if (ImGui::Selectable(type_name.c_str(), type == light->shadow_type)) {
+                    light->shadow_type = type;
+                }
             }
 
-            type = light::Type::DIRECTIONAL;
-            type_name = light::get_type_name(type);
-            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
-                light->type = type;
+            ImGui::EndCombo();
+        }
+        gui::pop_id();
 
-                light->color = YELLOW;
-                light->intensity = 5.0;
+        // ---------------------------------------------------------------
+        // light type selection
+        selected_type_name = light::get_light_type_name(light->light_type);
+        if (ImGui::BeginCombo("Light type", selected_type_name.c_str())) {
+            for (auto type : light::LIGHT_TYPES) {
+                auto type_name = light::get_light_type_name(type);
+                if (ImGui::Selectable(type_name.c_str(), type == light->light_type)) {
+                    light->light_type = type;
 
-                tr.set_forward({0.0, -1.0, 0.0});
-            }
+                    // after selecting the light type, initialize it with some
+                    // meaningful default light settings
+                    switch (type) {
+                        case light::LightType::POINT: {
+                            light->params.point.attenuation = {1.0, 1.5, 0.75};
 
-            type = light::Type::SPOT;
-            type_name = light::get_type_name(type);
-            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
-                light->type = type;
-                light->params.spot.attenuation = {1.0, 1.2, 0.2};
-                light->params.spot.inner_cutoff = 0.95;
-                light->params.spot.outer_cutoff = 0.80;
+                            light->color = GREEN;
+                            light->intensity = 20.0;
+                        } break;
 
-                light->color = {255, 255, 220, 255};
-                light->intensity = 50.0;
+                        case light::LightType::DIRECTIONAL: {
+                            light->color = YELLOW;
+                            light->intensity = 5.0;
 
-                tr.set_forward({0.0, -1.0, 0.0});
-            }
+                            tr.set_forward({0.0, -1.0, 0.0});
+                        } break;
 
-            type = light::Type::AMBIENT;
-            type_name = light::get_type_name(type);
-            if (ImGui::Selectable(type_name.c_str(), type_name == selected_type_name)) {
-                light->type = type;
-                light->params.ambient = {};
+                        case light::LightType::SPOT: {
+                            light->params.spot.attenuation = {1.0, 1.2, 0.2};
+                            light->params.spot.inner_cutoff = 0.95;
+                            light->params.spot.outer_cutoff = 0.80;
 
-                light->color = WHITE;
-                light->intensity = 0.1;
+                            light->color = {255, 255, 220, 255};
+                            light->intensity = 50.0;
+
+                            tr.set_forward({0.0, -1.0, 0.0});
+                        } break;
+
+                        case light::LightType::AMBIENT: {
+                            light->params.ambient = {};
+
+                            light->color = WHITE;
+                            light->intensity = 0.1;
+                        } break;
+
+                        default: break;
+                    }
+                }
             }
 
             ImGui::EndCombo();
         }
 
-        if (light->is_enabled && light->casts_shadows) {
-            gui::image(light->shadow_map.texture, 150.0, 150.0);
+        if (light->shadow_map != NULL) {
+            gui::image(light->shadow_map->texture, 150.0, 150.0);
         }
 
-        switch (light->type) {
-            case light::Type::POINT: {
+        // ---------------------------------------------------------------
+        // specific light type params
+        switch (light->light_type) {
+            case light::LightType::POINT: {
                 gui::point_light_params(light);
             } break;
-            case light::Type::SPOT: {
+
+            case light::LightType::SPOT: {
                 gui::spot_light_params(light);
             }
-            default: {
-                ImGui::TextColored({1.0, 1.0, 0.0, 1.0}, "TODO: Not implemented");
-            } break;
+
+            default: break;
         }
     }
 
-    ImGui::PopID();
+    gui::pop_id();
 }
 
 void update_and_draw() {

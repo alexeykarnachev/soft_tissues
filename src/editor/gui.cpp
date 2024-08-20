@@ -11,7 +11,7 @@ namespace soft_tissues::editor::gui {
 static const ImVec4 COLOR_CANCEL = {0.8, 0.2, 0.1, 1.0};
 static const ImVec4 COLOR_ACCEPT = {0.2, 0.8, 0.1, 1.0};
 
-static void push_id() {
+void push_id() {
     static int id = 0;
     static int prev_frame = 0;
     int curr_frame = ImGui::GetFrameCount();
@@ -24,7 +24,7 @@ static void push_id() {
     ImGui::PushID(id++);
 }
 
-static void pop_id() {
+void pop_id() {
     ImGui::PopID();
 }
 
@@ -103,26 +103,6 @@ void tile_material_picker(
     if (gui::button("[A]pply to all") || IsKeyPressed(KEY_A)) {
         *tile_materials = pbr::MaterialPBR(*target_material);
     }
-}
-
-void common_light_params(component::Light *light) {
-    push_id();
-
-    // casts_shadows
-    ImGui::Checkbox("Casts Shadows", &light->casts_shadows);
-
-    // color
-    auto color = ColorNormalize(light->color);
-    float *color_p = (float *)&color;
-    if (ImGui::ColorEdit3("Color", color_p)) {
-        light->color = ColorFromNormalized(color);
-    }
-
-    // intensity
-    float *v = &light->intensity;
-    ImGui::SliderFloat("Intensity", v, 0.0, 100.0);
-
-    pop_id();
 }
 
 void spot_light_params(component::Light *light) {

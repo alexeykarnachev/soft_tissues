@@ -8,11 +8,16 @@ namespace soft_tissues::globals {
 
 entt::registry registry;
 
+bool IS_LIGHT_ENABLED = true;
+bool IS_SHADOW_MAP_PASS = false;
+
+float SHADOW_MAP_BIAS = -0.4;
+float SHADOW_MAP_MAX_DIST = 100.0;
+
 float TOTAL_TIME = 0.0;
 float FRAME_DT = 0.0;
 bool WINDOW_SHOULD_CLOSE = false;
 GameState GAME_STATE = GameState::PLAY;
-RenderOptions RENDER_OPTIONS;
 
 void update() {
     FRAME_DT = GetFrameTime();

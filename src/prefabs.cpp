@@ -2,7 +2,6 @@
 
 #include "component/component.hpp"
 #include "component/light.hpp"
-#include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
@@ -50,12 +49,16 @@ entt::entity spawn_sphere(Vector3 position, pbr::MaterialPBR material) {
 }
 
 entt::entity spawn_light(
-    Vector3 position, light::Type type, Color color, float intensity, light::Params params
+    Vector3 position,
+    light::LightType light_type,
+    Color color,
+    float intensity,
+    light::Params params
 ) {
     auto entity = globals::registry.create();
     auto transform = component::Transform(entity, position);
 
-    light::Light light(entity, type, color, intensity, params);
+    light::Light light(entity, light_type, color, intensity, params);
 
     globals::registry.emplace<component::Transform>(entity, transform);
     globals::registry.emplace<component::Light>(entity, light);
@@ -81,7 +84,7 @@ entt::entity spawn_spot_light(
                .outer_cutoff = outer_cutoff,
            }};
 
-    auto entity = spawn_light(position, light::Type::SPOT, color, intensity, params);
+    auto entity = spawn_light(position, light::LightType::SPOT, color, intensity, params);
     auto &tr = globals::registry.get<component::Transform>(entity);
     tr.set_forward(direction);
 
@@ -89,7 +92,7 @@ entt::entity spawn_spot_light(
 }
 
 entt::entity spawn_flashlight(Vector3 position) {
-    static const light::Type type = light::Type::SPOT;
+    static const light::LightType type = light::LightType::SPOT;
     static const Color color = {255, 255, 220, 255};
     static const auto intensity = 50.0;
 
@@ -110,7 +113,7 @@ entt::entity spawn_flashlight(Vector3 position) {
 }
 
 entt::entity spawn_ambient_light(Color color, float intensity) {
-    return spawn_light(Vector3Zero(), light::Type::AMBIENT, color, intensity, {});
+    return spawn_light(Vector3Zero(), light::LightType::AMBIENT, color, intensity, {});
 }
 
 }  // namespace soft_tissues::prefabs

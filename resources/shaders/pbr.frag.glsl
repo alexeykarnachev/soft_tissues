@@ -5,16 +5,13 @@ in vec2 v_tex_coord;
 in vec3 v_normal;
 in mat3 v_tbn;
 
-// NOTE: This represents vertex position in a ndc light space.
+// NOTE: This represents the rasterized vertex position in a ndc light space.
 // Since there are more than 1 light, these positions are stored in the array.
 in vec4 v_light_positions[MAX_N_LIGHTS];
 
 // -----------------------------------------------------------------------
 // Uniforms
-// NOTE: In the extreme cases all lights are point lights,
-// since a point light has 6 shadowmap planes,
-// the max number of shadow maps is MAX_N_LIGHTS * 6
-uniform sampler2D u_shadow_maps[MAX_N_LIGHTS * 6];
+uniform sampler2D u_shadow_maps[MAX_N_SHADOW_MAPS];
 
 uniform sampler2D u_albedo_map;
 uniform sampler2D u_metalness_map;
@@ -51,6 +48,8 @@ float mock_usage() {
 
     f += u_camera_pos.x;
     f += float(u_n_lights);
+
+    f += u_shadow_map_bias;
 
     if (u_n_lights > 0) {
         f += u_lights[0].intensity;
@@ -126,7 +125,7 @@ vec3 get_pbr_color() {
             if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) {
                 is_in_shadow = true;
             } else {
-                float depth = u_shadow_map_max_dist * texture(u_shadow_maps[i * 6], uv).r;
+                float depth = u_shadow_map_max_dist * texture(u_shadow_maps[i], uv).r;
                 is_in_shadow = depth < (dist + u_shadow_map_bias);
             }
         }
@@ -189,6 +188,7 @@ vec3 get_pbr_color() {
 
     vec3 color = ambient_total + light_total * occlusion;
     color = mix(color, u_constant_color.rgb, u_constant_color.a);
+    // color = color + mock_usage();
 
     return color;
 }
