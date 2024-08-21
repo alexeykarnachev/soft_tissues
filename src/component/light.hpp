@@ -78,6 +78,9 @@ public:
     void draw_shadow_map();
 
     void set_shader_uniform(Shader shader, int idx);
+
+private:
+    bool needs_update = true;
 };
 
 std::string get_light_type_name(LightType type);

@@ -30,24 +30,24 @@ void Light::draw_shadow_map() {
 
     // -------------------------------------------------------------------
     // decide if the shadow map needs to be updated
-    static bool needs_update = true;
-
     if (this->casts_shadows) {
 
         if (this->shadow_type == ShadowType::DYNAMIC) {
-            needs_update = true;
+            this->needs_update = true;
         }
 
     } else {
-        needs_update = false;
+        this->needs_update = false;
 
+        // update is not needed, but shadow map is assigned, so we return it back
+        // to the resources manager
         if (this->shadow_map != NULL) {
             resources::free_shadow_map(this->shadow_map);
             this->shadow_map = NULL;
         }
     }
 
-    if (!needs_update) {
+    if (!this->needs_update) {
         return;
     }
 
