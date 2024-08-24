@@ -19,16 +19,6 @@ entt::entity spawn_entity() {
     return entity;
 }
 
-entt::entity spawn_player(Vector2 position) {
-    auto entity = globals::registry.create();
-    auto transform = component::Transform(entity, {position.x, 0.0, position.y});
-
-    globals::registry.emplace<component::Transform>(entity, transform);
-    globals::registry.emplace<component::Player>(entity);
-
-    return entity;
-}
-
 entt::entity spawn_mesh(Vector3 position, Mesh mesh, pbr::MaterialPBR material) {
     auto entity = globals::registry.create();
     auto transform = component::Transform(entity, position);
@@ -91,29 +81,53 @@ entt::entity spawn_spot_light(
     return entity;
 }
 
-entt::entity spawn_flashlight(Vector3 position) {
-    static const light::LightType type = light::LightType::SPOT;
-    static const Color color = {255, 255, 220, 255};
-    static const auto intensity = 50.0;
-
-    static const Vector3 attenuation = {1.0, 1.2, 0.2};
-    static const float inner_cutoff = 0.95;
-    static const float outer_cutoff = 0.80;
-
-    light::Params params
-        = {.spot = {
-               .attenuation = attenuation,
-               .inner_cutoff = inner_cutoff,
-               .outer_cutoff = outer_cutoff,
-           }};
-    auto entity = spawn_light(position, type, color, intensity, params);
-    globals::registry.emplace<component::Flashlight>(entity);
-
-    return entity;
-}
-
 entt::entity spawn_ambient_light(Color color, float intensity) {
     return spawn_light(Vector3Zero(), light::LightType::AMBIENT, color, intensity, {});
+}
+
+entt::entity spawn_player(Vector2 position) {
+    entt::entity player;
+    entt::entity flashlight;
+
+    // player
+    {
+        auto entity = globals::registry.create();
+        auto transform = component::Transform(entity, {position.x, 0.0, position.y});
+
+        globals::registry.emplace<component::Transform>(entity, transform);
+        globals::registry.emplace<component::Player>(entity);
+
+        player = entity;
+    }
+
+    // flashlight
+    {
+        static const Vector3 position = {0.0, globals::PLAYER_HEIGHT, 0.0};
+
+        static const light::LightType type = light::LightType::SPOT;
+        static const Color color = {255, 255, 220, 255};
+        static const auto intensity = 50.0;
+
+        static const Vector3 attenuation = {1.0, 1.2, 0.2};
+        static const float inner_cutoff = 0.95;
+        static const float outer_cutoff = 0.80;
+
+        light::Params params
+            = {.spot = {
+                   .attenuation = attenuation,
+                   .inner_cutoff = inner_cutoff,
+                   .outer_cutoff = outer_cutoff,
+               }};
+        auto entity = spawn_light(position, type, color, intensity, params);
+        globals::registry.emplace<component::Flashlight>(entity);
+
+        flashlight = entity;
+    }
+
+    // attach flashlight to player
+    globals::registry.emplace<component::Parent>(flashlight, player);
+
+    return player;
 }
 
 }  // namespace soft_tissues::prefabs
