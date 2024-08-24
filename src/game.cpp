@@ -116,8 +116,7 @@ static void draw_player() {
 
     Vector3 position = tr.get_position();
     Matrix t = MatrixTranslate(position.x, position.y, position.z);
-    Matrix r = QuaternionToMatrix(tr.get_quaternion());
-    Matrix transform = MatrixMultiply(r, t);
+    Matrix transform = t;
 
     Model model = PLAYER_MODEL;
     model.transform = MatrixMultiply(model.transform, transform);
