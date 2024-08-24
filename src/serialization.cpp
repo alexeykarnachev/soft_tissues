@@ -4,10 +4,10 @@
 
 namespace soft_tissues::serialization {
 
-void save_scene(std::string file_path) {
-
+void save(std::string file_path) {
+    // tiles
 }
 
-void load_scene(std::string file_path) {}
+void load(std::string file_path) {}
 
 }  // namespace soft_tissues::serialization

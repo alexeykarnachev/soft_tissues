@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pbr.hpp"
 #include "raylib/raylib.h"
 #include "utils.hpp"
 #include <array>
@@ -12,13 +11,13 @@ using namespace utils;
 
 class TileMaterials {
 public:
-    pbr::MaterialPBR floor;
-    pbr::MaterialPBR wall;
-    pbr::MaterialPBR ceil;
+    std::string floor_key;
+    std::string wall_key;
+    std::string ceil_key;
 
     TileMaterials();
-    TileMaterials(pbr::MaterialPBR material);
-    TileMaterials(pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil);
+    TileMaterials(std::string material_pbr_key);
+    TileMaterials(std::string floor_key, std::string wall_key, std::string ceil_key);
 };
 
 enum class TileWall {

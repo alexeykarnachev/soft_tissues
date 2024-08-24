@@ -5,6 +5,8 @@
 #include "raylib/raylib.h"
 #include <cmath>
 #include <cstdio>
+#include <stdexcept>
+#include <vector>
 
 namespace soft_tissues::editor::gui {
 
@@ -67,33 +69,37 @@ void image(Texture texture, float width, float height) {
     return image(texture.id, width, height);
 }
 
-void material_picker(pbr::MaterialPBR *material) {
-    auto name = material->get_name();
-
-    if (ImGui::BeginMenu(name.c_str())) {
+void material_picker(std::string *material_pbr_key) {
+    if (ImGui::BeginMenu(material_pbr_key->c_str())) {
         ImGui::Separator();
 
-        for (auto &another_material : resources::MATERIALS_PBR) {
-            auto another_name = another_material.get_name();
-            bool is_selected = name == another_name;
+        std::vector<std::string> keys = resources::get_material_pbr_keys();
+        for (auto another_material_pbr_key : keys) {
+            bool is_selected = another_material_pbr_key == *material_pbr_key;
 
-            if (ImGui::MenuItem(another_name.c_str(), NULL, is_selected)) {
-                *material = another_material;
+            if (ImGui::MenuItem(another_material_pbr_key.c_str(), NULL, is_selected)) {
+                *material_pbr_key = another_material_pbr_key;
             }
-            gui::image(another_material.get_texture(), 30.0);
+
+            auto another_material_pbr = resources::get_material_pbr(
+                another_material_pbr_key
+            );
+            gui::image(another_material_pbr.get_texture(), 30.0);
             ImGui::Separator();
         }
         ImGui::EndMenu();
     }
-    gui::image(material->get_texture(), 150.0);
+
+    auto material_pbr = resources::get_material_pbr(*material_pbr_key);
+    gui::image(material_pbr.get_texture(), 150.0);
 }
 
 void tile_material_picker(
-    pbr::MaterialPBR *target_material, tile::TileMaterials *tile_materials
+    std::string *target_material_pbr_key, tile::TileMaterials *tile_materials
 ) {
-    material_picker(target_material);
+    material_picker(target_material_pbr_key);
     if (gui::button("[A]pply to all") || IsKeyPressed(KEY_A)) {
-        *tile_materials = pbr::MaterialPBR(*target_material);
+        *tile_materials = tile::TileMaterials(*target_material_pbr_key);
     }
 }
 

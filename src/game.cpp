@@ -50,22 +50,6 @@ void reset() {
     TraceLog(LOG_INFO, "Game has been reset");
 }
 
-#if 0
-template <typename T> void update_components() {
-    for (auto entity : globals::registry.view<T>()) {
-        auto &component = globals::registry.get<T>(entity);
-        component.update();
-    }
-}
-
-template <typename T> void draw_components() {
-    for (auto entity : globals::registry.view<T>()) {
-        auto &component = globals::registry.get<T>(entity);
-        component.draw();
-    }
-}
-#endif
-
 static void update() {
     globals::update();
 

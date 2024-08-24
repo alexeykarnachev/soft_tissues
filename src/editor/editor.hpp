@@ -47,9 +47,9 @@ bool button(const char *name, bool is_enabled = true);
 bool button_color(const char *name, ImVec4 color, bool is_enabled = true);
 void image(unsigned int texture, float width, float height);
 void image(Texture texture, float width, float height = 0.0);
-void material_picker(pbr::MaterialPBR *material);
+void material_picker(std::string *material_pbr_key);
 void tile_material_picker(
-    pbr::MaterialPBR *target_material, tile::TileMaterials *tile_materials
+    std::string *target_material_pbr_key, tile::TileMaterials *tile_materials
 );
 void spot_light_params(component::Light *light);
 void point_light_params(component::Light *light);

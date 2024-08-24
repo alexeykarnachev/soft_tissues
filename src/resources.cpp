@@ -20,31 +20,43 @@ using namespace utils;
 
 Material DEFAULT_MATERIAL;
 
-Mesh PLANE_MESH;
-Mesh CUBE_MESH;
-Mesh SPHERE_MESH;
-
-// TODO: Make hashmap instead of the vector
-std::vector<pbr::MaterialPBR> MATERIALS_PBR;
+static std::unordered_map<std::string, pbr::MaterialPBR> MATERIALS_PBR;
+static std::unordered_map<std::string, Mesh> MESHES;
 
 static std::unordered_set<int> FREE_SHADOW_MAP_IDXS;
 static std::array<RenderTexture2D, globals::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
 
+static std::string get_material_pbr_dir_path(std::string key) {
+    return "resources/pbr/" + key + "/";
+}
+
 void load() {
     DEFAULT_MATERIAL = LoadMaterialDefault();
 
-    MATERIALS_PBR = {
-        pbr::MaterialPBR("resources/pbr/brick_wall/", {1.0, 1.0}, 0.0),
-        pbr::MaterialPBR("resources/pbr/tiled_stone/", {1.0, 1.0}, 0.0),
-        pbr::MaterialPBR("resources/pbr/modern_shattered_wallpaper/", {1.0, 1.0}, 0.0),
-        pbr::MaterialPBR("resources/pbr/hungarian_point_flooring/", {1.0, 1.0}, 0.0),
-        pbr::MaterialPBR("resources/pbr/muddy_scattered_brickwork/", {1.0, 1.0}, 0.0),
+    // -------------------------------------------------------------------
+    // materials pbr
+    static const std::array<std::string, 5> material_keys = {
+        "brick_wall",
+        "tiled_stone",
+        "modern_shattered_wallpaper",
+        "hungarian_point_flooring",
+        "muddy_scattered_brickwork",
     };
 
-    PLANE_MESH = gen_mesh_plane(2);
-    CUBE_MESH = gen_mesh_cube();
-    SPHERE_MESH = gen_mesh_sphere(64, 64);
+    for (auto key : material_keys) {
+        auto dir_path = get_material_pbr_dir_path(key);
+        auto material_pbr = pbr::MaterialPBR(dir_path, {1.0, 1.0}, 0.0);
+        MATERIALS_PBR[key] = material_pbr;
+    }
 
+    // -------------------------------------------------------------------
+    // meshes
+    MESHES["plane"] = gen_mesh_plane(2);
+    MESHES["cube"] = gen_mesh_cube();
+    MESHES["sphere"] = gen_mesh_sphere(64, 64);
+
+    // -------------------------------------------------------------------
+    // shadow maps
     for (size_t i = 0; i < SHADOW_MAPS.size(); ++i) {
         SHADOW_MAPS[i] = LoadRenderTexture(
             globals::SHADOW_MAP_SIZE, globals::SHADOW_MAP_SIZE
@@ -56,23 +68,46 @@ void load() {
 void unload() {
     UnloadMaterial(DEFAULT_MATERIAL);
 
-    UnloadMesh(PLANE_MESH);
-    UnloadMesh(CUBE_MESH);
-    UnloadMesh(SPHERE_MESH);
-
-    for (auto material : MATERIALS_PBR) {
+    // -------------------------------------------------------------------
+    // materials pbr
+    for (auto [_, material] : MATERIALS_PBR) {
         material.unload();
     }
 
+    // -------------------------------------------------------------------
+    // meshes
+    for (auto [_, mesh] : MESHES) {
+        UnloadMesh(mesh);
+    }
+
+    // -------------------------------------------------------------------
+    // shadow maps
     for (auto &shadow_map : SHADOW_MAPS) {
         UnloadRenderTexture(shadow_map);
     }
 }
 
-Material get_color_material(Color color) {
+Material get_material_color(Color color) {
     Material material = DEFAULT_MATERIAL;
     material.maps[0].color = color;
     return material;
+}
+
+pbr::MaterialPBR get_material_pbr(std::string key) {
+    return MATERIALS_PBR[key];
+}
+
+Mesh get_mesh(std::string key) {
+    return MESHES[key];
+}
+
+std::vector<std::string> get_material_pbr_keys() {
+    std::vector<std::string> keys;
+    for (auto [key, _] : MATERIALS_PBR) {
+        keys.push_back(key);
+    }
+
+    return keys;
 }
 
 RenderTexture2D *get_shadow_map() {

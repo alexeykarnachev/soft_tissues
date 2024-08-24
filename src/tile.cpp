@@ -1,6 +1,5 @@
 #include "tile.hpp"
 
-#include "pbr.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "utils.hpp"
@@ -13,17 +12,17 @@ using namespace utils;
 
 TileMaterials::TileMaterials() = default;
 
-TileMaterials::TileMaterials(pbr::MaterialPBR material)
-    : floor(material)
-    , wall(material)
-    , ceil(material) {}
+TileMaterials::TileMaterials(std::string material_pbr_key)
+    : floor_key(material_pbr_key)
+    , wall_key(material_pbr_key)
+    , ceil_key(material_pbr_key) {}
 
 TileMaterials::TileMaterials(
-    pbr::MaterialPBR floor, pbr::MaterialPBR wall, pbr::MaterialPBR ceil
+    std::string floor_key, std::string wall_key, std::string ceil_key
 )
-    : floor(floor)
-    , wall(wall)
-    , ceil(ceil) {}
+    : floor_key(floor_key)
+    , wall_key(wall_key)
+    , ceil_key(ceil_key) {}
 
 Tile::Tile() = default;
 

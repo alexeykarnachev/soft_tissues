@@ -193,12 +193,13 @@ void update_hovered_entity() {
         auto meshes = globals::registry.view<component::MyMesh>();
         for (auto entity : meshes) {
             auto tr = globals::registry.get<component::Transform>(entity);
-            auto mesh = globals::registry.get<component::MyMesh>(entity);
+            auto my_mesh = globals::registry.get<component::MyMesh>(entity);
 
-            Matrix matrix = tr.get_matrix();
-            Material material = resources::DEFAULT_MATERIAL;
-            material.maps[0].color = {id, 0, 0, 255};
-            DrawMesh(mesh.mesh, material, matrix);
+            auto mesh = resources::get_mesh(my_mesh.mesh_key);
+            auto material = resources::get_material_color({id, 0, 0, 255});
+            auto matrix = tr.get_matrix();
+
+            DrawMesh(mesh, material, matrix);
 
             entities.push_back(entity);
             // TODO: Check for overflow

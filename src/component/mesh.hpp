@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../pbr.hpp"
 #include "entt/entity/fwd.hpp"
 #include "raylib/raylib.h"
 
@@ -10,11 +9,12 @@ class MyMesh {
 public:
     const entt::entity entity;
 
-    Mesh mesh;
-    pbr::MaterialPBR material;
+    const std::string mesh_key;
+    std::string material_pbr_key;
+
     Color constant_color;
 
-    MyMesh(entt::entity entity, Mesh mesh, pbr::MaterialPBR material);
+    MyMesh(entt::entity entity, std::string mesh_key, std::string material_pbr_key);
 };
 
 }  // namespace soft_tissues::mesh

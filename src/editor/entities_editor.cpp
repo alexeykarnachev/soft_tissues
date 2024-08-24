@@ -1,7 +1,6 @@
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../prefabs.hpp"
-#include "../resources.hpp"
 #include "editor.hpp"
 #include "entt/entity/entity.hpp"
 #include "imgui/imgui.h"
@@ -50,11 +49,11 @@ static void update_and_draw_mesh() {
 
     if (mesh == NULL) {
         if (gui::button("Add [M]esh") || IsKeyPressed(KEY_M)) {
-            mesh::MyMesh mesh(ENTITY, resources::CUBE_MESH, resources::MATERIALS_PBR[0]);
-            globals::registry.emplace<component::MyMesh>(ENTITY, mesh);
+            mesh::MyMesh my_mesh(ENTITY, "cube", "brick_wall");
+            globals::registry.emplace<component::MyMesh>(ENTITY, my_mesh);
         }
     } else {
-        gui::material_picker(&mesh->material);
+        gui::material_picker(&mesh->material_pbr_key);
     }
 
     gui::pop_id();

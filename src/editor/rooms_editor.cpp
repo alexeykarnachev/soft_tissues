@@ -22,9 +22,11 @@ static void select_room(int id) {
 }
 
 static void draw_tile_ghost(tile::Tile *tile, Color color) {
-    Material material = resources::get_color_material(color);
-    Matrix matrix = tile->get_floor_matrix();
-    DrawMesh(resources::PLANE_MESH, material, matrix);
+    auto mesh = resources::get_mesh("plane");
+    auto material = resources::get_material_color(color);
+    auto matrix = tile->get_floor_matrix();
+
+    DrawMesh(mesh, material, matrix);
 }
 
 static void draw_tile_ghost(tile::Tile *tile, bool is_remove) {
@@ -44,7 +46,7 @@ void update_and_draw() {
     static bool is_loaded = false;
 
     if (!is_loaded) {
-        MATERIALS = tile::TileMaterials(resources::MATERIALS_PBR[0]);
+        MATERIALS = tile::TileMaterials("brick_wall");
         is_loaded = true;
     }
 
@@ -76,17 +78,17 @@ void update_and_draw() {
         ImGui::BeginTabBar("Materials");
 
         if (ImGui::BeginTabItem("floor")) {
-            gui::tile_material_picker(&MATERIALS.floor, &MATERIALS);
+            gui::tile_material_picker(&MATERIALS.floor_key, &MATERIALS);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("wall")) {
-            gui::tile_material_picker(&MATERIALS.wall, &MATERIALS);
+            gui::tile_material_picker(&MATERIALS.wall_key, &MATERIALS);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("ceil")) {
-            gui::tile_material_picker(&MATERIALS.ceil, &MATERIALS);
+            gui::tile_material_picker(&MATERIALS.ceil_key, &MATERIALS);
             ImGui::EndTabItem();
         }
 

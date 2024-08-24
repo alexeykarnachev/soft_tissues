@@ -380,32 +380,37 @@ void draw_grid() {
 }
 
 void draw_tiles() {
+    Mesh mesh = resources::get_mesh("plane");
+
     for (tile::Tile &tile : TILES) {
         // don't draw tile which doesn't belong to any room
         if (get_tile_room_id(&tile) == -1) continue;
 
-        Mesh mesh = resources::PLANE_MESH;
-
         // draw floor
         pbr::draw_mesh(
-            mesh, tile.materials.floor, tile.constant_color, tile.get_floor_matrix()
+            mesh,
+            resources::get_material_pbr(tile.materials.floor_key),
+            tile.constant_color,
+            tile.get_floor_matrix()
         );
 
         // draw ceil
         pbr::draw_mesh(
-            mesh, tile.materials.ceil, tile.constant_color, tile.get_ceil_matrix()
+            mesh,
+            resources::get_material_pbr(tile.materials.ceil_key),
+            tile.constant_color,
+            tile.get_ceil_matrix()
         );
 
         // draw solid walls
+        auto wall_material_pbr = resources::get_material_pbr(tile.materials.wall_key);
         for (int i_direction = 0; i_direction < 4; ++i_direction) {
             Direction direction = (Direction)i_direction;
 
             if (tile.has_solid_wall(direction)) {
                 for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {
                     Matrix matrix = tile.get_wall_matrix(direction, i_height);
-                    pbr::draw_mesh(
-                        mesh, tile.materials.wall, tile.constant_color, matrix
-                    );
+                    pbr::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix);
                 }
             }
         }
@@ -416,11 +421,14 @@ void draw_meshes() {
     auto view = globals::registry.view<component::MyMesh>();
 
     for (auto entity : view) {
-        auto mesh = globals::registry.get<component::MyMesh>(entity);
+        auto my_mesh = globals::registry.get<component::MyMesh>(entity);
         auto tr = globals::registry.get<component::Transform>(entity);
         Matrix matrix = tr.get_matrix();
 
-        pbr::draw_mesh(mesh.mesh, mesh.material, mesh.constant_color, matrix);
+        auto mesh = resources::get_mesh(my_mesh.mesh_key);
+        auto material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);
+
+        pbr::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix);
     }
 }
 
