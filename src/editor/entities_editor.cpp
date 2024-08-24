@@ -17,11 +17,6 @@ namespace soft_tissues::editor::entities_editor {
 entt::entity ENTITY = entt::null;
 
 static void update_and_draw_transformation() {
-    // TODO: uncomment
-    return;
-
-    assert(ENTITY != entt::null);
-
     auto &tr = globals::registry.get<component::Transform>(ENTITY);
 
     ImGui::SeparatorText("Transformation");
@@ -48,11 +43,6 @@ static void update_and_draw_transformation() {
 }
 
 static void update_and_draw_mesh() {
-    // TODO: uncomment
-    return;
-
-    assert(ENTITY != entt::null);
-
     auto mesh = globals::registry.try_get<component::MyMesh>(ENTITY);
 
     gui::push_id();
@@ -71,11 +61,6 @@ static void update_and_draw_mesh() {
 }
 
 static void update_and_draw_light() {
-    // TODO: uncomment
-    return;
-
-    assert(ENTITY != entt::null);
-
     auto light = globals::registry.try_get<component::Light>(ENTITY);
     auto &tr = globals::registry.get<component::Transform>(ENTITY);
 
@@ -91,7 +76,7 @@ static void update_and_draw_light() {
     } else {
         // ---------------------------------------------------------------
         // common light params
-    
+
         ImGui::Checkbox("is on", &light->is_on);
         ImGui::Checkbox("casts shadows", &light->casts_shadows);
 
@@ -199,6 +184,8 @@ static void update_and_draw_light() {
 }
 
 void update_and_draw() {
+    if (!globals::registry.valid(ENTITY)) ENTITY = entt::null;
+
     // ---------------------------------------------------------------
     // entity picking
     bool is_hovered_picked = IsMouseButtonPressed(MOUSE_LEFT_BUTTON)

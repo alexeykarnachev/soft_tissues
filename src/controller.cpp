@@ -22,26 +22,23 @@ void update_translation() {
     float length = Vector3Length(dir);
     if (length <= EPSILON) return;
 
-    // TODO: uncomment
+    auto player = globals::registry.view<component::Player>().front();
+    auto &tr = globals::registry.get<component::Transform>(player);
 
-    // auto player = globals::registry.view<component::Player>().front();
-    // auto &tr = globals::registry.get<component::Transform>(player);
+    Vector3 forward = tr.get_forward();
+    Vector3 right = tr.get_right();
 
-    // Vector3 forward = tr.get_forward();
-    // Vector3 right = tr.get_right();
+    forward.y = 0.0;
+    right.y = 0.0;
 
-    // forward.y = 0.0;
-    // right.y = 0.0;
+    dir = Vector3Scale(dir, 1.0 / length);
+    forward = Vector3Scale(Vector3Normalize(forward), -dir.z);
+    right = Vector3Scale(Vector3Normalize(right), dir.x);
+    dir = Vector3Normalize(Vector3Add(forward, right));
 
-    // dir = Vector3Scale(dir, 1.0 / length);
-    // forward = Vector3Scale(Vector3Normalize(forward), -dir.z);
-    // right = Vector3Scale(Vector3Normalize(right), dir.x);
-    // dir = Vector3Normalize(Vector3Add(forward, right));
+    Vector3 step = Vector3Scale(dir, globals::FRAME_DT * globals::PLAYER_MOVEMENT_SPEED);
 
-    // Vector3 step = Vector3Scale(dir, globals::FRAME_DT *
-    // globals::PLAYER_MOVEMENT_SPEED);
-
-    // tr.step(step);
+    tr.step(step);
 }
 
 void update_rotation() {
@@ -55,27 +52,23 @@ void update_rotation() {
     float pitch_delta = -mouse_delta.y;
     if (yaw_delta == 0 && pitch_delta == 0) return;
 
-    // TODO: uncomment
+    auto player = globals::registry.view<component::Player>().front();
+    auto &tr = globals::registry.get<component::Transform>(player);
 
-    // auto player = globals::registry.view<component::Player>().front();
-    // auto &tr = globals::registry.get<component::Transform>(player);
+    float pitch = tr._rotation.x + pitch_delta;
+    pitch = Clamp(pitch, -0.5 * PI + 0.025, 0.5 * PI - 0.025);
+    float yaw = tr._rotation.y + yaw_delta;
 
-    // float pitch = tr._rotation.x + pitch_delta;
-    // pitch = Clamp(pitch, -0.5 * PI + 0.025, 0.5 * PI - 0.025);
-    // float yaw = tr._rotation.y + yaw_delta;
-
-    // tr._rotation.x = pitch;
-    // tr._rotation.y = yaw;
+    tr._rotation.x = pitch;
+    tr._rotation.y = yaw;
 }
 
 void update_flashlight() {
-    // TODO: uncomment
+    auto flashlight = globals::registry.view<component::Flashlight>().front();
+    auto &light = globals::registry.get<component::Light>(flashlight);
 
-    // auto flashlight = globals::registry.view<component::Flashlight>().front();
-    // auto &light = globals::registry.get<component::Light>(flashlight);
-
-    // // toggle
-    // light.is_on ^= IsKeyPressed(KEY_L);
+    // toggle
+    light.is_on ^= IsKeyPressed(KEY_L);
 }
 
 void update() {

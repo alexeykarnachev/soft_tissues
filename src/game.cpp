@@ -86,40 +86,33 @@ static void draw_cursor() {
 }
 
 static void draw_light_shells() {
-    // TODO: uncomment
-
-    // auto view = globals::registry.view<component::Light>();
-    // for (auto entity : view) {
-    //     auto tr = globals::registry.get<component::Transform>(entity);
-    //     DrawSphere(tr.get_position(), 0.2, WHITE);
-    // }
+    auto view = globals::registry.view<component::Light>();
+    for (auto entity : view) {
+        auto tr = globals::registry.get<component::Transform>(entity);
+        DrawSphere(tr.get_position(), 0.2, WHITE);
+    }
 }
 
 static void draw_player() {
-    // TODO: uncomment
+    auto player = globals::registry.view<component::Player>().front();
+    auto tr = globals::registry.get<component::Transform>(player);
 
-    // auto player = globals::registry.view<component::Player>().front();
-    // auto tr = globals::registry.get<component::Transform>(player);
+    Vector3 position = tr.get_position();
+    Matrix t = MatrixTranslate(position.x, position.y, position.z);
+    Matrix transform = t;
 
-    // Vector3 position = tr.get_position();
-    // Matrix t = MatrixTranslate(position.x, position.y, position.z);
-    // Matrix transform = t;
-
-    // Model model = PLAYER_MODEL;
-    // model.transform = MatrixMultiply(model.transform, transform);
-    // DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
+    Model model = PLAYER_MODEL;
+    model.transform = MatrixMultiply(model.transform, transform);
+    DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
 }
 
 static void draw() {
     // -------------------------------------------------------------------
     // shadow maps
-
-    // TODO: uncomment
-
-    // for (auto entity : globals::registry.view<component::Light>()) {
-    //     auto &light = globals::registry.get<component::Light>(entity);
-    //     light.draw_shadow_map();
-    // }
+    for (auto entity : globals::registry.view<component::Light>()) {
+        auto &light = globals::registry.get<component::Light>(entity);
+        light.draw_shadow_map();
+    }
 
     // -------------------------------------------------------------------
     // entity picking

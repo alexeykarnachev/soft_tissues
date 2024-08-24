@@ -171,9 +171,8 @@ void update_and_draw() {
 }
 
 void update_hovered_entity() {
-    // TODO: uncomment
-    return;
-
+    // -------------------------------------------------------------------
+    // Draw entities into the PICKING_FBO
     static std::vector<entt::entity> entities;
     entities.clear();
     HOVERED_ENTITY = entt::null;
