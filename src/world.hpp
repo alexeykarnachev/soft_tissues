@@ -15,6 +15,7 @@ extern const Vector2 ORIGIN;
 void load();
 
 int get_tiles_count();
+int get_rooms_count();
 Vector2 get_size();
 
 std::pair<int, int> get_row_col_at_position(Vector2 pos);

@@ -31,6 +31,7 @@ static void draw_tile_ghost(tile::Tile *tile, bool is_remove) {
     int room_id = world::get_tile_room_id(tile);
     bool can_remove = is_remove && room_id == ROOM_ID;
     bool can_place = !is_remove && room_id == -1;
+
     Color color = GRAY;
     if (can_remove || can_place) {
         color = is_remove ? RED : GREEN;
@@ -47,7 +48,7 @@ void update_and_draw() {
         is_loaded = true;
     }
 
-    if (IsKeyPressed(KEY_ESCAPE)) {
+    if (IsKeyPressed(KEY_ESCAPE) || world::get_rooms_count() == 0) {
         ROOM_ID = -1;
     }
 

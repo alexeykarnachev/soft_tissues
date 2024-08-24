@@ -6,7 +6,6 @@
 #include "controller.hpp"
 #include "editor/editor.hpp"
 #include "globals.hpp"
-#include "pbr.hpp"
 #include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -33,40 +32,20 @@ static void load_window() {
 
 static Model PLAYER_MODEL;
 
-static void load() {
-    load_window();
-    resources::load();
-    editor::load();
+void load() {
     world::load();
 
-    // player
     prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
-
-    // mesh
-    {
-        Vector3 position = {0.0, 1.5, -6.0};
-        pbr::MaterialPBR material = resources::MATERIALS_PBR[0];
-        prefabs::spawn_sphere(position, material);
-    }
-
-    // spot light
-    {
-        Vector3 position = {-10.0, 2.0, -6.0f};
-        Vector3 direction = {1.0, -0.2, 0.0};
-        prefabs::spawn_spot_light(
-            position, direction, GREEN, 40.0, {1.0, 0.2, 0.02}, 0.9, 0.8
-        );
-    }
-
-    // ambient light
-    prefabs::spawn_ambient_light(WHITE, 0.1);
 }
 
-static void unload() {
-    editor::unload();
-    resources::unload();
-    CloseWindow();
+void reset() {
+    // globals::registry.clear();
+    world::load();
+
+    // prefabs::spawn_player(world::ORIGIN);
+
+    TraceLog(LOG_INFO, "Game has been reset");
 }
 
 template <typename T> void update_components() {
@@ -173,14 +152,24 @@ static void draw() {
 }
 
 void run() {
+    // load engine
+    load_window();
+    resources::load();
+    editor::load();
+
+    // load initial scene
     load();
 
+    // main loop
     while (!globals::WINDOW_SHOULD_CLOSE) {
         update();
         draw();
     }
 
-    unload();
+    // unload
+    editor::unload();
+    resources::unload();
+    CloseWindow();
 }
 
 }  // namespace soft_tissues::game

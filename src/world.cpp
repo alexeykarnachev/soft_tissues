@@ -38,10 +38,17 @@ void load() {
     for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
+
+    ROOM_ID_TO_TILES.clear();
+    TILE_TO_ROOM_ID.clear();
 }
 
 int get_tiles_count() {
     return N_TILES;
+}
+
+int get_rooms_count() {
+    return ROOM_ID_TO_TILES.size();
 }
 
 Vector2 get_size() {

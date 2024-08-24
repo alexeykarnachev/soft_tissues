@@ -2,8 +2,10 @@
 
 #include "../camera.hpp"
 #include "../component/component.hpp"
+#include "../game.hpp"
 #include "../globals.hpp"
 #include "../resources.hpp"
+#include "../world.hpp"
 #include "GLFW/glfw3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -135,6 +137,17 @@ static void update_and_draw_globals() {
     ImGui::SliderFloat(
         "shadow_map_max_dist", &globals::SHADOW_MAP_MAX_DIST, 10.0, 1000.0
     );
+
+    // -------------------------------------------------------------------
+    // world
+    ImGui::SeparatorText("World");
+    ImGui::Text("Rooms count: %d", world::get_rooms_count());
+
+    // -------------------------------------------------------------------
+    // reset
+    if (gui::button("Reset")) {
+        game::reset();
+    }
 }
 
 void update_and_draw() {
