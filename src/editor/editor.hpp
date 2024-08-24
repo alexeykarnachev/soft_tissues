@@ -35,6 +35,9 @@ void update_and_draw();
 // -----------------------------------------------------------------------
 namespace gui {
 
+extern ImVec4 COLOR_RED;
+extern ImVec4 COLOR_GREEN;
+
 void push_id();
 void pop_id();
 
@@ -42,8 +45,6 @@ bool collapsing_header(const char *name, bool is_opened);
 bool collapsing_header(const char *name);
 bool button(const char *name, bool is_enabled = true);
 bool button_color(const char *name, ImVec4 color, bool is_enabled = true);
-bool button_cancel(bool is_enabled = true);
-bool button_accept(bool is_enabled = true);
 void image(unsigned int texture, float width, float height);
 void image(Texture texture, float width, float height = 0.0);
 void material_picker(pbr::MaterialPBR *material);

@@ -145,7 +145,7 @@ static void update_and_draw_globals() {
 
     // -------------------------------------------------------------------
     // reset
-    if (gui::button("Reset")) {
+    if (gui::button_color("Reset", gui::COLOR_RED)) {
         game::reset();
     }
 }

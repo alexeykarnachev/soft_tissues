@@ -8,8 +8,8 @@
 
 namespace soft_tissues::editor::gui {
 
-static const ImVec4 COLOR_CANCEL = {0.8, 0.2, 0.1, 1.0};
-static const ImVec4 COLOR_ACCEPT = {0.2, 0.8, 0.1, 1.0};
+ImVec4 COLOR_RED = {0.8, 0.2, 0.1, 1.0};
+ImVec4 COLOR_GREEN = {0.2, 0.8, 0.1, 1.0};
 
 void push_id() {
     static int id = 0;
@@ -53,14 +53,6 @@ bool button_color(const char *name, ImVec4 color, bool is_enabled) {
     ImGui::PopStyleColor();
 
     return is_clicked;
-}
-
-bool button_cancel(bool is_enabled) {
-    return button_color("Cancel", COLOR_CANCEL, is_enabled);
-}
-
-bool button_accept(bool is_enabled) {
-    return button_color("Accept", COLOR_ACCEPT, is_enabled);
 }
 
 void image(unsigned int texture, float width, float height) {
