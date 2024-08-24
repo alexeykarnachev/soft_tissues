@@ -118,14 +118,14 @@ entt::entity spawn_player(Vector2 position) {
                    .inner_cutoff = inner_cutoff,
                    .outer_cutoff = outer_cutoff,
                }};
-        auto entity = spawn_light(position, type, color, intensity, params);
-        globals::registry.emplace<component::Flashlight>(entity);
+        // auto entity = spawn_light(position, type, color, intensity, params);
+        // globals::registry.emplace<component::Flashlight>(entity);
 
-        flashlight = entity;
+        // flashlight = entity;
     }
 
     // attach flashlight to player
-    globals::registry.emplace<component::Parent>(flashlight, player);
+    // globals::registry.emplace<component::Parent>(flashlight, player);
 
     return player;
 }

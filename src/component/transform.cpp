@@ -28,6 +28,9 @@ Transform::Transform(
     , _rotation(rotation) {}
 
 Quaternion Transform::get_quaternion() {
+    // TODO: uncomment
+    return QuaternionIdentity();
+
     auto parent = globals::registry.try_get<component::Parent>(this->entity);
     Quaternion parent_q = QuaternionIdentity();
     if (parent != NULL) {
@@ -55,6 +58,9 @@ Matrix Transform::get_matrix() {
 }
 
 Vector3 Transform::get_position() {
+    // TODO: uncomment
+    return Vector3Zero();
+
     auto parent = globals::registry.try_get<component::Parent>(this->entity);
     Vector3 parent_pos = Vector3Zero();
     if (parent != NULL) {

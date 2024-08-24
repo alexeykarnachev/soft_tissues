@@ -413,15 +413,17 @@ void draw_tiles() {
 }
 
 void draw_meshes() {
-    auto view = globals::registry.view<component::MyMesh>();
+    // TODO: uncomment
 
-    for (auto entity : view) {
-        auto mesh = globals::registry.get<component::MyMesh>(entity);
-        auto tr = globals::registry.get<component::Transform>(entity);
-        Matrix matrix = tr.get_matrix();
+    // auto view = globals::registry.view<component::MyMesh>();
 
-        pbr::draw_mesh(mesh.mesh, mesh.material, mesh.constant_color, matrix);
-    }
+    // for (auto entity : view) {
+    //     auto mesh = globals::registry.get<component::MyMesh>(entity);
+    //     auto tr = globals::registry.get<component::Transform>(entity);
+    //     Matrix matrix = tr.get_matrix();
+
+    //     pbr::draw_mesh(mesh.mesh, mesh.material, mesh.constant_color, matrix);
+    // }
 }
 
 }  // namespace soft_tissues::world

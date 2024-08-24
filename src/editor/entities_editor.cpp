@@ -17,6 +17,9 @@ namespace soft_tissues::editor::entities_editor {
 entt::entity ENTITY = entt::null;
 
 static void update_and_draw_transformation() {
+    // TODO: uncomment
+    return;
+
     assert(ENTITY != entt::null);
 
     auto &tr = globals::registry.get<component::Transform>(ENTITY);
@@ -45,6 +48,9 @@ static void update_and_draw_transformation() {
 }
 
 static void update_and_draw_mesh() {
+    // TODO: uncomment
+    return;
+
     assert(ENTITY != entt::null);
 
     auto mesh = globals::registry.try_get<component::MyMesh>(ENTITY);
@@ -65,6 +71,9 @@ static void update_and_draw_mesh() {
 }
 
 static void update_and_draw_light() {
+    // TODO: uncomment
+    return;
+
     assert(ENTITY != entt::null);
 
     auto light = globals::registry.try_get<component::Light>(ENTITY);

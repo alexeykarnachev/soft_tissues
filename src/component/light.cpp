@@ -26,6 +26,10 @@ Light::Light(
     , params(params) {}
 
 void Light::draw_shadow_map() {
+
+    // TODO: uncomment
+    return;
+
     if (!this->casts_shadows || !this->is_on) return;
 
     // -------------------------------------------------------------------
@@ -124,6 +128,9 @@ static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
 }
 
 void Light::set_shader_uniform(Shader shader, int idx) {
+    // TODO: uncomment
+    return;
+
     if (!this->is_on) {
         throw std::runtime_error("Can't set light shader uniform, is_on = false");
     }

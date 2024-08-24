@@ -33,21 +33,24 @@ static void load_window() {
 static Model PLAYER_MODEL;
 
 void load() {
-    world::load();
+    reset();
 
-    prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 }
 
 void reset() {
-    // globals::registry.clear();
-    world::load();
+    for (const auto entity : globals::registry.view<transform::Transform>()) {
+        globals::registry.destroy(entity);
+    }
 
-    // prefabs::spawn_player(world::ORIGIN);
+    prefabs::spawn_player(world::ORIGIN);
+
+    world::load();
 
     TraceLog(LOG_INFO, "Game has been reset");
 }
 
+#if 0
 template <typename T> void update_components() {
     for (auto entity : globals::registry.view<T>()) {
         auto &component = globals::registry.get<T>(entity);
@@ -61,6 +64,7 @@ template <typename T> void draw_components() {
         component.draw();
     }
 }
+#endif
 
 static void update() {
     globals::update();
@@ -82,33 +86,40 @@ static void draw_cursor() {
 }
 
 static void draw_light_shells() {
-    auto view = globals::registry.view<component::Light>();
-    for (auto entity : view) {
-        auto tr = globals::registry.get<component::Transform>(entity);
-        DrawSphere(tr.get_position(), 0.2, WHITE);
-    }
+    // TODO: uncomment
+
+    // auto view = globals::registry.view<component::Light>();
+    // for (auto entity : view) {
+    //     auto tr = globals::registry.get<component::Transform>(entity);
+    //     DrawSphere(tr.get_position(), 0.2, WHITE);
+    // }
 }
 
 static void draw_player() {
-    auto player = globals::registry.view<component::Player>().front();
-    auto tr = globals::registry.get<component::Transform>(player);
+    // TODO: uncomment
 
-    Vector3 position = tr.get_position();
-    Matrix t = MatrixTranslate(position.x, position.y, position.z);
-    Matrix transform = t;
+    // auto player = globals::registry.view<component::Player>().front();
+    // auto tr = globals::registry.get<component::Transform>(player);
 
-    Model model = PLAYER_MODEL;
-    model.transform = MatrixMultiply(model.transform, transform);
-    DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
+    // Vector3 position = tr.get_position();
+    // Matrix t = MatrixTranslate(position.x, position.y, position.z);
+    // Matrix transform = t;
+
+    // Model model = PLAYER_MODEL;
+    // model.transform = MatrixMultiply(model.transform, transform);
+    // DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
 }
 
 static void draw() {
     // -------------------------------------------------------------------
     // shadow maps
-    for (auto entity : globals::registry.view<component::Light>()) {
-        auto &light = globals::registry.get<component::Light>(entity);
-        light.draw_shadow_map();
-    }
+
+    // TODO: uncomment
+
+    // for (auto entity : globals::registry.view<component::Light>()) {
+    //     auto &light = globals::registry.get<component::Light>(entity);
+    //     light.draw_shadow_map();
+    // }
 
     // -------------------------------------------------------------------
     // entity picking

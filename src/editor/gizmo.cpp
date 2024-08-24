@@ -137,6 +137,9 @@ static XYZColors get_xyz_colors(Vector3 current_axis, bool is_hot) {
 }
 
 static void draw(HandleColors colors) {
+    // TODO: uncomment
+    return;
+
     auto tr = globals::registry.get<component::Transform>(ENTITY);
     Camera3D camera = camera::CAMERA;
 
@@ -298,6 +301,9 @@ void load() {
 }
 
 static void update() {
+    // TODO: uncomment
+    return;
+
     auto &tr = globals::registry.get<component::Transform>(ENTITY);
 
     // -------------------------------------------------------------------
