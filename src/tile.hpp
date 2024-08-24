@@ -18,6 +18,8 @@ public:
     TileMaterials();
     TileMaterials(std::string material_pbr_key);
     TileMaterials(std::string floor_key, std::string wall_key, std::string ceil_key);
+
+    std::string to_string();
 };
 
 enum class TileWall {
@@ -57,6 +59,8 @@ public:
     Matrix get_floor_matrix();
     Matrix get_ceil_matrix();
     Matrix get_wall_matrix(Direction direction, int elevation);
+
+    std::string to_string();
 };
 
 }  // namespace soft_tissues::tile

@@ -5,13 +5,13 @@
 #include "raylib/raylib.h"
 #include <cmath>
 #include <cstdio>
-#include <stdexcept>
 #include <vector>
 
 namespace soft_tissues::editor::gui {
 
-ImVec4 COLOR_RED = {0.8, 0.2, 0.1, 1.0};
-ImVec4 COLOR_GREEN = {0.2, 0.8, 0.1, 1.0};
+ImVec4 COLOR_RED = {0.6, 0.0, 0.0, 1.0};
+ImVec4 COLOR_GREEN = {0.0, 0.5, 0.0, 1.0};
+ImVec4 COLOR_YELLOW = {0.6, 0.6, 0.0, 1.0};
 
 void push_id() {
     static int id = 0;

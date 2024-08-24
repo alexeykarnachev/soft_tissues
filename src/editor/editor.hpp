@@ -37,6 +37,7 @@ namespace gui {
 
 extern ImVec4 COLOR_RED;
 extern ImVec4 COLOR_GREEN;
+extern ImVec4 COLOR_YELLOW;
 
 void push_id();
 void pop_id();

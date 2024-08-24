@@ -43,6 +43,13 @@ void load() {
     TILE_TO_ROOM_ID.clear();
 }
 
+void save(std::string file_path) {
+    for (auto [tile, room_id] : TILE_TO_ROOM_ID) {
+        std::string tile_str = tile->to_string();
+        printf("%s\n", tile_str.c_str());
+    }
+}
+
 int get_tiles_count() {
     return N_TILES;
 }

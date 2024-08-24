@@ -13,6 +13,7 @@ extern const int N_COLS;
 extern const Vector2 ORIGIN;
 
 void load();
+void save(std::string file_path);
 
 int get_tiles_count();
 int get_rooms_count();

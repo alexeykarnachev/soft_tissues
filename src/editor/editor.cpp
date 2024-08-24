@@ -144,7 +144,16 @@ static void update_and_draw_globals() {
     ImGui::Text("Rooms count: %d", world::get_rooms_count());
 
     // -------------------------------------------------------------------
-    // reset
+    // save, load, reset
+    if (gui::button_color("Save", gui::COLOR_GREEN)) {
+        world::save("");
+    }
+
+    ImGui::SameLine(0.0, 5.0);
+    if (gui::button_color("Load", gui::COLOR_YELLOW)) {
+    }
+
+    ImGui::SameLine(0.0, 5.0);
     if (gui::button_color("Reset", gui::COLOR_RED)) {
         game::reset();
     }

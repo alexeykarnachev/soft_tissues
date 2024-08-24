@@ -5,6 +5,7 @@
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
+#include <string>
 
 namespace soft_tissues::tile {
 
@@ -23,6 +24,16 @@ TileMaterials::TileMaterials(
     : floor_key(floor_key)
     , wall_key(wall_key)
     , ceil_key(ceil_key) {}
+
+std::string TileMaterials::to_string() {
+    std::string str;
+
+    str.append(this->floor_key + " ");
+    str.append(this->wall_key + " ");
+    str.append(this->ceil_key);
+
+    return str;
+}
 
 Tile::Tile() = default;
 
@@ -146,6 +157,30 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     }
 
     return matrix;
+}
+
+std::string Tile::to_string() {
+    std::string str;
+
+    // id
+    str.append(std::to_string(this->id) + " ");
+
+    // walls
+    str.append(std::to_string((int)this->walls[0]) + " ");
+    str.append(std::to_string((int)this->walls[1]) + " ");
+    str.append(std::to_string((int)this->walls[2]) + " ");
+    str.append(std::to_string((int)this->walls[3]) + " ");
+
+    // materials
+    str.append(this->materials.to_string() + " ");
+
+    // constant color
+    str.append(std::to_string((int)this->constant_color.r) + " ");
+    str.append(std::to_string((int)this->constant_color.g) + " ");
+    str.append(std::to_string((int)this->constant_color.b) + " ");
+    str.append(std::to_string((int)this->constant_color.a));
+
+    return str;
 }
 
 }  // namespace soft_tissues::tile
