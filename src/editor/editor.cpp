@@ -7,6 +7,7 @@
 #include "../resources.hpp"
 #include "../world.hpp"
 #include "GLFW/glfw3.h"
+#include "ImGuiFileDialog.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -144,15 +145,54 @@ static void update_and_draw_globals() {
     ImGui::Text("Rooms count: %d", world::get_rooms_count());
 
     // -------------------------------------------------------------------
-    // save, load, reset
+    // save
     if (gui::button_color("Save", gui::COLOR_GREEN)) {
-        world::save("");
+        IGFD::FileDialogConfig config;
+        config.path = "./resources/worlds";
+        config.fileName = "world.stw";
+        config.flags = ImGuiFileDialogFlags_ConfirmOverwrite | ImGuiFileDialogFlags_Modal;
+
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "SAVE_WORLD", "Choose File", ".stw", config
+        );
     }
 
+    if (ImGuiFileDialog::Instance()->Display("SAVE_WORLD")) {
+        if (ImGuiFileDialog::Instance()->IsOk()) {
+            std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
+            world::save(file_path);
+            TraceLog(LOG_INFO, "World saved: %s", file_path.c_str());
+        }
+
+        ImGuiFileDialog::Instance()->Close();
+    }
+
+    // -------------------------------------------------------------------
+    // open
     ImGui::SameLine(0.0, 5.0);
-    if (gui::button_color("Load", gui::COLOR_YELLOW)) {
+    if (gui::button_color("Open", gui::COLOR_YELLOW)) {
+        IGFD::FileDialogConfig config;
+        config.path = "./resources/worlds";
+        config.fileName = "world.stw";
+        config.flags = ImGuiFileDialogFlags_Modal;
+
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "OPEN_WORLD", "Choose File", ".stw", config
+        );
     }
 
+    if (ImGuiFileDialog::Instance()->Display("OPEN_WORLD")) {
+        if (ImGuiFileDialog::Instance()->IsOk()) {
+            std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
+            world::load(file_path);
+            TraceLog(LOG_INFO, "World opened: %s", file_path.c_str());
+        }
+
+        ImGuiFileDialog::Instance()->Close();
+    }
+
+    // -------------------------------------------------------------------
+    // reset
     ImGui::SameLine(0.0, 5.0);
     if (gui::button_color("Reset", gui::COLOR_RED)) {
         game::reset();

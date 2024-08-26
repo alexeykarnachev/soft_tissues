@@ -12,8 +12,7 @@ extern const int N_ROWS;
 extern const int N_COLS;
 extern const Vector2 ORIGIN;
 
-void load();
-void save(std::string file_path);
+void reset();
 
 int get_tiles_count();
 int get_rooms_count();
@@ -52,5 +51,8 @@ void add_tile_to_room(tile::Tile *tile, int room_id);
 void draw_grid();
 void draw_tiles();
 void draw_meshes();
+
+void save(std::string file_path);
+void load(std::string file_path);
 
 }  // namespace soft_tissues::world

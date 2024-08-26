@@ -20,6 +20,7 @@ public:
     TileMaterials(std::string floor_key, std::string wall_key, std::string ceil_key);
 
     std::string to_string();
+    static TileMaterials from_string(std::string str);
 };
 
 enum class TileWall {
@@ -39,6 +40,12 @@ public:
 
     Tile();
     Tile(uint32_t id);
+    Tile(
+        uint32_t id,
+        std::array<TileWall, 4> walls,
+        TileMaterials materials,
+        Color constant_color
+    );
 
     uint32_t get_id();
 
@@ -61,6 +68,7 @@ public:
     Matrix get_wall_matrix(Direction direction, int elevation);
 
     std::string to_string();
+    static Tile from_string(std::string str);
 };
 
 }  // namespace soft_tissues::tile

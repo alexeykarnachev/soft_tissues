@@ -5,6 +5,9 @@
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
+#include <cstdio>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace soft_tissues::tile {
@@ -35,10 +38,36 @@ std::string TileMaterials::to_string() {
     return str;
 }
 
+TileMaterials TileMaterials::from_string(std::string str) {
+    std::istringstream iss(str);
+
+    std::string floor_key;
+    std::string wall_key;
+    std::string ceil_key;
+
+    if (!(iss >> floor_key >> wall_key >> ceil_key)) {
+        auto err_str = "Failed to create TileMaterials from string: " + str;
+        throw std::runtime_error(err_str);
+    }
+
+    return TileMaterials(floor_key, wall_key, ceil_key);
+}
+
 Tile::Tile() = default;
 
 Tile::Tile(uint32_t id)
     : id(id) {}
+
+Tile::Tile(
+    uint32_t id,
+    std::array<TileWall, 4> walls,
+    TileMaterials materials,
+    Color constant_color
+)
+    : id(id)
+    , walls(walls)
+    , materials(materials)
+    , constant_color(constant_color) {}
 
 uint32_t Tile::get_id() {
     return this->id;
@@ -181,6 +210,47 @@ std::string Tile::to_string() {
     str.append(std::to_string((int)this->constant_color.a));
 
     return str;
+}
+
+Tile Tile::from_string(std::string str) {
+    std::istringstream iss(str);
+    uint32_t id;
+    std::array<TileWall, 4> walls;
+    std::string material;
+    std::string materials_str;
+    uint8_t r, g, b, a;
+
+    // Parse id
+    if (!(iss >> id)) {
+        throw std::runtime_error("Failed to parse id from string: " + str);
+    }
+
+    // Parse walls
+    for (auto &wall : walls) {
+        int wall_int;
+        if (!(iss >> wall_int)) {
+            throw std::runtime_error("Failed to parse wall from string: " + str);
+        }
+        wall = static_cast<TileWall>(wall_int);
+    }
+
+    // Parse materials
+    for (int i = 0; i < 3; ++i) {
+        if (!(iss >> material)) {
+            throw std::runtime_error("Failed to parse TileMaterials from string: " + str);
+        }
+        if (i > 0) materials_str += " ";
+        materials_str += material;
+    }
+    TileMaterials tile_materials = TileMaterials::from_string(materials_str);
+
+    // Parse constant color
+    if (!(iss >> r >> g >> b >> a)) {
+        throw std::runtime_error("Failed to parse Color from string: " + str);
+    }
+    Color constant_color{r, g, b, a};
+
+    return Tile(id, walls, tile_materials, constant_color);
 }
 
 }  // namespace soft_tissues::tile

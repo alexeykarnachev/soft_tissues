@@ -45,7 +45,7 @@ void reset() {
 
     prefabs::spawn_player(world::ORIGIN);
 
-    world::load();
+    world::reset();
 
     TraceLog(LOG_INFO, "Game has been reset");
 }

@@ -15,8 +15,12 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <fstream>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace soft_tissues::world {
 
@@ -34,20 +38,13 @@ static std::array<tile::Tile, N_TILES> TILES;
 static std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
 static std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
 
-void load() {
+void reset() {
     for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
 
     ROOM_ID_TO_TILES.clear();
     TILE_TO_ROOM_ID.clear();
-}
-
-void save(std::string file_path) {
-    for (auto [tile, room_id] : TILE_TO_ROOM_ID) {
-        std::string tile_str = tile->to_string();
-        printf("%s\n", tile_str.c_str());
-    }
 }
 
 int get_tiles_count() {
@@ -437,6 +434,98 @@ void draw_meshes() {
 
         pbr::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix);
     }
+}
+
+void save(std::string file_path) {
+    std::ofstream file(file_path);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file for writing: " + file_path);
+    }
+
+    std::string str;
+
+    // -------------------------------------------------------------------
+    // TILES
+    str.append("TILES\n");
+    for (auto [tile, room_id] : TILE_TO_ROOM_ID) {
+        std::string tile_str = tile->to_string();
+        str.append(tile_str).append("\n");
+    }
+
+    // -------------------------------------------------------------------
+    // TILE_TO_ROOM_ID
+    str.append("TILE_TO_ROOM_ID\n");
+    for (auto [tile, room_id] : TILE_TO_ROOM_ID) {
+        auto tile_id_str = std::to_string(tile->get_id());
+        auto room_id_str = std::to_string(room_id);
+        str.append(tile_id_str + " " + room_id_str).append("\n");
+    }
+
+    // save file
+    file << str;
+
+    if (file.fail()) {
+        throw std::runtime_error("Failed to write to file: " + file_path);
+    }
+
+    file.close();
+}
+
+void load(std::string file_path) {
+    reset();
+
+    std::ifstream file(file_path);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file: " + file_path);
+    }
+
+    std::string line;
+    std::string section;
+
+    static std::unordered_set<int> tile_ids;
+    tile_ids.clear();
+
+    while (std::getline(file, line)) {
+        if (line == "TILES" || line == "TILE_TO_ROOM_ID") {
+            section = line;
+            continue;
+        }
+
+        if (section == "TILES") {
+            // -------------------------------------------------------------------
+            // TILES
+            tile::Tile tile = tile::Tile::from_string(line);
+            int tile_id = tile.get_id();
+
+            TILES[tile_id] = tile;
+            tile_ids.insert(tile_id);
+        } else if (section == "TILE_TO_ROOM_ID") {
+            // -------------------------------------------------------------------
+            // TILE_TO_ROOM_ID
+            std::istringstream iss(line);
+            int tile_id, room_id;
+
+            if (!(iss >> tile_id >> room_id)) {
+                throw std::runtime_error("Invalid TILE_TO_ROOM_ID format");
+            }
+
+            if (tile_ids.count(tile_id) == 0) {
+                throw std::runtime_error("Tile ID not found: " + std::to_string(tile_id));
+            }
+
+            tile::Tile *tile = &TILES[tile_id];
+
+            // -------------------------------------------------------------------
+            // TILE_TO_ROOM_ID
+            TILE_TO_ROOM_ID[tile] = room_id;
+
+            // -------------------------------------------------------------------
+            // ROOM_ID_TO_TILES
+            ROOM_ID_TO_TILES[room_id].push_back(tile);
+        }
+    }
+
+    file.close();
 }
 
 }  // namespace soft_tissues::world

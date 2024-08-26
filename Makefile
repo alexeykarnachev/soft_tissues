@@ -16,7 +16,10 @@ OBJDIR := $(BUILDDIR)/obj
 TARGET := $(BUILDDIR)/$(APPNAME)
 
 # Source files and object files
-SRCFILES = $(shell find $(SRCDIR) -name '*.cpp')
+SRCFILES = \
+	$(shell find $(SRCDIR) -name '*.cpp') \
+	./deps/src/ImGuiFileDialog.cpp
+
 OBJFILES := $(SRCFILES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 # Default target
