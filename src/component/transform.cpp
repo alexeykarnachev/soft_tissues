@@ -1,6 +1,7 @@
 #include "transform.hpp"
 
 #include "../globals.hpp"
+#include "../serializers.hpp"
 #include "component.hpp"
 #include "raylib/raymath.h"
 #include <cstdio>
@@ -95,6 +96,24 @@ void Transform::rotate_by_axis_angle(Vector3 axis, float angle) {
     );
     auto q = QuaternionMultiply(new_q, my_q);
     this->_rotation = QuaternionToEuler(q);
+}
+
+nlohmann::json Transform::to_json() const {
+    nlohmann::json json;
+
+    json["position"] = this->_position;
+    json["scale"] = this->_scale;
+    json["rotation"] = this->_rotation;
+
+    return json;
+}
+
+Transform Transform::from_json(entt::entity entity, const nlohmann::json &json_data) {
+    Vector3 position = json_data["position"].get<Vector3>();
+    Vector3 scale = json_data["scale"].get<Vector3>();
+    Vector3 rotation = json_data["rotation"].get<Vector3>();
+
+    return Transform(entity, position, scale, rotation);
 }
 
 }  // namespace soft_tissues::transform

@@ -195,7 +195,7 @@ static void update_and_draw_globals() {
     // reset
     ImGui::SameLine(0.0, 5.0);
     if (gui::button_color("Reset", gui::COLOR_RED)) {
-        game::reset();
+        world::reset();
     }
 }
 

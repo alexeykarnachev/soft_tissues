@@ -93,12 +93,12 @@ static void update_and_draw_light() {
         // ---------------------------------------------------------------
         // shadow type selection
         gui::push_id();
-        auto selected_type_name = light::get_shadow_type_name(light->shadow_type);
+        auto selected_type_name = light::shadow_type_to_str(light->shadow_type);
 
         if (ImGui::BeginCombo("Shadow type", selected_type_name.c_str())) {
 
             for (auto type : light::SHADOW_TYPES) {
-                auto type_name = light::get_shadow_type_name(type);
+                auto type_name = light::shadow_type_to_str(type);
                 if (ImGui::Selectable(type_name.c_str(), type == light->shadow_type)) {
                     light->shadow_type = type;
                 }
@@ -110,10 +110,10 @@ static void update_and_draw_light() {
 
         // ---------------------------------------------------------------
         // light type selection
-        selected_type_name = light::get_light_type_name(light->light_type);
+        selected_type_name = light::light_type_to_str(light->light_type);
         if (ImGui::BeginCombo("Light type", selected_type_name.c_str())) {
             for (auto type : light::LIGHT_TYPES) {
-                auto type_name = light::get_light_type_name(type);
+                auto type_name = light::light_type_to_str(type);
                 if (ImGui::Selectable(type_name.c_str(), type == light->light_type)) {
                     light->light_type = type;
 

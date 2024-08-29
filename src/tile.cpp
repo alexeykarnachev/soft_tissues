@@ -2,6 +2,7 @@
 
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include "serializers.hpp"
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
@@ -182,35 +183,20 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
 
 nlohmann::json Tile::to_json() {
     return nlohmann::json{
-        {"id", id},
-        {"walls", walls},
-        {"materials", materials.to_json()},
-        {"constant_color",
-         {{"r", constant_color.r},
-          {"g", constant_color.g},
-          {"b", constant_color.b},
-          {"a", constant_color.a}}}
+        {"id", this->id},
+        {"walls", this->walls},
+        {"materials", this->materials.to_json()},
+        {"constant_color", this->constant_color}
     };
 }
 
 Tile Tile::from_json(const nlohmann::json &json) {
     uint32_t tile_id = json["id"].get<uint32_t>();
-    std::array<TileWall, 4> tile_walls = json["walls"].get<std::array<TileWall, 4>>();
-    TileMaterials tile_materials = TileMaterials::from_json(json["materials"]);
-
-    const auto &color_json = json["constant_color"];
-    if (!color_json.contains("r") || !color_json.contains("g")
-        || !color_json.contains("b") || !color_json.contains("a")) {
-        throw std::runtime_error("Invalid JSON: missing color components");
-    }
-
-    Color tile_color{
-        color_json["r"].get<uint8_t>(),
-        color_json["g"].get<uint8_t>(),
-        color_json["b"].get<uint8_t>(),
-        color_json["a"].get<uint8_t>()
-    };
+    auto tile_walls = json["walls"].get<std::array<TileWall, 4>>();
+    auto tile_materials = TileMaterials::from_json(json["materials"]);
+    auto tile_color = json["constant_color"].get<Color>();
 
     return Tile(tile_id, tile_walls, tile_materials, tile_color);
 }
+
 }  // namespace soft_tissues::tile

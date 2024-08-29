@@ -4,6 +4,7 @@
 #include "component/component.hpp"
 #include "component/transform.hpp"
 #include "globals.hpp"
+#include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "resources.hpp"
@@ -20,7 +21,6 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
 
 namespace soft_tissues::world {
 
@@ -39,12 +39,19 @@ static std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
 static std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
 
 void reset() {
+    // tiles
     for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
 
     ROOM_ID_TO_TILES.clear();
     TILE_TO_ROOM_ID.clear();
+
+    // registry
+    globals::registry.clear();
+
+    // player
+    prefabs::spawn_player(world::ORIGIN);
 }
 
 int get_tiles_count() {
@@ -449,6 +456,43 @@ void save(std::string file_path) {
     }
 
     // -------------------------------------------------------------------
+    // ENTITIES
+    json["entities"] = nlohmann::json::array();
+    auto view = globals::registry.view<entt::entity>();
+    for (auto entity : view) {
+        nlohmann::json entity_json;
+
+        // id
+        entity_json["id"] = (uint32_t)entity;
+
+        // Transform
+        if (globals::registry.all_of<component::Transform>(entity)) {
+            auto &component = globals::registry.get<component::Transform>(entity);
+            entity_json["Transform"] = component.to_json();
+        }
+
+        // MyMesh
+        if (globals::registry.all_of<component::MyMesh>(entity)) {
+            auto &component = globals::registry.get<component::MyMesh>(entity);
+            entity_json["MyMesh"] = component.to_json();
+        }
+
+        // Parent
+        if (globals::registry.all_of<component::Parent>(entity)) {
+            auto &component = globals::registry.get<component::Parent>(entity);
+            entity_json["Parent"] = component.to_json();
+        }
+
+        // Light
+        if (globals::registry.all_of<light::Light>(entity)) {
+            auto &component = globals::registry.get<light::Light>(entity);
+            entity_json["Light"] = component.to_json();
+        }
+
+        json["entities"].push_back(entity_json);
+    }
+
+    // -------------------------------------------------------------------
     // save file
     std::ofstream file(file_path);
     if (!file.is_open()) {
@@ -487,6 +531,54 @@ void load(std::string file_path) {
         TILES[tile_id] = tile;
         TILE_TO_ROOM_ID[&TILES[tile_id]] = room_id;
         ROOM_ID_TO_TILES[room_id].push_back(&TILES[tile_id]);
+    }
+
+    // -------------------------------------------------------------------
+    // ENTITIES
+    std::unordered_map<uint32_t, entt::entity> id_map;
+    std::vector<std::pair<entt::entity, uint32_t>> parents_to_assign;
+
+    for (const auto &entity_json : json["entities"]) {
+        uint32_t old_id = entity_json["id"].get<uint32_t>();
+        auto new_entity = globals::registry.create();
+        id_map[old_id] = new_entity;
+
+        // Transform
+        if (entity_json.contains("Transform")) {
+            auto transform = component::Transform::from_json(
+                new_entity, entity_json["Transform"]
+            );
+            globals::registry.emplace<component::Transform>(new_entity, transform);
+        }
+
+        // MyMesh
+        if (entity_json.contains("MyMesh")) {
+            auto my_mesh = component::MyMesh::from_json(
+                new_entity, entity_json["MyMesh"]
+            );
+            globals::registry.emplace<component::MyMesh>(new_entity, my_mesh);
+        }
+
+        // Parent
+        if (entity_json.contains("Parent")) {
+            auto parent_json = entity_json["Parent"];
+            uint32_t parent_old_id = parent_json["entity"].get<uint32_t>();
+            parents_to_assign.push_back({new_entity, parent_old_id});
+        }
+
+        // Light
+        if (entity_json.contains("Light")) {
+            auto light = light::Light::from_json(new_entity, entity_json["Light"]);
+            globals::registry.emplace<light::Light>(new_entity, std::move(light));
+        }
+    }
+
+    // assign parents after all entities have been created
+    for (const auto &[child_entity, parent_old_id] : parents_to_assign) {
+        entt::entity parent_entity = id_map[parent_old_id];
+        globals::registry.emplace<component::Parent>(
+            child_entity, component::Parent{parent_entity}
+        );
     }
 
     file.close();

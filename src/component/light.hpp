@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entt/entity/fwd.hpp"
+#include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
 
 namespace soft_tissues::light {
@@ -79,11 +80,17 @@ public:
 
     void set_shader_uniform(Shader shader, int idx);
 
+    nlohmann::json to_json() const;
+    static Light from_json(entt::entity entity, const nlohmann::json &json_data);
+
 private:
     bool needs_update = true;
 };
 
-std::string get_light_type_name(LightType type);
-std::string get_shadow_type_name(ShadowType type);
+std::string light_type_to_str(LightType type);
+std::string shadow_type_to_str(ShadowType type);
+
+LightType str_to_light_type(std::string str);
+ShadowType str_to_shadow_type(std::string str);
 
 }  // namespace soft_tissues::light

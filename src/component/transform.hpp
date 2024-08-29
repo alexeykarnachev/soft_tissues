@@ -3,6 +3,7 @@
 #include "entt/entity/fwd.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include <nlohmann/json.hpp>
 
 namespace soft_tissues::transform {
 
@@ -29,6 +30,9 @@ public:
 
     void step(Vector3 step);
     void rotate_by_axis_angle(Vector3 axis, float angle);
+
+    nlohmann::json to_json() const;
+    static Transform from_json(entt::entity, const nlohmann::json &json_data);
 };
 
 }  // namespace soft_tissues::transform

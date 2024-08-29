@@ -32,24 +32,6 @@ static void load_window() {
 
 static Model PLAYER_MODEL;
 
-void load() {
-    reset();
-
-    PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
-}
-
-void reset() {
-    for (const auto entity : globals::registry.view<transform::Transform>()) {
-        globals::registry.destroy(entity);
-    }
-
-    prefabs::spawn_player(world::ORIGIN);
-
-    world::reset();
-
-    TraceLog(LOG_INFO, "Game has been reset");
-}
-
 static void update() {
     globals::update();
 
@@ -146,7 +128,8 @@ void run() {
     editor::load();
 
     // load initial scene
-    load();
+    world::reset();
+    PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
 
     // main loop
     while (!globals::WINDOW_SHOULD_CLOSE) {
