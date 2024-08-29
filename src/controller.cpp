@@ -36,7 +36,7 @@ void update_translation() {
     right = Vector3Scale(Vector3Normalize(right), dir.x);
     dir = Vector3Normalize(Vector3Add(forward, right));
 
-    Vector3 step = Vector3Scale(dir, globals::FRAME_DT * globals::PLAYER_MOVEMENT_SPEED);
+    Vector3 step = Vector3Scale(dir, globals::FRAME_DT * globals::PLAYER_SPEED);
 
     tr.step(step);
 }
