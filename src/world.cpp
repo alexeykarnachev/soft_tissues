@@ -2,6 +2,7 @@
 
 #include "camera.hpp"
 #include "component/component.hpp"
+#include "component/transform.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -16,7 +17,6 @@
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -437,32 +437,25 @@ void draw_meshes() {
 }
 
 void save(std::string file_path) {
+    nlohmann::json json;
+
+    // -------------------------------------------------------------------
+    // TILES
+    json["tiles"] = nlohmann::json::array();
+    for (const auto &[tile, room_id] : TILE_TO_ROOM_ID) {
+        nlohmann::json tile_json = tile->to_json();
+        tile_json["room_id"] = room_id;
+        json["tiles"].push_back(tile_json);
+    }
+
+    // -------------------------------------------------------------------
+    // save file
     std::ofstream file(file_path);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open file for writing: " + file_path);
     }
 
-    std::string str;
-
-    // -------------------------------------------------------------------
-    // TILES
-    str.append("TILES\n");
-    for (auto [tile, room_id] : TILE_TO_ROOM_ID) {
-        std::string tile_str = tile->to_string();
-        str.append(tile_str).append("\n");
-    }
-
-    // -------------------------------------------------------------------
-    // TILE_TO_ROOM_ID
-    str.append("TILE_TO_ROOM_ID\n");
-    for (auto [tile, room_id] : TILE_TO_ROOM_ID) {
-        auto tile_id_str = std::to_string(tile->get_id());
-        auto room_id_str = std::to_string(room_id);
-        str.append(tile_id_str + " " + room_id_str).append("\n");
-    }
-
-    // save file
-    file << str;
+    file << json.dump(4);
 
     if (file.fail()) {
         throw std::runtime_error("Failed to write to file: " + file_path);
@@ -474,55 +467,26 @@ void save(std::string file_path) {
 void load(std::string file_path) {
     reset();
 
+    // -------------------------------------------------------------------
+    // load file
     std::ifstream file(file_path);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open file: " + file_path);
     }
 
-    std::string line;
-    std::string section;
+    nlohmann::json json;
+    file >> json;
 
-    static std::unordered_set<int> tile_ids;
-    tile_ids.clear();
+    // -------------------------------------------------------------------
+    // TILES
+    for (const auto &tile_json : json["tiles"]) {
+        tile::Tile tile = tile::Tile::from_json(tile_json);
+        int tile_id = tile.get_id();
+        int room_id = tile_json["room_id"];
 
-    while (std::getline(file, line)) {
-        if (line == "TILES" || line == "TILE_TO_ROOM_ID") {
-            section = line;
-            continue;
-        }
-
-        if (section == "TILES") {
-            // -------------------------------------------------------------------
-            // TILES
-            tile::Tile tile = tile::Tile::from_string(line);
-            int tile_id = tile.get_id();
-
-            TILES[tile_id] = tile;
-            tile_ids.insert(tile_id);
-        } else if (section == "TILE_TO_ROOM_ID") {
-            // -------------------------------------------------------------------
-            // TILE_TO_ROOM_ID
-            std::istringstream iss(line);
-            int tile_id, room_id;
-
-            if (!(iss >> tile_id >> room_id)) {
-                throw std::runtime_error("Invalid TILE_TO_ROOM_ID format");
-            }
-
-            if (tile_ids.count(tile_id) == 0) {
-                throw std::runtime_error("Tile ID not found: " + std::to_string(tile_id));
-            }
-
-            tile::Tile *tile = &TILES[tile_id];
-
-            // -------------------------------------------------------------------
-            // TILE_TO_ROOM_ID
-            TILE_TO_ROOM_ID[tile] = room_id;
-
-            // -------------------------------------------------------------------
-            // ROOM_ID_TO_TILES
-            ROOM_ID_TO_TILES[room_id].push_back(tile);
-        }
+        TILES[tile_id] = tile;
+        TILE_TO_ROOM_ID[&TILES[tile_id]] = room_id;
+        ROOM_ID_TO_TILES[room_id].push_back(&TILES[tile_id]);
     }
 
     file.close();

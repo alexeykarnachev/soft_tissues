@@ -149,11 +149,11 @@ static void update_and_draw_globals() {
     if (gui::button_color("Save", gui::COLOR_GREEN)) {
         IGFD::FileDialogConfig config;
         config.path = "./resources/worlds";
-        config.fileName = "world.stw";
+        config.fileName = "world.json";
         config.flags = ImGuiFileDialogFlags_ConfirmOverwrite | ImGuiFileDialogFlags_Modal;
 
         ImGuiFileDialog::Instance()->OpenDialog(
-            "SAVE_WORLD", "Choose File", ".stw", config
+            "SAVE_WORLD", "Choose File", ".json", config
         );
     }
 
@@ -173,11 +173,11 @@ static void update_and_draw_globals() {
     if (gui::button_color("Open", gui::COLOR_YELLOW)) {
         IGFD::FileDialogConfig config;
         config.path = "./resources/worlds";
-        config.fileName = "world.stw";
+        config.fileName = "world.json";
         config.flags = ImGuiFileDialogFlags_Modal;
 
         ImGuiFileDialog::Instance()->OpenDialog(
-            "OPEN_WORLD", "Choose File", ".stw", config
+            "OPEN_WORLD", "Choose File", ".json", config
         );
     }
 

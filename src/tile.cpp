@@ -6,6 +6,7 @@
 #include "world.hpp"
 #include <cstdint>
 #include <cstdio>
+#include <nlohmann/json.hpp>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -28,29 +29,20 @@ TileMaterials::TileMaterials(
     , wall_key(wall_key)
     , ceil_key(ceil_key) {}
 
-std::string TileMaterials::to_string() {
-    std::string str;
-
-    str.append(this->floor_key + " ");
-    str.append(this->wall_key + " ");
-    str.append(this->ceil_key);
-
-    return str;
+nlohmann::json TileMaterials::to_json() {
+    return {
+        {"floor", this->floor_key},
+        {"wall", this->wall_key},
+        {"ceiling", this->ceil_key},
+    };
 }
 
-TileMaterials TileMaterials::from_string(std::string str) {
-    std::istringstream iss(str);
+TileMaterials TileMaterials::from_json(const nlohmann::json &json_data) {
+    auto floor_key = json_data["floor"].get<std::string>();
+    auto wall_key = json_data["wall"].get<std::string>();
+    auto ceiling_key = json_data["ceiling"].get<std::string>();
 
-    std::string floor_key;
-    std::string wall_key;
-    std::string ceil_key;
-
-    if (!(iss >> floor_key >> wall_key >> ceil_key)) {
-        auto err_str = "Failed to create TileMaterials from string: " + str;
-        throw std::runtime_error(err_str);
-    }
-
-    return TileMaterials(floor_key, wall_key, ceil_key);
+    return TileMaterials(floor_key, wall_key, ceiling_key);
 }
 
 Tile::Tile() = default;
@@ -188,69 +180,37 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     return matrix;
 }
 
-std::string Tile::to_string() {
-    std::string str;
-
-    // id
-    str.append(std::to_string(this->id) + " ");
-
-    // walls
-    str.append(std::to_string((int)this->walls[0]) + " ");
-    str.append(std::to_string((int)this->walls[1]) + " ");
-    str.append(std::to_string((int)this->walls[2]) + " ");
-    str.append(std::to_string((int)this->walls[3]) + " ");
-
-    // materials
-    str.append(this->materials.to_string() + " ");
-
-    // constant color
-    str.append(std::to_string((int)this->constant_color.r) + " ");
-    str.append(std::to_string((int)this->constant_color.g) + " ");
-    str.append(std::to_string((int)this->constant_color.b) + " ");
-    str.append(std::to_string((int)this->constant_color.a));
-
-    return str;
+nlohmann::json Tile::to_json() {
+    return nlohmann::json{
+        {"id", id},
+        {"walls", walls},
+        {"materials", materials.to_json()},
+        {"constant_color",
+         {{"r", constant_color.r},
+          {"g", constant_color.g},
+          {"b", constant_color.b},
+          {"a", constant_color.a}}}
+    };
 }
 
-Tile Tile::from_string(std::string str) {
-    std::istringstream iss(str);
-    uint32_t id;
-    std::array<TileWall, 4> walls;
-    std::string material;
-    std::string materials_str;
-    uint8_t r, g, b, a;
+Tile Tile::from_json(const nlohmann::json &json) {
+    uint32_t tile_id = json["id"].get<uint32_t>();
+    std::array<TileWall, 4> tile_walls = json["walls"].get<std::array<TileWall, 4>>();
+    TileMaterials tile_materials = TileMaterials::from_json(json["materials"]);
 
-    // Parse id
-    if (!(iss >> id)) {
-        throw std::runtime_error("Failed to parse id from string: " + str);
+    const auto &color_json = json["constant_color"];
+    if (!color_json.contains("r") || !color_json.contains("g")
+        || !color_json.contains("b") || !color_json.contains("a")) {
+        throw std::runtime_error("Invalid JSON: missing color components");
     }
 
-    // Parse walls
-    for (auto &wall : walls) {
-        int wall_int;
-        if (!(iss >> wall_int)) {
-            throw std::runtime_error("Failed to parse wall from string: " + str);
-        }
-        wall = static_cast<TileWall>(wall_int);
-    }
+    Color tile_color{
+        color_json["r"].get<uint8_t>(),
+        color_json["g"].get<uint8_t>(),
+        color_json["b"].get<uint8_t>(),
+        color_json["a"].get<uint8_t>()
+    };
 
-    // Parse materials
-    for (int i = 0; i < 3; ++i) {
-        if (!(iss >> material)) {
-            throw std::runtime_error("Failed to parse TileMaterials from string: " + str);
-        }
-        if (i > 0) materials_str += " ";
-        materials_str += material;
-    }
-    TileMaterials tile_materials = TileMaterials::from_string(materials_str);
-
-    // Parse constant color
-    if (!(iss >> r >> g >> b >> a)) {
-        throw std::runtime_error("Failed to parse Color from string: " + str);
-    }
-    Color constant_color{r, g, b, a};
-
-    return Tile(id, walls, tile_materials, constant_color);
+    return Tile(tile_id, tile_walls, tile_materials, tile_color);
 }
-
 }  // namespace soft_tissues::tile

@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include <array>
 #include <cstdint>
+#include <nlohmann/json.hpp>
 
 namespace soft_tissues::tile {
 
@@ -19,8 +20,8 @@ public:
     TileMaterials(std::string material_pbr_key);
     TileMaterials(std::string floor_key, std::string wall_key, std::string ceil_key);
 
-    std::string to_string();
-    static TileMaterials from_string(std::string str);
+    nlohmann::json to_json();
+    static TileMaterials from_json(const nlohmann::json &json_data);
 };
 
 enum class TileWall {
@@ -67,8 +68,8 @@ public:
     Matrix get_ceil_matrix();
     Matrix get_wall_matrix(Direction direction, int elevation);
 
-    std::string to_string();
-    static Tile from_string(std::string str);
+    nlohmann::json to_json();
+    static Tile from_json(const nlohmann::json &json_data);
 };
 
 }  // namespace soft_tissues::tile
