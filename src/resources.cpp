@@ -54,6 +54,7 @@ void load() {
     MESHES["plane"] = gen_mesh_plane(2);
     MESHES["cube"] = gen_mesh_cube();
     MESHES["sphere"] = gen_mesh_sphere(64, 64);
+    MESHES["wall"] = gen_mesh_wall();
 
     // -------------------------------------------------------------------
     // shadow maps

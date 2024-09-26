@@ -74,6 +74,14 @@ static void draw_player() {
 
 static void draw() {
     // -------------------------------------------------------------------
+    // faces culling
+    if (globals::IS_CULL_FACES) {
+        rlEnableBackfaceCulling();
+    } else {
+        rlDisableBackfaceCulling();
+    }
+
+    // -------------------------------------------------------------------
     // shadow maps
     for (auto entity : globals::registry.view<component::Light>()) {
         auto &light = globals::registry.get<component::Light>(entity);

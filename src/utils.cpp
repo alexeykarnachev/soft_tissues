@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
@@ -278,6 +279,13 @@ Mesh gen_mesh_sphere(int n_rings, int n_slices) {
     // TODO: Fix my gen_mesh_tangents function,
     // for some reason it doesn't work for sphere now, then use it here.
     GenMeshTangents(&mesh);
+
+    return mesh;
+}
+
+Mesh gen_mesh_wall() {
+    Mesh mesh = GenMeshCube(globals::WALL_THICKNESS, 1.0, 1.0);
+    gen_mesh_tangents(&mesh);
 
     return mesh;
 }

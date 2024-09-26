@@ -1,5 +1,6 @@
 #include "tile.hpp"
 
+#include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "serializers.hpp"
@@ -150,27 +151,29 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     Vector2 position = this->get_floor_position();
     float y = elevation + 0.5;
 
+    float offset = 0.5 - 0.5 * globals::WALL_THICKNESS;
+
     Matrix matrix;
     switch (direction) {
         case Direction::NORTH: {
-            Matrix t = MatrixTranslate(position.x, y, position.y - 0.5);
+            Matrix t = MatrixTranslate(position.x, y, position.y - offset);
             Matrix r = MatrixRotateX(0.5 * PI);
             matrix = MatrixMultiply(r, t);
         } break;
         case Direction::SOUTH: {
-            Matrix t = MatrixTranslate(position.x, y, position.y + 0.5);
+            Matrix t = MatrixTranslate(position.x, y, position.y + offset);
             Matrix r = MatrixRotateX(-0.5 * PI);
             matrix = MatrixMultiply(r, t);
         } break;
         case Direction::WEST: {
-            Matrix t = MatrixTranslate(position.x - 0.5, y, position.y);
+            Matrix t = MatrixTranslate(position.x - offset, y, position.y);
             Matrix rx = MatrixRotateX(0.5 * PI);
             Matrix ry = MatrixRotateY(0.5 * PI);
             Matrix r = MatrixMultiply(rx, ry);
             matrix = MatrixMultiply(r, t);
         } break;
         case Direction::EAST: {
-            Matrix t = MatrixTranslate(position.x + 0.5, y, position.y);
+            Matrix t = MatrixTranslate(position.x + offset, y, position.y);
             Matrix rx = MatrixRotateX(0.5 * PI);
             Matrix ry = MatrixRotateY(-0.5 * PI);
             Matrix r = MatrixMultiply(rx, ry);

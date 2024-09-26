@@ -391,7 +391,7 @@ void draw_grid() {
 }
 
 void draw_tiles() {
-    Mesh mesh = resources::get_mesh("plane");
+    Mesh mesh = resources::get_mesh("wall");
 
     for (tile::Tile &tile : TILES) {
         // don't draw tile which doesn't belong to any room

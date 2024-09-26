@@ -132,12 +132,14 @@ static void update_and_draw_globals() {
     // -------------------------------------------------------------------
     // globals
     ImGui::SeparatorText("Globals");
+    ImGui::Checkbox("is_cull_faces", &globals::IS_CULL_FACES);
     ImGui::Checkbox("is_light_enabled", &globals::IS_LIGHT_ENABLED);
     ImGui::Checkbox("is_shadow_map_pass", &globals::IS_SHADOW_MAP_PASS);
     ImGui::SliderFloat("shadow_map_bias", &globals::SHADOW_MAP_BIAS, -0.5, 0.0);
     ImGui::SliderFloat(
         "shadow_map_max_dist", &globals::SHADOW_MAP_MAX_DIST, 10.0, 1000.0
     );
+    ImGui::SliderFloat("wall_thickness", &globals::WALL_THICKNESS, 0.0, 0.25);
 
     // -------------------------------------------------------------------
     // world
