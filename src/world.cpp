@@ -391,7 +391,8 @@ void draw_grid() {
 }
 
 void draw_tiles() {
-    Mesh mesh = resources::get_mesh("wall");
+    Mesh ceil_mesh = resources::get_mesh("plane");
+    Mesh wall_mesh = resources::get_mesh("wall");
 
     for (tile::Tile &tile : TILES) {
         // don't draw tile which doesn't belong to any room
@@ -399,7 +400,7 @@ void draw_tiles() {
 
         // draw floor
         pbr::draw_mesh(
-            mesh,
+            ceil_mesh,
             resources::get_material_pbr(tile.materials.floor_key),
             tile.constant_color,
             tile.get_floor_matrix()
@@ -407,7 +408,7 @@ void draw_tiles() {
 
         // draw ceil
         pbr::draw_mesh(
-            mesh,
+            ceil_mesh,
             resources::get_material_pbr(tile.materials.ceil_key),
             tile.constant_color,
             tile.get_ceil_matrix()
@@ -415,13 +416,16 @@ void draw_tiles() {
 
         // draw solid walls
         auto wall_material_pbr = resources::get_material_pbr(tile.materials.wall_key);
+
         for (int i_direction = 0; i_direction < 4; ++i_direction) {
             Direction direction = (Direction)i_direction;
 
             if (tile.has_solid_wall(direction)) {
                 for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {
                     Matrix matrix = tile.get_wall_matrix(direction, i_height);
-                    pbr::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix);
+                    pbr::draw_mesh(
+                        wall_mesh, wall_material_pbr, tile.constant_color, matrix
+                    );
                 }
             }
         }

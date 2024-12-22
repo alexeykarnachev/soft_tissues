@@ -123,7 +123,7 @@ Vector2 Tile::get_floor_position() {
     uint32_t row = this->id / world::N_COLS;
     uint32_t col = this->id % world::N_COLS;
 
-    Vector2 pos = {col + 0.5f, row + 0.5f};
+    Vector2 pos = Vector2{col + 0.5f, row + 0.5f};
     pos = Vector2Subtract(pos, Vector2Scale(world::get_size(), 0.5));
     pos = Vector2Add(pos, world::ORIGIN);
 
@@ -157,27 +157,21 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     switch (direction) {
         case Direction::NORTH: {
             Matrix t = MatrixTranslate(position.x, y, position.y - offset);
-            Matrix r = MatrixRotateX(0.5 * PI);
+            Matrix r = MatrixRotateY(0.5 * PI);
             matrix = MatrixMultiply(r, t);
         } break;
         case Direction::SOUTH: {
             Matrix t = MatrixTranslate(position.x, y, position.y + offset);
-            Matrix r = MatrixRotateX(-0.5 * PI);
+            Matrix r = MatrixRotateY(-0.5 * PI);
             matrix = MatrixMultiply(r, t);
         } break;
         case Direction::WEST: {
             Matrix t = MatrixTranslate(position.x - offset, y, position.y);
-            Matrix rx = MatrixRotateX(0.5 * PI);
-            Matrix ry = MatrixRotateY(0.5 * PI);
-            Matrix r = MatrixMultiply(rx, ry);
-            matrix = MatrixMultiply(r, t);
+            matrix = t;
         } break;
         case Direction::EAST: {
             Matrix t = MatrixTranslate(position.x + offset, y, position.y);
-            Matrix rx = MatrixRotateX(0.5 * PI);
-            Matrix ry = MatrixRotateY(-0.5 * PI);
-            Matrix r = MatrixMultiply(rx, ry);
-            matrix = MatrixMultiply(r, t);
+            matrix = t;
         } break;
     }
 

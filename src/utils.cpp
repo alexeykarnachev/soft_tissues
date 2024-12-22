@@ -287,6 +287,16 @@ Mesh gen_mesh_wall() {
     Mesh mesh = GenMeshCube(globals::WALL_THICKNESS, 1.0, 1.0);
     gen_mesh_tangents(&mesh);
 
+    for (int i = 0; i < mesh.vertexCount; ++i) {
+        if (mesh.vertices[i * 3] < 0.0) {
+            mesh.texcoords[i * 3] = 1.0 - 0.5 * globals::WALL_THICKNESS;
+        } else {
+            mesh.texcoords[i * 3] = 0.5 * globals::WALL_THICKNESS;
+        }
+    }
+
+    UpdateMeshBuffer(mesh, 1, mesh.texcoords, sizeof(float) * 24, 0);
+
     return mesh;
 }
 

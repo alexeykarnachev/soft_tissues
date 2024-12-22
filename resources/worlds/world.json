@@ -48,13 +48,13 @@
         {
             "Transform": {
                 "position": [
-                    0.5358521342277527,
+                    0.35605448484420776,
                     0.0,
-                    0.4937817454338074
+                    -0.6217600703239441
                 ],
                 "rotation": [
-                    -0.11100002378225327,
-                    0.016499817371368408,
+                    -0.22199998795986176,
+                    -0.5279999375343323,
                     0.0
                 ],
                 "scale": [
@@ -74,17 +74,17 @@
                 0,
                 0
             ],
-            "id": 167,
+            "id": 142,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
+                0,
                 2,
-                2,
-                2,
+                0,
                 2
             ]
         },
@@ -95,18 +95,39 @@
                 0,
                 0
             ],
-            "id": 158,
+            "id": 141,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
+                0,
                 2,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 140,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
                 2,
-                2,
-                2
+                0,
+                0
             ]
         },
         {
@@ -118,16 +139,16 @@
             ],
             "id": 139,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
                 0,
                 2,
                 0,
-                2
+                0
             ]
         },
         {
@@ -139,14 +160,56 @@
             ],
             "id": 138,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
                 0,
                 2,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 126,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 125,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
                 0,
                 0
             ]
@@ -158,38 +221,17 @@
                 0,
                 0
             ],
-            "id": 137,
+            "id": 124,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
                 0,
-                2,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
                 0,
                 0,
-                0,
-                0
-            ],
-            "id": 136,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                2,
-                2,
                 0
             ]
         },
@@ -202,16 +244,16 @@
             ],
             "id": 123,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
                 0,
                 0,
                 0,
-                2
+                0
             ]
         },
         {
@@ -223,30 +265,9 @@
             ],
             "id": 122,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 104,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
@@ -263,13 +284,13 @@
                 0,
                 0
             ],
-            "id": 119,
+            "id": 110,
             "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
                 "wall": "brick_wall"
             },
-            "room_id": 0,
+            "room_id": 1,
             "walls": [
                 0,
                 0,
@@ -284,11 +305,11 @@
                 0,
                 0
             ],
-            "id": 90,
+            "id": 109,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
             "room_id": 1,
             "walls": [
@@ -305,7 +326,511 @@
                 0,
                 0
             ],
-            "id": 118,
+            "id": 108,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 107,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 106,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                1,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 94,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 93,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 92,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 91,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 90,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                1,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 78,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 77,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 76,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 75,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 74,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                1,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 62,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 61,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 60,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 59,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 58,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 46,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 45,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 44,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 43,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 42,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 104,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 103,
             "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
@@ -328,27 +853,6 @@
             ],
             "id": 89,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 117,
-            "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
                 "wall": "brick_wall"
@@ -357,8 +861,8 @@
             "walls": [
                 0,
                 0,
-                2,
-                0
+                0,
+                1
             ]
         },
         {
@@ -370,27 +874,6 @@
             ],
             "id": 88,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                1,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 103,
-            "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
                 "wall": "brick_wall"
@@ -400,7 +883,7 @@
                 0,
                 0,
                 0,
-                2
+                0
             ]
         },
         {
@@ -410,7 +893,7 @@
                 0,
                 0
             ],
-            "id": 133,
+            "id": 87,
             "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
@@ -419,27 +902,6 @@
             "room_id": 0,
             "walls": [
                 0,
-                2,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 74,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                2,
                 0,
                 0,
                 0
@@ -475,15 +937,36 @@
             ],
             "id": 73,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
-            "room_id": 1,
+            "room_id": 0,
             "walls": [
+                0,
+                0,
+                0,
+                1
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 132,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
                 2,
-                0,
-                0,
+                2,
                 0
             ]
         },
@@ -504,7 +987,7 @@
             "walls": [
                 0,
                 0,
-                2,
+                0,
                 0
             ]
         },
@@ -517,11 +1000,95 @@
             ],
             "id": 72,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
-            "room_id": 1,
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 100,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 41,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                2,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 71,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 36,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
             "walls": [
                 2,
                 0,
@@ -536,7 +1103,70 @@
                 0,
                 0
             ],
-            "id": 87,
+            "id": 37,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 38,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 52,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 69,
             "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
@@ -547,7 +1177,217 @@
                 0,
                 0,
                 0,
-                1
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 40,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 53,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 70,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 54,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 84,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 55,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 39,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                2,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 68,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 85,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 56,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
             ]
         },
         {
@@ -578,7 +1418,7 @@
                 0,
                 0
             ],
-            "id": 85,
+            "id": 57,
             "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
@@ -587,27 +1427,6 @@
             "room_id": 0,
             "walls": [
                 0,
-                0,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 71,
-            "materials": {
-                "ceiling": "brick_wall",
-                "floor": "brick_wall",
-                "wall": "brick_wall"
-            },
-            "room_id": 0,
-            "walls": [
-                2,
                 0,
                 0,
                 2
@@ -620,7 +1439,7 @@
                 0,
                 0
             ],
-            "id": 70,
+            "id": 116,
             "materials": {
                 "ceiling": "brick_wall",
                 "floor": "brick_wall",
@@ -628,28 +1447,7 @@
             },
             "room_id": 0,
             "walls": [
-                2,
                 0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 69,
-            "materials": {
-                "ceiling": "brick_wall",
-                "floor": "brick_wall",
-                "wall": "brick_wall"
-            },
-            "room_id": 0,
-            "walls": [
-                2,
                 0,
                 2,
                 0
@@ -662,18 +1460,144 @@
                 0,
                 0
             ],
-            "id": 75,
+            "id": 105,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
-            "room_id": 1,
+            "room_id": 0,
             "walls": [
-                2,
+                0,
+                0,
+                0,
+                1
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 117,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 118,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 119,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 120,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 121,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
                 0,
                 0,
                 2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 133,
+            "materials": {
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                2,
+                0,
+                0
             ]
         },
         {
@@ -704,27 +1628,6 @@
                 0,
                 0
             ],
-            "id": 105,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
             "id": 135,
             "materials": {
                 "ceiling": "brick_wall",
@@ -736,27 +1639,6 @@
                 0,
                 2,
                 0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 106,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
                 0
             ]
         },
@@ -767,38 +1649,17 @@
                 0,
                 0
             ],
-            "id": 91,
+            "id": 136,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
-            "room_id": 1,
+            "room_id": 0,
             "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 120,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
                 0,
                 2,
+                0,
                 0
             ]
         },
@@ -809,39 +1670,18 @@
                 0,
                 0
             ],
-            "id": 107,
+            "id": 137,
             "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
+                "ceiling": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
             },
-            "room_id": 1,
+            "room_id": 0,
             "walls": [
                 0,
-                0,
+                2,
                 0,
                 2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 121,
-            "materials": {
-                "ceiling": "tiled_stone",
-                "floor": "tiled_stone",
-                "wall": "tiled_stone"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
-                0
             ]
         }
     ]

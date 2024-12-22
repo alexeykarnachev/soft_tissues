@@ -34,6 +34,7 @@ static Model PLAYER_MODEL;
 
 static void update() {
     globals::update();
+    resources::update();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
         controller::update();

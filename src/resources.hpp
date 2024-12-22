@@ -19,5 +19,6 @@ void free_shadow_map(RenderTexture2D *shadow_map);
 
 void load();
 void unload();
+void update();
 
 }  // namespace soft_tissues::resources

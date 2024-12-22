@@ -88,6 +88,17 @@ void unload() {
     }
 }
 
+void update() {
+    // -------------------------------------------------------------------
+    // update wall thickness (if changed in the editor)
+    static float wall_thickness = globals::WALL_THICKNESS;
+    if (wall_thickness != globals::WALL_THICKNESS) {
+        UnloadMesh(MESHES["wall"]);
+        MESHES["wall"] = gen_mesh_wall();
+        wall_thickness = globals::WALL_THICKNESS;
+    }
+}
+
 Material get_material_color(Color color) {
     Material material = DEFAULT_MATERIAL;
     material.maps[0].color = color;
