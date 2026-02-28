@@ -20,6 +20,7 @@ using namespace utils;
 
 Material DEFAULT_MATERIAL;
 
+static Shader PBR_SHADER;
 static std::unordered_map<std::string, pbr::MaterialPBR> MATERIALS_PBR;
 static std::unordered_map<std::string, Mesh> MESHES;
 
@@ -34,6 +35,28 @@ void load() {
     DEFAULT_MATERIAL = LoadMaterialDefault();
 
     // -------------------------------------------------------------------
+    // pbr shader
+    PBR_SHADER = load_shader("pbr.vert.glsl", "pbr.frag.glsl");
+
+    // vertex attributes
+    PBR_SHADER.locs[SHADER_LOC_VERTEX_POSITION] = get_attribute_loc(PBR_SHADER, "a_position");
+    PBR_SHADER.locs[SHADER_LOC_VERTEX_TEXCOORD01] = get_attribute_loc(PBR_SHADER, "a_tex_coord");
+    PBR_SHADER.locs[SHADER_LOC_VERTEX_NORMAL] = get_attribute_loc(PBR_SHADER, "a_normal");
+    PBR_SHADER.locs[SHADER_LOC_VERTEX_TANGENT] = get_attribute_loc(PBR_SHADER, "a_tangent");
+
+    // uniforms
+    PBR_SHADER.locs[SHADER_LOC_MATRIX_MVP] = get_uniform_loc(PBR_SHADER, "u_mvp_mat");
+    PBR_SHADER.locs[SHADER_LOC_MATRIX_MODEL] = get_uniform_loc(PBR_SHADER, "u_model_mat");
+    PBR_SHADER.locs[SHADER_LOC_MATRIX_NORMAL] = get_uniform_loc(PBR_SHADER, "u_normal_mat");
+
+    PBR_SHADER.locs[SHADER_LOC_MAP_ALBEDO] = get_uniform_loc(PBR_SHADER, "u_albedo_map");
+    PBR_SHADER.locs[SHADER_LOC_MAP_METALNESS] = get_uniform_loc(PBR_SHADER, "u_metalness_map");
+    PBR_SHADER.locs[SHADER_LOC_MAP_NORMAL] = get_uniform_loc(PBR_SHADER, "u_normal_map");
+    PBR_SHADER.locs[SHADER_LOC_MAP_ROUGHNESS] = get_uniform_loc(PBR_SHADER, "u_roughness_map");
+    PBR_SHADER.locs[SHADER_LOC_MAP_OCCLUSION] = get_uniform_loc(PBR_SHADER, "u_occlusion_map");
+    PBR_SHADER.locs[SHADER_LOC_MAP_HEIGHT] = get_uniform_loc(PBR_SHADER, "u_height_map");
+
+    // -------------------------------------------------------------------
     // materials pbr
     static const std::array<std::string, 5> material_keys = {
         "brick_wall",
@@ -45,7 +68,7 @@ void load() {
 
     for (auto key : material_keys) {
         auto dir_path = get_material_pbr_dir_path(key);
-        auto material_pbr = pbr::MaterialPBR(dir_path, {1.0, 1.0}, 0.0);
+        auto material_pbr = pbr::MaterialPBR(PBR_SHADER, dir_path, {1.0, 1.0}, 0.0);
         MATERIALS_PBR[key] = material_pbr;
     }
 
@@ -69,10 +92,14 @@ void unload() {
     UnloadMaterial(DEFAULT_MATERIAL);
 
     // -------------------------------------------------------------------
-    // materials pbr
+    // materials pbr (unload before shader since they reference it)
     for (auto [_, material] : MATERIALS_PBR) {
         material.unload();
     }
+
+    // -------------------------------------------------------------------
+    // pbr shader
+    UnloadShader(PBR_SHADER);
 
     // -------------------------------------------------------------------
     // meshes

@@ -14,31 +14,9 @@ using namespace utils;
 
 MaterialPBR::MaterialPBR() = default;
 
-MaterialPBR::MaterialPBR(std::string dir_path, Vector2 tiling, float displacement_scale)
+MaterialPBR::MaterialPBR(Shader shader, std::string dir_path, Vector2 tiling, float displacement_scale)
     : dir_path(dir_path) {
     Material material = LoadMaterialDefault();
-    Shader shader = load_shader("pbr.vert.glsl", "pbr.frag.glsl");
-
-    // -------------------------------------------------------------------
-    // set shader locations
-
-    // vertex attributes
-    shader.locs[SHADER_LOC_VERTEX_POSITION] = get_attribute_loc(shader, "a_position");
-    shader.locs[SHADER_LOC_VERTEX_TEXCOORD01] = get_attribute_loc(shader, "a_tex_coord");
-    shader.locs[SHADER_LOC_VERTEX_NORMAL] = get_attribute_loc(shader, "a_normal");
-    shader.locs[SHADER_LOC_VERTEX_TANGENT] = get_attribute_loc(shader, "a_tangent");
-
-    // uniforms
-    shader.locs[SHADER_LOC_MATRIX_MVP] = get_uniform_loc(shader, "u_mvp_mat");
-    shader.locs[SHADER_LOC_MATRIX_MODEL] = get_uniform_loc(shader, "u_model_mat");
-    shader.locs[SHADER_LOC_MATRIX_NORMAL] = get_uniform_loc(shader, "u_normal_mat");
-
-    shader.locs[SHADER_LOC_MAP_ALBEDO] = get_uniform_loc(shader, "u_albedo_map");
-    shader.locs[SHADER_LOC_MAP_METALNESS] = get_uniform_loc(shader, "u_metalness_map");
-    shader.locs[SHADER_LOC_MAP_NORMAL] = get_uniform_loc(shader, "u_normal_map");
-    shader.locs[SHADER_LOC_MAP_ROUGHNESS] = get_uniform_loc(shader, "u_roughness_map");
-    shader.locs[SHADER_LOC_MAP_OCCLUSION] = get_uniform_loc(shader, "u_occlusion_map");
-    shader.locs[SHADER_LOC_MAP_HEIGHT] = get_uniform_loc(shader, "u_height_map");
 
     // texture maps
     material.maps[MATERIAL_MAP_ALBEDO].texture = load_texture(dir_path, "albedo.png");
@@ -85,7 +63,14 @@ std::string MaterialPBR::get_name() {
 }
 
 void MaterialPBR::unload() {
-    UnloadMaterial(this->material);
+    // Unload textures only; the shared PBR shader is managed by resources
+    UnloadTexture(this->material.maps[MATERIAL_MAP_ALBEDO].texture);
+    UnloadTexture(this->material.maps[MATERIAL_MAP_METALNESS].texture);
+    UnloadTexture(this->material.maps[MATERIAL_MAP_NORMAL].texture);
+    UnloadTexture(this->material.maps[MATERIAL_MAP_ROUGHNESS].texture);
+    UnloadTexture(this->material.maps[MATERIAL_MAP_OCCLUSION].texture);
+    UnloadTexture(this->material.maps[MATERIAL_MAP_HEIGHT].texture);
+    RL_FREE(this->material.maps);
 }
 
 void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix matrix) {

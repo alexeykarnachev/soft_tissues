@@ -13,7 +13,7 @@ private:
 
 public:
     MaterialPBR();
-    MaterialPBR(std::string dir_path, Vector2 tiling, float displacement_scale);
+    MaterialPBR(Shader shader, std::string dir_path, Vector2 tiling, float displacement_scale);
 
     Texture get_texture();
     Material get_material();
