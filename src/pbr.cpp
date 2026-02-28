@@ -1,6 +1,6 @@
 #include "pbr.hpp"
 
-#include "component/light.hpp"
+#include "component/component.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -131,8 +131,8 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
         if (is_light_enabled) {
             int light_idx = 0;
 
-            for (auto entity : globals::registry.view<light::Light>()) {
-                auto light = globals::registry.get<light::Light>(entity);
+            for (auto entity : globals::registry.view<component::Light>()) {
+                auto light = globals::registry.get<component::Light>(entity);
                 if (!light.is_on) continue;
 
                 light.set_shader_uniform(shader, light_idx++);

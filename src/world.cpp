@@ -484,8 +484,8 @@ void save(std::string file_path) {
         }
 
         // Light
-        if (globals::registry.all_of<light::Light>(entity)) {
-            auto &component = globals::registry.get<light::Light>(entity);
+        if (globals::registry.all_of<component::Light>(entity)) {
+            auto &component = globals::registry.get<component::Light>(entity);
             entity_json["Light"] = component.to_json();
         }
 
@@ -568,8 +568,8 @@ void load(std::string file_path) {
 
         // Light
         if (entity_json.contains("Light")) {
-            auto light = light::Light::from_json(new_entity, entity_json["Light"]);
-            globals::registry.emplace<light::Light>(new_entity, std::move(light));
+            auto light = component::Light::from_json(new_entity, entity_json["Light"]);
+            globals::registry.emplace<component::Light>(new_entity, std::move(light));
         }
     }
 
