@@ -601,6 +601,10 @@ void load(std::string file_path) {
 
     // assign parents after all entities have been created
     for (const auto &[child_entity, parent_old_id] : parents_to_assign) {
+        if (id_map.count(parent_old_id) == 0) {
+            TraceLog(LOG_WARNING, "Skipping parent assignment: entity %u not found", parent_old_id);
+            continue;
+        }
         entt::entity parent_entity = id_map[parent_old_id];
         globals::registry.emplace<component::Parent>(
             child_entity, component::Parent{parent_entity}
