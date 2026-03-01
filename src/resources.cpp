@@ -103,11 +103,11 @@ Material get_material_color(Color color) {
 }
 
 pbr::MaterialPBR get_material_pbr(std::string key) {
-    return MATERIALS_PBR[key];
+    return MATERIALS_PBR.at(key);
 }
 
 Mesh get_mesh(std::string key) {
-    return MESHES[key];
+    return MESHES.at(key);
 }
 
 std::vector<std::string> get_material_pbr_keys() {

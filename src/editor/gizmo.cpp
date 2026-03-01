@@ -344,8 +344,8 @@ static void update() {
 
     float x_fract = Clamp(mouse_position.x / (float)GetScreenWidth(), 0.0, 1.0);
     float y_fract = Clamp(1.0 - (mouse_position.y / (float)GetScreenHeight()), 0.0, 1.0);
-    int x = (int)(PICKING_FBO_SIZE * x_fract);
-    int y = (int)(PICKING_FBO_SIZE * y_fract);
+    int x = Clamp((int)(PICKING_FBO_SIZE * x_fract), 0, PICKING_FBO_SIZE - 1);
+    int y = Clamp((int)(PICKING_FBO_SIZE * y_fract), 0, PICKING_FBO_SIZE - 1);
     int idx = 4 * (y * PICKING_FBO_SIZE + x);
     unsigned char picked_id = pixels[idx];
 

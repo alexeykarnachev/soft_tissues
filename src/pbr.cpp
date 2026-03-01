@@ -197,6 +197,8 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
             int light_idx = 0;
 
             for (auto entity : globals::registry.view<component::Light>()) {
+                if (light_idx >= globals::MAX_N_LIGHTS) break;
+
                 auto light = globals::registry.get<component::Light>(entity);
                 if (!light.is_on) continue;
 
