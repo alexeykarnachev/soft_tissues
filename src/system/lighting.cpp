@@ -5,14 +5,17 @@
 #include "../pbr.hpp"
 #include "../resources.hpp"
 #include "render.hpp"
-#include "scene.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 
 namespace soft_tissues::system::lighting {
 
-void draw_shadow_maps() {
+void draw_shadow_maps(
+    pbr::PBRShader &pbr_shader,
+    RenderState &render_state,
+    SceneDrawFn draw_scene
+) {
     for (auto entity : globals::registry.view<component::Light>()) {
         auto &light = globals::registry.get<component::Light>(entity);
 
@@ -63,15 +66,14 @@ void draw_shadow_maps() {
                 Matrix p = rlGetMatrixProjection();
                 light.vp_mat = MatrixMultiply(v, p);
 
-                // draw scene
-                bool is_shadow_map_pass = globals::RENDER_STATE.is_shadow_map_pass;
-                globals::RENDER_STATE.is_shadow_map_pass = true;
+                // draw scene from light's perspective
+                bool prev_shadow_map_pass = render_state.is_shadow_map_pass;
+                render_state.is_shadow_map_pass = true;
 
-                render::begin_frame(resources::get_pbr_shader());
-                scene::draw_tiles();
-                scene::draw_meshes();
+                render::begin_frame(pbr_shader, render_state);
+                draw_scene();
 
-                globals::RENDER_STATE.is_shadow_map_pass = is_shadow_map_pass;
+                render_state.is_shadow_map_pass = prev_shadow_map_pass;
 
                 EndMode3D();
                 EndTextureMode();
@@ -101,7 +103,6 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         auto &light = globals::registry.get<component::Light>(entity);
         if (!light.is_on) continue;
 
-        // set_shader_uniform logic
         Shader shader = pbr_shader.get_shader();
         const auto &locs = pbr_shader.get_light_locs(light_idx);
 

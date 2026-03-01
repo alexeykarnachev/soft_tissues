@@ -3,7 +3,6 @@
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../resources.hpp"
-#include "../utils.hpp"
 #include "../world.hpp"
 #include "render.hpp"
 #include "raylib/raylib.h"
@@ -46,7 +45,7 @@ void draw_grid() {
     DrawLine3D(bot_left, top_left, RED);
 }
 
-void draw_tiles() {
+void draw_tiles(const RenderState &render_state) {
     Mesh mesh = resources::get_mesh("plane");
     tile::Tile *tiles = world::get_tiles();
     int n_tiles = world::get_tiles_count();
@@ -62,7 +61,8 @@ void draw_tiles() {
             mesh,
             resources::get_material_pbr(tile.materials.floor_key),
             tile.constant_color,
-            tile.get_floor_matrix()
+            tile.get_floor_matrix(),
+            render_state
         );
 
         // draw ceil
@@ -70,7 +70,8 @@ void draw_tiles() {
             mesh,
             resources::get_material_pbr(tile.materials.ceil_key),
             tile.constant_color,
-            tile.get_ceil_matrix()
+            tile.get_ceil_matrix(),
+            render_state
         );
 
         // draw solid walls
@@ -81,14 +82,14 @@ void draw_tiles() {
             if (tile.has_solid_wall(direction)) {
                 for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {
                     Matrix matrix = tile.get_wall_matrix(direction, i_height);
-                    render::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix);
+                    render::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix, render_state);
                 }
             }
         }
     }
 }
 
-void draw_meshes() {
+void draw_meshes(const RenderState &render_state) {
     auto view = globals::registry.view<component::MyMesh>();
 
     for (auto entity : view) {
@@ -99,7 +100,7 @@ void draw_meshes() {
         auto mesh = resources::get_mesh(my_mesh.mesh_key);
         auto material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);
 
-        render::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix);
+        render::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix, render_state);
     }
 }
 

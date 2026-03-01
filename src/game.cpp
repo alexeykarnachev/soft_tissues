@@ -71,9 +71,16 @@ static void draw_player() {
 }
 
 static void draw() {
+    auto &render_state = globals::RENDER_STATE;
+    auto &pbr_shader = resources::get_pbr_shader();
+
     // -------------------------------------------------------------------
     // shadow maps
-    system::lighting::draw_shadow_maps();
+    auto draw_scene = [&]() {
+        system::scene::draw_tiles(render_state);
+        system::scene::draw_meshes(render_state);
+    };
+    system::lighting::draw_shadow_maps(pbr_shader, render_state, draw_scene);
 
     // -------------------------------------------------------------------
     // entity picking
@@ -87,10 +94,6 @@ static void draw() {
     rlEnableDepthTest();
     ClearBackground(BLANK);
 
-    // TODO: Maybe factor out BeginMode3D and EndMode3D, such that some
-    // global camera (e.g from RENDER_OPTIONS) will be assigned.
-    // It means, that the engine should control current camera via
-    // RENDER_OPTIONS (but not directly via BeginMode3D(camera::CAMERA)).
     BeginMode3D(camera::CAMERA);
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
@@ -99,9 +102,9 @@ static void draw() {
             system::scene::draw_grid();
         }
 
-        system::render::begin_frame(resources::get_pbr_shader());
-        system::scene::draw_tiles();
-        system::scene::draw_meshes();
+        system::render::begin_frame(pbr_shader, render_state);
+        system::scene::draw_tiles(render_state);
+        system::scene::draw_meshes(render_state);
     }
     EndMode3D();
 
