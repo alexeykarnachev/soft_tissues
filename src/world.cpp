@@ -1,24 +1,17 @@
 #include "world.hpp"
 
 #include "camera.hpp"
-#include "component/component.hpp"
-#include "component/transform.hpp"
 #include "globals.hpp"
 #include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
-#include "resources.hpp"
-#include "system/render.hpp"
 #include "tile.hpp"
 #include "utils.hpp"
 #include <algorithm>
 #include <array>
-#include <cassert>
 #include <cfloat>
 #include <cmath>
 #include <cstdint>
-#include <cstdio>
-#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -53,6 +46,10 @@ void reset() {
 
     // player
     prefabs::spawn_player(world::ORIGIN);
+}
+
+tile::Tile *get_tiles() {
+    return TILES.data();
 }
 
 int get_tiles_count() {
@@ -356,263 +353,28 @@ void add_tile_to_room(tile::Tile *tile, int room_id) {
     }
 }
 
-void draw_grid() {
-    Rectangle rect = get_bound_rect();
-
-    // TODO: factor these out into RectangleExt struct
-    float min_x = rect.x;
-    float max_x = rect.x + rect.width;
-    float min_y = rect.y;
-    float max_y = rect.y + rect.height;
-
-    Vector3 top_left = {min_x, 0.0, min_y};
-    Vector3 top_right = {max_x, 0.0, min_y};
-    Vector3 bot_right = {max_x, 0.0, max_y};
-    Vector3 bot_left = {min_x, 0.0, max_y};
-
-    // z lines
-    for (float x = min_x + 1.0; x < max_x; x += 1.0) {
-        Vector3 start_pos = {x, 0.0, min_y};
-        Vector3 end_pos = {x, 0.0, max_y};
-        DrawLine3D(start_pos, end_pos, WHITE);
-    }
-
-    // x lines
-    for (float z = min_y + 1.0; z < max_y; z += 1.0) {
-        Vector3 start_pos = {min_x, 0.0, z};
-        Vector3 end_pos = {max_x, 0.0, z};
-        DrawLine3D(start_pos, end_pos, WHITE);
-    }
-
-    // perimiter
-    DrawLine3D(top_left, top_right, RED);
-    DrawLine3D(top_right, bot_right, RED);
-    DrawLine3D(bot_right, bot_left, RED);
-    DrawLine3D(bot_left, top_left, RED);
-}
-
-void draw_tiles() {
-    Mesh mesh = resources::get_mesh("plane");
-
-    for (tile::Tile &tile : TILES) {
-        // don't draw tile which doesn't belong to any room
-        if (get_tile_room_id(&tile) == -1) continue;
-
-        // draw floor
-        system::render::draw_mesh(
-            mesh,
-            resources::get_material_pbr(tile.materials.floor_key),
-            tile.constant_color,
-            tile.get_floor_matrix()
-        );
-
-        // draw ceil
-        system::render::draw_mesh(
-            mesh,
-            resources::get_material_pbr(tile.materials.ceil_key),
-            tile.constant_color,
-            tile.get_ceil_matrix()
-        );
-
-        // draw solid walls
-        auto wall_material_pbr = resources::get_material_pbr(tile.materials.wall_key);
-        for (int i_direction = 0; i_direction < 4; ++i_direction) {
-            Direction direction = (Direction)i_direction;
-
-            if (tile.has_solid_wall(direction)) {
-                for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {
-                    Matrix matrix = tile.get_wall_matrix(direction, i_height);
-                    system::render::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix);
-                }
-            }
-        }
-    }
-}
-
-void draw_meshes() {
-    auto view = globals::registry.view<component::MyMesh>();
-
-    for (auto entity : view) {
-        auto my_mesh = globals::registry.get<component::MyMesh>(entity);
-        auto tr = globals::registry.get<component::Transform>(entity);
-        Matrix matrix = tr.get_matrix();
-
-        auto mesh = resources::get_mesh(my_mesh.mesh_key);
-        auto material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);
-
-        system::render::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix);
-    }
-}
-
-void save(std::string file_path) {
-    nlohmann::json json;
-
-    // -------------------------------------------------------------------
-    // TILES
-    json["tiles"] = nlohmann::json::array();
-    for (const auto &[tile, room_id] : TILE_TO_ROOM_ID) {
-        nlohmann::json tile_json = tile->to_json();
-        tile_json["room_id"] = room_id;
-        json["tiles"].push_back(tile_json);
-    }
-
-    // -------------------------------------------------------------------
-    // ENTITIES
-    json["entities"] = nlohmann::json::array();
-    auto view = globals::registry.view<entt::entity>();
-    for (auto entity : view) {
-        nlohmann::json entity_json;
-
-        // id
-        entity_json["id"] = (uint32_t)entity;
-
-        // Transform
-        if (globals::registry.all_of<component::Transform>(entity)) {
-            auto &component = globals::registry.get<component::Transform>(entity);
-            entity_json["Transform"] = component.to_json();
-        }
-
-        // MyMesh
-        if (globals::registry.all_of<component::MyMesh>(entity)) {
-            auto &component = globals::registry.get<component::MyMesh>(entity);
-            entity_json["MyMesh"] = component.to_json();
-        }
-
-        // Parent
-        if (globals::registry.all_of<component::Parent>(entity)) {
-            auto &component = globals::registry.get<component::Parent>(entity);
-            entity_json["Parent"] = component.to_json();
-        }
-
-        // Light
-        if (globals::registry.all_of<component::Light>(entity)) {
-            auto &component = globals::registry.get<component::Light>(entity);
-            entity_json["Light"] = component.to_json();
-        }
-
-        // Player
-        if (globals::registry.all_of<component::Player>(entity)) {
-            entity_json["Player"] = component::Player().to_json();
-        }
-
-        // Flashlight
-        if (globals::registry.all_of<component::Flashlight>(entity)) {
-            entity_json["Flashlight"] = component::Flashlight().to_json();
-        }
-
-        json["entities"].push_back(entity_json);
-    }
-
-    // -------------------------------------------------------------------
-    // save file
-    std::ofstream file(file_path);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file for writing: " + file_path);
-    }
-
-    file << json.dump(4);
-
-    if (file.fail()) {
-        throw std::runtime_error("Failed to write to file: " + file_path);
-    }
-
-    file.close();
-}
-
-void load(std::string file_path) {
-    // clear state without spawning a new player — the loaded data will restore it
+void clear_state() {
     for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
     ROOM_ID_TO_TILES.clear();
     TILE_TO_ROOM_ID.clear();
     globals::registry.clear();
+}
 
-    // -------------------------------------------------------------------
-    // load file
-    std::ifstream file(file_path);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + file_path);
+std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids() {
+    std::vector<std::pair<tile::Tile *, int>> result;
+    for (const auto &[tile, room_id] : TILE_TO_ROOM_ID) {
+        result.push_back({tile, room_id});
     }
+    return result;
+}
 
-    nlohmann::json json;
-    file >> json;
-
-    // -------------------------------------------------------------------
-    // TILES
-    for (const auto &tile_json : json["tiles"]) {
-        tile::Tile tile = tile::Tile::from_json(tile_json);
-        int tile_id = tile.get_id();
-        int room_id = tile_json["room_id"];
-
-        TILES[tile_id] = tile;
-        TILE_TO_ROOM_ID[&TILES[tile_id]] = room_id;
-        ROOM_ID_TO_TILES[room_id].push_back(&TILES[tile_id]);
-    }
-
-    // -------------------------------------------------------------------
-    // ENTITIES
-    std::unordered_map<uint32_t, entt::entity> id_map;
-    std::vector<std::pair<entt::entity, uint32_t>> parents_to_assign;
-
-    for (const auto &entity_json : json["entities"]) {
-        uint32_t old_id = entity_json["id"].get<uint32_t>();
-        auto new_entity = globals::registry.create();
-        id_map[old_id] = new_entity;
-
-        // Transform
-        if (entity_json.contains("Transform")) {
-            auto transform = component::Transform::from_json(
-                new_entity, entity_json["Transform"]
-            );
-            globals::registry.emplace<component::Transform>(new_entity, transform);
-        }
-
-        // MyMesh
-        if (entity_json.contains("MyMesh")) {
-            auto my_mesh = component::MyMesh::from_json(
-                new_entity, entity_json["MyMesh"]
-            );
-            globals::registry.emplace<component::MyMesh>(new_entity, my_mesh);
-        }
-
-        // Parent
-        if (entity_json.contains("Parent")) {
-            auto parent_json = entity_json["Parent"];
-            uint32_t parent_old_id = parent_json["entity"].get<uint32_t>();
-            parents_to_assign.push_back({new_entity, parent_old_id});
-        }
-
-        // Light
-        if (entity_json.contains("Light")) {
-            auto light = component::Light::from_json(new_entity, entity_json["Light"]);
-            globals::registry.emplace<component::Light>(new_entity, std::move(light));
-        }
-
-        // Player
-        if (entity_json.contains("Player")) {
-            globals::registry.emplace<component::Player>(new_entity);
-        }
-
-        // Flashlight
-        if (entity_json.contains("Flashlight")) {
-            globals::registry.emplace<component::Flashlight>(new_entity);
-        }
-    }
-
-    // assign parents after all entities have been created
-    for (const auto &[child_entity, parent_old_id] : parents_to_assign) {
-        if (id_map.count(parent_old_id) == 0) {
-            TraceLog(LOG_WARNING, "Skipping parent assignment: entity %u not found", parent_old_id);
-            continue;
-        }
-        entt::entity parent_entity = id_map[parent_old_id];
-        globals::registry.emplace<component::Parent>(
-            child_entity, component::Parent{parent_entity}
-        );
-    }
-
-    file.close();
+void load_tile_to_room(tile::Tile tile, int room_id) {
+    int tile_id = tile.get_id();
+    TILES[tile_id] = tile;
+    TILE_TO_ROOM_ID[&TILES[tile_id]] = room_id;
+    ROOM_ID_TO_TILES[room_id].push_back(&TILES[tile_id]);
 }
 
 }  // namespace soft_tissues::world

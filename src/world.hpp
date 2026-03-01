@@ -14,6 +14,7 @@ extern const Vector2 ORIGIN;
 
 void reset();
 
+tile::Tile *get_tiles();
 int get_tiles_count();
 int get_rooms_count();
 Vector2 get_size();
@@ -48,11 +49,9 @@ void set_room_tile_materials(int room_id, tile::TileMaterials materials);
 
 void add_tile_to_room(tile::Tile *tile, int room_id);
 
-void draw_grid();
-void draw_tiles();
-void draw_meshes();
-
-void save(std::string file_path);
-void load(std::string file_path);
+// serialization helpers
+void clear_state();
+std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids();
+void load_tile_to_room(tile::Tile tile, int room_id);
 
 }  // namespace soft_tissues::world

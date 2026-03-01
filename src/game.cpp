@@ -2,7 +2,7 @@
 
 #include "camera.hpp"
 #include "component/component.hpp"
-#include "component/transform.hpp"
+#include "transform.hpp"
 #include "controller.hpp"
 #include "editor/editor.hpp"
 #include "globals.hpp"
@@ -12,6 +12,7 @@
 #include "resources.hpp"
 #include "system/lighting.hpp"
 #include "system/render.hpp"
+#include "system/scene.hpp"
 #include "world.hpp"
 
 namespace soft_tissues::game {
@@ -95,12 +96,12 @@ static void draw() {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
             draw_light_shells();
-            world::draw_grid();
+            system::scene::draw_grid();
         }
 
         system::render::begin_frame(resources::get_pbr_shader());
-        world::draw_tiles();
-        world::draw_meshes();
+        system::scene::draw_tiles();
+        system::scene::draw_meshes();
     }
     EndMode3D();
 
@@ -116,11 +117,22 @@ static void draw() {
     EndDrawing();
 }
 
+static void on_light_destroyed(entt::registry &reg, entt::entity entity) {
+    auto &light = reg.get<component::Light>(entity);
+    if (light.shadow_map != nullptr) {
+        resources::free_shadow_map(light.shadow_map);
+        light.shadow_map = nullptr;
+    }
+}
+
 void run() {
     // load engine
     load_window();
     resources::load();
     editor::load();
+
+    // register cleanup hooks
+    globals::registry.on_destroy<component::Light>().connect<&on_light_destroyed>();
 
     // load initial scene
     world::reset();

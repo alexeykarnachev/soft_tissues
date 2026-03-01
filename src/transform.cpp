@@ -1,10 +1,9 @@
+#include "serializers.hpp"
 #include "transform.hpp"
 
-#include "../globals.hpp"
-#include "../serializers.hpp"
-#include "component.hpp"
+#include "component/component.hpp"
+#include "globals.hpp"
 #include "raylib/raymath.h"
-#include <cstdio>
 
 namespace soft_tissues::transform {
 

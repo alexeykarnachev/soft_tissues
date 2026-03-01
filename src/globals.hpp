@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entt/entt.hpp"
+#include "render_state.hpp"
 
 namespace soft_tissues::globals {
 
@@ -19,12 +20,7 @@ static constexpr float PLAYER_SPEED = 1.0;
 static constexpr float PLAYER_CAMERA_SENSITIVITY = 0.0015;
 
 extern entt::registry registry;
-
-extern bool IS_LIGHT_ENABLED;
-extern bool IS_SHADOW_MAP_PASS;
-
-extern float SHADOW_MAP_BIAS;
-extern float SHADOW_MAP_MAX_DIST;
+extern RenderState RENDER_STATE;
 
 extern float TOTAL_TIME;
 extern float FRAME_DT;

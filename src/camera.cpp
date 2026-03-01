@@ -1,7 +1,7 @@
 #include "camera.hpp"
 
 #include "component/component.hpp"
-#include "component/transform.hpp"
+#include "transform.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"

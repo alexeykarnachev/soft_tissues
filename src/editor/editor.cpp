@@ -6,6 +6,7 @@
 #include "../globals.hpp"
 #include "../resources.hpp"
 #include "../world.hpp"
+#include "../world_serializer.hpp"
 #include "GLFW/glfw3.h"
 #include "ImGuiFileDialog.h"
 #include "imgui/imgui.h"
@@ -131,11 +132,11 @@ static void update_and_draw_globals() {
     // -------------------------------------------------------------------
     // globals
     ImGui::SeparatorText("Globals");
-    ImGui::Checkbox("is_light_enabled", &globals::IS_LIGHT_ENABLED);
-    ImGui::Checkbox("is_shadow_map_pass", &globals::IS_SHADOW_MAP_PASS);
-    ImGui::SliderFloat("shadow_map_bias", &globals::SHADOW_MAP_BIAS, -0.5, 0.0);
+    ImGui::Checkbox("is_light_enabled", &globals::RENDER_STATE.is_light_enabled);
+    ImGui::Checkbox("is_shadow_map_pass", &globals::RENDER_STATE.is_shadow_map_pass);
+    ImGui::SliderFloat("shadow_map_bias", &globals::RENDER_STATE.shadow_map_bias, -0.5, 0.0);
     ImGui::SliderFloat(
-        "shadow_map_max_dist", &globals::SHADOW_MAP_MAX_DIST, 10.0, 1000.0
+        "shadow_map_max_dist", &globals::RENDER_STATE.shadow_map_max_dist, 10.0, 1000.0
     );
 
     // -------------------------------------------------------------------
@@ -159,7 +160,7 @@ static void update_and_draw_globals() {
     if (ImGuiFileDialog::Instance()->Display("SAVE_WORLD")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
-            world::save(file_path);
+            world_serializer::save(file_path);
             TraceLog(LOG_INFO, "World saved: %s", file_path.c_str());
         }
 
@@ -183,7 +184,7 @@ static void update_and_draw_globals() {
     if (ImGuiFileDialog::Instance()->Display("OPEN_WORLD")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
-            world::load(file_path);
+            world_serializer::load(file_path);
             TraceLog(LOG_INFO, "World opened: %s", file_path.c_str());
         }
 

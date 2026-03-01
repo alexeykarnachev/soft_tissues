@@ -4,12 +4,11 @@
 #include "../globals.hpp"
 #include "../pbr.hpp"
 #include "../resources.hpp"
-#include "../world.hpp"
 #include "render.hpp"
+#include "scene.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
-#include <stdexcept>
 
 namespace soft_tissues::system::lighting {
 
@@ -65,14 +64,14 @@ void draw_shadow_maps() {
                 light.vp_mat = MatrixMultiply(v, p);
 
                 // draw scene
-                bool is_shadow_map_pass = globals::IS_SHADOW_MAP_PASS;
-                globals::IS_SHADOW_MAP_PASS = true;
+                bool is_shadow_map_pass = globals::RENDER_STATE.is_shadow_map_pass;
+                globals::RENDER_STATE.is_shadow_map_pass = true;
 
                 render::begin_frame(resources::get_pbr_shader());
-                world::draw_tiles();
-                world::draw_meshes();
+                scene::draw_tiles();
+                scene::draw_meshes();
 
-                globals::IS_SHADOW_MAP_PASS = is_shadow_map_pass;
+                globals::RENDER_STATE.is_shadow_map_pass = is_shadow_map_pass;
 
                 EndMode3D();
                 EndTextureMode();
