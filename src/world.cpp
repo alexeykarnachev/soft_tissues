@@ -8,6 +8,7 @@
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "resources.hpp"
+#include "system/render.hpp"
 #include "tile.hpp"
 #include "utils.hpp"
 #include <algorithm>
@@ -398,7 +399,7 @@ void draw_tiles() {
         if (get_tile_room_id(&tile) == -1) continue;
 
         // draw floor
-        pbr::draw_mesh(
+        system::render::draw_mesh(
             mesh,
             resources::get_material_pbr(tile.materials.floor_key),
             tile.constant_color,
@@ -406,7 +407,7 @@ void draw_tiles() {
         );
 
         // draw ceil
-        pbr::draw_mesh(
+        system::render::draw_mesh(
             mesh,
             resources::get_material_pbr(tile.materials.ceil_key),
             tile.constant_color,
@@ -421,7 +422,7 @@ void draw_tiles() {
             if (tile.has_solid_wall(direction)) {
                 for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {
                     Matrix matrix = tile.get_wall_matrix(direction, i_height);
-                    pbr::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix);
+                    system::render::draw_mesh(mesh, wall_material_pbr, tile.constant_color, matrix);
                 }
             }
         }
@@ -439,7 +440,7 @@ void draw_meshes() {
         auto mesh = resources::get_mesh(my_mesh.mesh_key);
         auto material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);
 
-        pbr::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix);
+        system::render::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix);
     }
 }
 

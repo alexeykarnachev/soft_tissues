@@ -5,10 +5,6 @@
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 
-namespace soft_tissues::pbr {
-class PBRShader;
-}
-
 namespace soft_tissues::light {
 
 enum class LightType {
@@ -73,6 +69,8 @@ public:
 
     Params params;
 
+    bool needs_update = true;
+
     Light(
         entt::entity entity,
         LightType light_type,
@@ -81,15 +79,8 @@ public:
         Params params
     );
 
-    void draw_shadow_map();
-
-    void set_shader_uniform(pbr::PBRShader &pbr_shader, int idx);
-
     nlohmann::json to_json() const;
     static Light from_json(entt::entity entity, const nlohmann::json &json_data);
-
-private:
-    bool needs_update = true;
 };
 
 std::string light_type_to_str(LightType type);

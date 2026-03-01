@@ -10,6 +10,8 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
+#include "system/lighting.hpp"
+#include "system/render.hpp"
 #include "world.hpp"
 
 namespace soft_tissues::game {
@@ -70,10 +72,7 @@ static void draw_player() {
 static void draw() {
     // -------------------------------------------------------------------
     // shadow maps
-    for (auto entity : globals::registry.view<component::Light>()) {
-        auto &light = globals::registry.get<component::Light>(entity);
-        light.draw_shadow_map();
-    }
+    system::lighting::draw_shadow_maps();
 
     // -------------------------------------------------------------------
     // entity picking
@@ -99,7 +98,7 @@ static void draw() {
             world::draw_grid();
         }
 
-        pbr::begin_frame(resources::get_pbr_shader());
+        system::render::begin_frame(resources::get_pbr_shader());
         world::draw_tiles();
         world::draw_meshes();
     }

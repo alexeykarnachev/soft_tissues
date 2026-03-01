@@ -1,6 +1,5 @@
 #include "pbr.hpp"
 
-#include "component/component.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -180,50 +179,6 @@ void MaterialPBR::unload() {
     UnloadTexture(this->material.maps[MATERIAL_MAP_OCCLUSION].texture);
     UnloadTexture(this->material.maps[MATERIAL_MAP_HEIGHT].texture);
     RL_FREE(this->material.maps);
-}
-
-// -----------------------------------------------------------------------
-// per-frame and per-draw
-void begin_frame(PBRShader &pbr_shader) {
-    pbr_shader.set_shadow_map_pass(globals::IS_SHADOW_MAP_PASS);
-
-    Matrix mat = MatrixInvert(rlGetMatrixModelview());
-    pbr_shader.set_camera_pos({mat.m12, mat.m13, mat.m14});
-
-    if (!globals::IS_SHADOW_MAP_PASS) {
-        pbr_shader.set_light_enabled(globals::IS_LIGHT_ENABLED);
-        pbr_shader.set_shadow_map_bias(globals::SHADOW_MAP_BIAS);
-        pbr_shader.set_shadow_map_max_dist(globals::SHADOW_MAP_MAX_DIST);
-
-        if (globals::IS_LIGHT_ENABLED) {
-            int light_idx = 0;
-
-            for (auto entity : globals::registry.view<component::Light>()) {
-                if (light_idx >= globals::MAX_N_LIGHTS) break;
-
-                auto &light = globals::registry.get<component::Light>(entity);
-                if (!light.is_on) continue;
-
-                light.set_shader_uniform(pbr_shader, light_idx++);
-            }
-
-            pbr_shader.set_n_lights(light_idx);
-        }
-    }
-}
-
-void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix matrix) {
-    Material material = material_pbr.get_material();
-    PBRShader &pbr_shader = material_pbr.get_pbr_shader();
-
-    pbr_shader.set_tiling(material_pbr.get_tiling());
-    pbr_shader.set_displacement_scale(material_pbr.get_displacement_scale());
-
-    if (!globals::IS_SHADOW_MAP_PASS) {
-        pbr_shader.set_constant_color(constant_color);
-    }
-
-    DrawMesh(mesh, material, matrix);
 }
 
 }  // namespace soft_tissues::pbr
