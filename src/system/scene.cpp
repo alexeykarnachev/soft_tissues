@@ -7,6 +7,7 @@
 #include "render.hpp"
 #include "transform.hpp"
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 
 namespace soft_tissues::system::scene {
 
@@ -47,7 +48,7 @@ void draw_grid() {
 }
 
 void draw_tiles(const RenderState &render_state) {
-    Mesh mesh = resources::get_mesh("plane");
+    const Mesh &mesh = resources::get_mesh("plane");
     tile::Tile *tiles = world::get_tiles();
     int n_tiles = world::get_tiles_count();
 
@@ -76,7 +77,7 @@ void draw_tiles(const RenderState &render_state) {
         );
 
         // draw solid walls
-        auto wall_material_pbr = resources::get_material_pbr(tile.materials.wall_key);
+        const auto &wall_material_pbr = resources::get_material_pbr(tile.materials.wall_key);
         for (int i_direction = 0; i_direction < 4; ++i_direction) {
             Direction direction = (Direction)i_direction;
 
@@ -94,13 +95,33 @@ void draw_meshes(const RenderState &render_state) {
     auto view = globals::registry.view<component::MyMesh>();
 
     for (auto entity : view) {
-        auto my_mesh = globals::registry.get<component::MyMesh>(entity);
+        const auto &my_mesh = globals::registry.get<component::MyMesh>(entity);
         Matrix matrix = transform::get_world_matrix(entity);
 
-        auto mesh = resources::get_mesh(my_mesh.mesh_key);
-        auto material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);
+        const auto &mesh = resources::get_mesh(my_mesh.mesh_key);
+        const auto &material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);
 
         render::draw_mesh(mesh, material_pbr, my_mesh.constant_color, matrix, render_state);
+    }
+}
+
+void draw_player() {
+    auto view = globals::registry.view<component::Player>();
+    if (view.size() == 0) return;
+    auto player = view.front();
+
+    Vector3 position = transform::get_world_position(player);
+    Matrix matrix = MatrixTranslate(position.x, position.y, position.z);
+
+    const Mesh &mesh = resources::get_mesh("player_cylinder");
+    Material material = resources::get_material_color({220, 95, 30, 255});
+    DrawMesh(mesh, material, matrix);
+}
+
+void draw_light_shells() {
+    auto view = globals::registry.view<component::Light>();
+    for (auto entity : view) {
+        DrawSphere(transform::get_world_position(entity), 0.2, WHITE);
     }
 }
 

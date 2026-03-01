@@ -58,4 +58,17 @@ void set_forward(entt::entity entity, Vector3 forward) {
     tr.rotation = QuaternionToEuler(q);
 }
 
+void step(entt::entity entity, Vector3 delta) {
+    auto &tr = globals::registry.get<component::Transform>(entity);
+    tr.position = Vector3Add(tr.position, delta);
+}
+
+void rotate_by_axis_angle(entt::entity entity, Vector3 axis, float angle) {
+    auto &tr = globals::registry.get<component::Transform>(entity);
+    auto new_q = QuaternionFromAxisAngle(axis, angle);
+    auto my_q = tr.get_local_quaternion();
+    auto q = QuaternionMultiply(new_q, my_q);
+    tr.rotation = QuaternionToEuler(q);
+}
+
 }  // namespace soft_tissues::system::transform

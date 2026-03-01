@@ -24,17 +24,6 @@ Quaternion Transform::get_local_quaternion() const {
     return QuaternionFromEuler(this->rotation.x, this->rotation.y, this->rotation.z);
 }
 
-void Transform::step(Vector3 step) {
-    this->position = Vector3Add(this->position, step);
-}
-
-void Transform::rotate_by_axis_angle(Vector3 axis, float angle) {
-    auto new_q = QuaternionFromAxisAngle(axis, angle);
-    auto my_q = this->get_local_quaternion();
-    auto q = QuaternionMultiply(new_q, my_q);
-    this->rotation = QuaternionToEuler(q);
-}
-
 nlohmann::json Transform::to_json() const {
     nlohmann::json json;
 

@@ -6,7 +6,7 @@
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
-#include <nlohmann/json.hpp>
+#include "nlohmann/json.hpp"
 #include <string>
 
 namespace soft_tissues::tile {

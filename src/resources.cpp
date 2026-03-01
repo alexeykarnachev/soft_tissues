@@ -1,6 +1,7 @@
 #include "resources.hpp"
 
 #include "pbr.hpp"
+#include "gameplay_config.hpp"
 #include "render_config.hpp"
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
@@ -15,7 +16,7 @@ namespace soft_tissues::resources {
 
 using namespace utils;
 
-Material DEFAULT_MATERIAL;
+static Material DEFAULT_MATERIAL;
 
 static pbr::PBRShader PBR_SHADER;
 static std::unordered_map<std::string, pbr::MaterialPBR> MATERIALS_PBR;
@@ -56,6 +57,7 @@ void load() {
     MESHES["plane"] = gen_mesh_plane(2);
     MESHES["cube"] = gen_mesh_cube();
     MESHES["sphere"] = gen_mesh_sphere(64, 64);
+    MESHES["player_cylinder"] = GenMeshCylinder(0.25, gameplay_config::PLAYER_HEIGHT, 16);
 
     // -------------------------------------------------------------------
     // shadow maps
@@ -93,6 +95,9 @@ void unload() {
     }
 }
 
+// Returns a shallow copy of DEFAULT_MATERIAL with the given color.
+// The copy shares DEFAULT_MATERIAL's maps pointer — only safe for single-use-per-frame
+// (e.g. pass directly to DrawMesh). Do not store or call UnloadMaterial on the copy.
 Material get_material_color(Color color) {
     Material material = DEFAULT_MATERIAL;
     material.maps[0].color = color;
@@ -121,7 +126,10 @@ std::vector<std::string> get_material_pbr_keys() {
 }
 
 RenderTexture2D *get_shadow_map() {
-    if (FREE_SHADOW_MAP_IDXS.size() == 0) return nullptr;
+    if (FREE_SHADOW_MAP_IDXS.size() == 0) {
+        TraceLog(LOG_WARNING, "Shadow map pool exhausted");
+        return nullptr;
+    }
 
     auto idx = *FREE_SHADOW_MAP_IDXS.begin();
     FREE_SHADOW_MAP_IDXS.erase(FREE_SHADOW_MAP_IDXS.begin());

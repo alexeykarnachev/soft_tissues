@@ -1,14 +1,13 @@
 #pragma once
 
+#include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
-#include <nlohmann/json.hpp>
+#include <string>
 
 namespace soft_tissues::component {
 
-class MyMesh {
-
-public:
-    const std::string mesh_key;
+struct MyMesh {
+    std::string mesh_key;
     std::string material_pbr_key;
     Color constant_color;
 

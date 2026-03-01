@@ -103,7 +103,7 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         // shadow map
         auto *sd = globals::registry.try_get<component::ShadowData>(entity);
         if (sd != nullptr && sd->shadow_map != nullptr) {
-            int slot = 10 + light_idx;
+            int slot = render_config::SHADOW_MAP_TEXTURE_SLOT_OFFSET + light_idx;
 
             rlActiveTextureSlot(slot);
             rlEnableTexture(sd->shadow_map->texture.id);

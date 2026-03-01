@@ -3,6 +3,7 @@
 #include "entt/entity/fwd.hpp"
 #include "light.hpp"
 #include "mesh.hpp"
+#include "nlohmann/json.hpp"
 #include "shadow_data.hpp"
 #include "transform.hpp"
 
@@ -10,8 +11,7 @@ namespace soft_tissues::component {
 
 // Tag and small components — move to own files when they grow.
 
-class Player {
-public:
+struct Player {
     nlohmann::json to_json() const {
         return nlohmann::json::object();
     }
@@ -21,8 +21,7 @@ public:
     }
 };
 
-class Flashlight {
-public:
+struct Flashlight {
     nlohmann::json to_json() const {
         return nlohmann::json::object();
     }
@@ -32,8 +31,7 @@ public:
     }
 };
 
-class Parent {
-public:
+struct Parent {
     entt::entity entity;
 
     nlohmann::json to_json() const {

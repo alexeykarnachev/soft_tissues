@@ -4,7 +4,6 @@
 #include "component/component.hpp"
 #include "system/controller.hpp"
 #include "editor/editor.hpp"
-#include "gameplay_config.hpp"
 #include "globals.hpp"
 #include "prefabs.hpp"
 #include "raylib/raylib.h"
@@ -14,7 +13,6 @@
 #include "system/lighting.hpp"
 #include "system/render.hpp"
 #include "system/scene.hpp"
-#include "system/transform.hpp"
 #include "world.hpp"
 
 namespace soft_tissues::game {
@@ -29,11 +27,21 @@ static void load_window() {
     SetExitKey(KEY_NULL);
 }
 
-static Model PLAYER_MODEL;
+static void update_game_state() {
+    if (IsKeyPressed(KEY_F1)) {
+        if (globals::GAME_STATE == globals::GameState::PLAY) {
+            globals::GAME_STATE = globals::GameState::EDITOR;
+            EnableCursor();
+        } else if (globals::GAME_STATE == globals::GameState::EDITOR) {
+            globals::GAME_STATE = globals::GameState::PLAY;
+            DisableCursor();
+        }
+    }
+}
 
 static void update() {
     globals::update();
-    system::controller::update_game_state();
+    update_game_state();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
         system::controller::update();
@@ -49,26 +57,6 @@ static void draw_cursor() {
     float x = 0.5 * GetScreenWidth();
     float y = 0.5 * GetScreenHeight();
     DrawCircle(x, y, radius, color);
-}
-
-static void draw_light_shells() {
-    auto view = globals::registry.view<component::Light>();
-    for (auto entity : view) {
-        DrawSphere(system::transform::get_world_position(entity), 0.2, WHITE);
-    }
-}
-
-static void draw_player() {
-    auto view = globals::registry.view<component::Player>();
-    if (view.size() == 0) return;
-    auto player = view.front();
-
-    Vector3 position = system::transform::get_world_position(player);
-    Matrix transform = MatrixTranslate(position.x, position.y, position.z);
-
-    Model model = PLAYER_MODEL;
-    model.transform = MatrixMultiply(model.transform, transform);
-    DrawModel(model, Vector3Zero(), 1.0, {220, 95, 30, 255});
 }
 
 static void draw() {
@@ -112,11 +100,14 @@ static void draw() {
     BeginMode3D(system::camera::CAMERA);
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
-            draw_player();
-            draw_light_shells();
+            system::scene::draw_player();
+            system::scene::draw_light_shells();
             system::scene::draw_grid();
         }
 
+        if (render_state.is_light_enabled) {
+            system::lighting::set_light_uniforms(pbr_shader);
+        }
         system::render::begin_frame(pbr_shader, render_state);
         system::scene::draw_tiles(render_state);
         system::scene::draw_meshes(render_state);
@@ -155,7 +146,6 @@ void run() {
     globals::registry.clear();
     world::reset();
     prefabs::spawn_player(world::ORIGIN);
-    PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, gameplay_config::PLAYER_HEIGHT, 16));
 
     // main loop
     while (!globals::WINDOW_SHOULD_CLOSE) {
@@ -164,7 +154,7 @@ void run() {
     }
 
     // unload
-    UnloadModel(PLAYER_MODEL);
+    globals::registry.clear();
     editor::unload();
     resources::unload();
     CloseWindow();

@@ -81,7 +81,7 @@ void material_picker(std::string *material_pbr_key) {
                 *material_pbr_key = another_material_pbr_key;
             }
 
-            auto another_material_pbr = resources::get_material_pbr(
+            const auto &another_material_pbr = resources::get_material_pbr(
                 another_material_pbr_key
             );
             gui::image(another_material_pbr.get_texture(), 30.0);
@@ -90,7 +90,7 @@ void material_picker(std::string *material_pbr_key) {
         ImGui::EndMenu();
     }
 
-    auto material_pbr = resources::get_material_pbr(*material_pbr_key);
+    const auto &material_pbr = resources::get_material_pbr(*material_pbr_key);
     gui::image(material_pbr.get_texture(), 150.0);
 }
 

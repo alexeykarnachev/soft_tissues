@@ -6,8 +6,6 @@
 
 namespace soft_tissues::resources {
 
-extern Material DEFAULT_MATERIAL;
-
 pbr::PBRShader &get_pbr_shader();
 Material get_material_color(Color color);
 const pbr::MaterialPBR &get_material_pbr(const std::string &key);

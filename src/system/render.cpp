@@ -1,7 +1,6 @@
 #include "render.hpp"
 
 #include "../pbr.hpp"
-#include "lighting.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
@@ -18,10 +17,6 @@ void begin_frame(pbr::PBRShader &pbr_shader, const RenderState &render_state) {
         pbr_shader.set_light_enabled(render_state.is_light_enabled);
         pbr_shader.set_shadow_map_bias(render_state.shadow_map_bias);
         pbr_shader.set_shadow_map_max_dist(render_state.shadow_map_max_dist);
-
-        if (render_state.is_light_enabled) {
-            lighting::set_light_uniforms(pbr_shader);
-        }
     }
 }
 

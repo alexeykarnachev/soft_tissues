@@ -20,7 +20,7 @@ static void select_room(int id) {
 }
 
 static void draw_tile_ghost(tile::Tile *tile, Color color) {
-    auto mesh = resources::get_mesh("plane");
+    const auto &mesh = resources::get_mesh("plane");
     auto material = resources::get_material_color(color);
     auto matrix = tile->get_floor_matrix();
 

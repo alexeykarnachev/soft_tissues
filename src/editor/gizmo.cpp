@@ -455,7 +455,7 @@ static void update() {
     }
 
     if (std::abs(UPDATE.angle) > EPSILON) {
-        tr.rotate_by_axis_angle(UPDATE.axis, UPDATE.angle);
+        system::transform::rotate_by_axis_angle(ENTITY, UPDATE.axis, UPDATE.angle);
     }
 }
 

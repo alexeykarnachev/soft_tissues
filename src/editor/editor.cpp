@@ -134,7 +134,6 @@ static void update_and_draw_globals() {
     // globals
     ImGui::SeparatorText("Globals");
     ImGui::Checkbox("is_light_enabled", &globals::RENDER_STATE.is_light_enabled);
-    ImGui::Checkbox("is_shadow_map_pass", &globals::RENDER_STATE.is_shadow_map_pass);
     ImGui::SliderFloat("shadow_map_bias", &globals::RENDER_STATE.shadow_map_bias, -0.5, 0.0);
     ImGui::SliderFloat(
         "shadow_map_max_dist", &globals::RENDER_STATE.shadow_map_max_dist, 10.0, 1000.0
@@ -246,7 +245,7 @@ void update_hovered_entity() {
         for (auto entity : meshes) {
             auto my_mesh = globals::registry.get<component::MyMesh>(entity);
 
-            auto mesh = resources::get_mesh(my_mesh.mesh_key);
+            const auto &mesh = resources::get_mesh(my_mesh.mesh_key);
             auto material = resources::get_material_color({id, 0, 0, 255});
             auto matrix = system::transform::get_world_matrix(entity);
 

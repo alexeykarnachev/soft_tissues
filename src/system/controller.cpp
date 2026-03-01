@@ -24,7 +24,6 @@ static void update_translation() {
     auto view = globals::registry.view<component::Player>();
     if (view.size() == 0) return;
     auto player = view.front();
-    auto &tr = globals::registry.get<component::Transform>(player);
 
     Vector3 forward = transform::get_forward(player);
     Vector3 right = transform::get_right(player);
@@ -37,12 +36,13 @@ static void update_translation() {
     right = Vector3Scale(Vector3Normalize(right), dir.x);
     dir = Vector3Normalize(Vector3Add(forward, right));
 
-    Vector3 step = Vector3Scale(dir, globals::FRAME_DT * gameplay_config::PLAYER_SPEED);
+    Vector3 delta = Vector3Scale(dir, globals::FRAME_DT * gameplay_config::PLAYER_SPEED);
 
-    tr.step(step);
+    transform::step(player, delta);
 }
 
 static void update_rotation() {
+    // Skip first frame — GetMouseDelta() returns garbage before the first update.
     static bool initialized = false;
     if (!initialized) { initialized = true; return; }
 
@@ -80,18 +80,6 @@ void update() {
     update_translation();
     update_rotation();
     update_flashlight();
-}
-
-void update_game_state() {
-    if (IsKeyPressed(KEY_F1)) {
-        if (globals::GAME_STATE == globals::GameState::PLAY) {
-            globals::GAME_STATE = globals::GameState::EDITOR;
-            EnableCursor();
-        } else if (globals::GAME_STATE == globals::GameState::EDITOR) {
-            globals::GAME_STATE = globals::GameState::PLAY;
-            DisableCursor();
-        }
-    }
 }
 
 }  // namespace soft_tissues::system::controller

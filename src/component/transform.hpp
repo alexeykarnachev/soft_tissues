@@ -1,8 +1,8 @@
 #pragma once
 
+#include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
-#include <nlohmann/json.hpp>
 
 namespace soft_tissues::component {
 
@@ -17,9 +17,6 @@ struct Transform {
     Transform(Vector3 position, Vector3 scale, Vector3 rotation);
 
     Quaternion get_local_quaternion() const;
-
-    void step(Vector3 step);
-    void rotate_by_axis_angle(Vector3 axis, float angle);
 
     nlohmann::json to_json() const;
     static Transform from_json(const nlohmann::json &json_data);
