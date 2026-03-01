@@ -28,30 +28,19 @@ Light::Light(
     , params(params) {}
 
 void Light::draw_shadow_map() {
+    // if shadows were turned off, free the shadow map back to the pool
+    if (!this->casts_shadows && this->shadow_map != NULL) {
+        resources::free_shadow_map(this->shadow_map);
+        this->shadow_map = NULL;
+    }
+
     if (!this->casts_shadows || !this->is_on) return;
 
-    // -------------------------------------------------------------------
-    // decide if the shadow map needs to be updated
-    if (this->casts_shadows) {
-
-        if (this->shadow_type == ShadowType::DYNAMIC) {
-            this->needs_update = true;
-        }
-
-    } else {
-        this->needs_update = false;
-
-        // update is not needed, but shadow map is assigned, so we return it back
-        // to the resources manager
-        if (this->shadow_map != NULL) {
-            resources::free_shadow_map(this->shadow_map);
-            this->shadow_map = NULL;
-        }
+    if (this->shadow_type == ShadowType::DYNAMIC) {
+        this->needs_update = true;
     }
 
-    if (!this->needs_update) {
-        return;
-    }
+    if (!this->needs_update) return;
 
     // -------------------------------------------------------------------
     // assign shadow map if not assigned yet
