@@ -197,9 +197,12 @@ int add_room() {
         if (room_tiles.size() == 0) return room_id;
     }
 
-    static int id = 0;
+    int id = 0;
+    for (auto [room_id, _] : ROOM_ID_TO_TILES) {
+        if (room_id >= id) id = room_id + 1;
+    }
     ROOM_ID_TO_TILES[id] = {};
-    return id++;
+    return id;
 }
 
 void remove_room(int room_id) {
