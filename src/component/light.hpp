@@ -1,9 +1,7 @@
 #pragma once
 
-#include "entt/entity/fwd.hpp"
 #include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
-#include "raylib/raymath.h"
 
 namespace soft_tissues::light {
 
@@ -53,8 +51,6 @@ typedef union {
 
 class Light {
 public:
-    const entt::entity entity;
-
     bool is_on;
     bool casts_shadows;
 
@@ -64,15 +60,9 @@ public:
     Color color;
     float intensity;
 
-    RenderTexture2D *shadow_map;
-    Matrix vp_mat = MatrixIdentity();
-
     Params params;
 
-    bool needs_update = true;
-
     Light(
-        entt::entity entity,
         LightType light_type,
         Color color,
         float intensity,
@@ -80,7 +70,7 @@ public:
     );
 
     nlohmann::json to_json() const;
-    static Light from_json(entt::entity entity, const nlohmann::json &json_data);
+    static Light from_json(const nlohmann::json &json_data);
 };
 
 std::string light_type_to_str(LightType type);

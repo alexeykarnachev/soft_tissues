@@ -3,6 +3,7 @@
 #include "component/component.hpp"
 #include "component/light.hpp"
 #include "entt/entity/fwd.hpp"
+#include "gameplay_config.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -23,7 +24,7 @@ entt::entity spawn_mesh(
 ) {
     auto entity = globals::registry.create();
     auto transform = component::Transform(entity, position);
-    auto my_mesh = component::MyMesh(entity, mesh_key, material_pbr_key);
+    auto my_mesh = component::MyMesh(mesh_key, material_pbr_key);
 
     globals::registry.emplace<component::Transform>(entity, transform);
     globals::registry.emplace<component::MyMesh>(entity, my_mesh);
@@ -41,7 +42,7 @@ entt::entity spawn_light(
     auto entity = globals::registry.create();
     auto transform = component::Transform(entity, position);
 
-    light::Light light(entity, light_type, color, intensity, params);
+    light::Light light(light_type, color, intensity, params);
 
     globals::registry.emplace<component::Transform>(entity, transform);
     globals::registry.emplace<component::Light>(entity, light);
@@ -95,7 +96,7 @@ entt::entity spawn_player(Vector2 position) {
 
     // flashlight
     {
-        static const Vector3 position = {0.0, globals::PLAYER_HEIGHT, 0.0};
+        static const Vector3 position = {0.0, gameplay_config::PLAYER_HEIGHT, 0.0};
 
         static const light::LightType type = light::LightType::SPOT;
         static const Color color = {255, 255, 220, 255};

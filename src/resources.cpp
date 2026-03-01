@@ -1,13 +1,14 @@
 #include "resources.hpp"
 
-#include "globals.hpp"
 #include "pbr.hpp"
+#include "render_config.hpp"
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
 #include "utils.hpp"
 #include <array>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 
 namespace soft_tissues::resources {
@@ -21,7 +22,7 @@ static std::unordered_map<std::string, pbr::MaterialPBR> MATERIALS_PBR;
 static std::unordered_map<std::string, Mesh> MESHES;
 
 static std::unordered_set<int> FREE_SHADOW_MAP_IDXS;
-static std::array<RenderTexture2D, globals::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
+static std::array<RenderTexture2D, render_config::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
 
 static std::string get_material_pbr_dir_path(std::string key) {
     return "resources/pbr/" + key + "/";
@@ -60,7 +61,7 @@ void load() {
     // shadow maps
     for (size_t i = 0; i < SHADOW_MAPS.size(); ++i) {
         SHADOW_MAPS[i] = LoadRenderTexture(
-            globals::SHADOW_MAP_SIZE, globals::SHADOW_MAP_SIZE
+            render_config::SHADOW_MAP_SIZE, render_config::SHADOW_MAP_SIZE
         );
         FREE_SHADOW_MAP_IDXS.insert(i);
     }

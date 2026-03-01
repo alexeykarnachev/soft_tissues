@@ -1,6 +1,7 @@
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../prefabs.hpp"
+#include "../system/lighting.hpp"
 #include "editor.hpp"
 #include "entt/entity/entity.hpp"
 #include "imgui/imgui.h"
@@ -46,7 +47,7 @@ static void update_and_draw_mesh() {
 
     if (mesh == nullptr) {
         if (gui::button("Add [M]esh") || IsKeyPressed(KEY_M)) {
-            mesh::MyMesh my_mesh(ENTITY, "cube", "brick_wall");
+            mesh::MyMesh my_mesh("cube", "brick_wall");
             globals::registry.emplace<component::MyMesh>(ENTITY, my_mesh);
         }
     } else {
@@ -66,7 +67,7 @@ static void update_and_draw_light() {
     if (light == nullptr) {
         if (gui::button("Add [L]ight") || IsKeyPressed(KEY_L)) {
             light::Params params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
-            light::Light light(ENTITY, light::LightType::POINT, GREEN, 20.0, params);
+            light::Light light(light::LightType::POINT, GREEN, 20.0, params);
             globals::registry.emplace<component::Light>(ENTITY, light);
         }
     } else {
@@ -157,8 +158,9 @@ static void update_and_draw_light() {
             ImGui::EndCombo();
         }
 
-        if (light->shadow_map != nullptr) {
-            gui::image(light->shadow_map->texture, 150.0, 150.0);
+        auto *sd = system::lighting::get_shadow_data(ENTITY);
+        if (sd != nullptr && sd->shadow_map != nullptr) {
+            gui::image(sd->shadow_map->texture, 150.0, 150.0);
         }
 
         // ---------------------------------------------------------------

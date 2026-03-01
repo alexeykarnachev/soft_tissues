@@ -1,6 +1,7 @@
 #include "camera.hpp"
 
 #include "component/component.hpp"
+#include "gameplay_config.hpp"
 #include "transform.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
@@ -61,7 +62,7 @@ static void update_first_person_mode() {
     auto tr = globals::registry.get<component::Transform>(player);
 
     Vector3 position = tr.get_position();
-    position.y += globals::PLAYER_HEIGHT;
+    position.y += gameplay_config::PLAYER_HEIGHT;
 
     Vector3 forward = tr.get_forward();
     Vector3 target = Vector3Add(position, forward);

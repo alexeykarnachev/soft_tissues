@@ -2,6 +2,7 @@
 
 #include "component/component.hpp"
 #include "component/light.hpp"
+#include "gameplay_config.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -36,7 +37,7 @@ void update_translation() {
     right = Vector3Scale(Vector3Normalize(right), dir.x);
     dir = Vector3Normalize(Vector3Add(forward, right));
 
-    Vector3 step = Vector3Scale(dir, globals::FRAME_DT * globals::PLAYER_SPEED);
+    Vector3 step = Vector3Scale(dir, globals::FRAME_DT * gameplay_config::PLAYER_SPEED);
 
     tr.step(step);
 }
@@ -46,7 +47,7 @@ void update_rotation() {
     if (!initialized) { initialized = true; return; }
 
     Vector2 mouse_delta = GetMouseDelta();
-    mouse_delta = Vector2Scale(mouse_delta, globals::PLAYER_CAMERA_SENSITIVITY);
+    mouse_delta = Vector2Scale(mouse_delta, gameplay_config::PLAYER_CAMERA_SENSITIVITY);
 
     float yaw_delta = -mouse_delta.x;
     float pitch_delta = -mouse_delta.y;

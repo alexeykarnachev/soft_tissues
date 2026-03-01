@@ -6,17 +6,13 @@
 
 namespace soft_tissues::light {
 
-Light::Light(
-    entt::entity entity, LightType light_type, Color color, float intensity, Params params
-)
-    : entity(entity)
-    , is_on(true)
+Light::Light(LightType light_type, Color color, float intensity, Params params)
+    : is_on(true)
     , casts_shadows(false)
     , light_type(light_type)
     , shadow_type(ShadowType::DYNAMIC)
     , color(color)
     , intensity(intensity)
-    , shadow_map(nullptr)
     , params(params) {}
 
 std::string light_type_to_str(LightType type) {
@@ -85,7 +81,7 @@ nlohmann::json Light::to_json() const {
     return json;
 }
 
-Light Light::from_json(entt::entity entity, const nlohmann::json &json_data) {
+Light Light::from_json(const nlohmann::json &json_data) {
     // -------------------------------------------------------------------
     // common params
     LightType light_type = str_to_light_type(json_data["light_type"]);
@@ -111,7 +107,7 @@ Light Light::from_json(entt::entity entity, const nlohmann::json &json_data) {
         default: break;
     }
 
-    Light light(entity, light_type, color, intensity, params);
+    Light light(light_type, color, intensity, params);
 
     light.is_on = is_on;
     light.casts_shadows = casts_shadows;

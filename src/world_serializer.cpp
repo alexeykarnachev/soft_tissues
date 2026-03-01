@@ -131,9 +131,7 @@ void load(std::string file_path) {
 
         // MyMesh
         if (entity_json.contains("MyMesh")) {
-            auto my_mesh = component::MyMesh::from_json(
-                new_entity, entity_json["MyMesh"]
-            );
+            auto my_mesh = component::MyMesh::from_json(entity_json["MyMesh"]);
             globals::registry.emplace<component::MyMesh>(new_entity, my_mesh);
         }
 
@@ -146,7 +144,7 @@ void load(std::string file_path) {
 
         // Light
         if (entity_json.contains("Light")) {
-            auto light = component::Light::from_json(new_entity, entity_json["Light"]);
+            auto light = component::Light::from_json(entity_json["Light"]);
             globals::registry.emplace<component::Light>(new_entity, std::move(light));
         }
 

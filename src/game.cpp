@@ -2,9 +2,9 @@
 
 #include "camera.hpp"
 #include "component/component.hpp"
-#include "transform.hpp"
 #include "controller.hpp"
 #include "editor/editor.hpp"
+#include "gameplay_config.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -76,11 +76,25 @@ static void draw() {
 
     // -------------------------------------------------------------------
     // shadow maps
-    auto draw_scene = [&]() {
-        system::scene::draw_tiles(render_state);
-        system::scene::draw_meshes(render_state);
-    };
-    system::lighting::draw_shadow_maps(pbr_shader, render_state, draw_scene);
+    auto jobs = system::lighting::prepare_shadow_passes();
+    for (auto &job : jobs) {
+        BeginTextureMode(*job.shadow_map);
+        ClearBackground(YELLOW);
+        BeginMode3D(job.camera);
+
+        Matrix vp_mat = MatrixMultiply(rlGetMatrixModelview(), rlGetMatrixProjection());
+
+        RenderState shadow_state = render_state;
+        shadow_state.is_shadow_map_pass = true;
+        system::render::begin_frame(pbr_shader, shadow_state);
+        system::scene::draw_tiles(shadow_state);
+        system::scene::draw_meshes(shadow_state);
+
+        EndMode3D();
+        EndTextureMode();
+
+        system::lighting::finalize_shadow_pass(job.entity, vp_mat);
+    }
 
     // -------------------------------------------------------------------
     // entity picking
@@ -120,12 +134,8 @@ static void draw() {
     EndDrawing();
 }
 
-static void on_light_destroyed(entt::registry &reg, entt::entity entity) {
-    auto &light = reg.get<component::Light>(entity);
-    if (light.shadow_map != nullptr) {
-        resources::free_shadow_map(light.shadow_map);
-        light.shadow_map = nullptr;
-    }
+static void on_light_destroyed(entt::registry &, entt::entity entity) {
+    system::lighting::cleanup_shadow_data(entity);
 }
 
 void run() {
@@ -139,7 +149,7 @@ void run() {
 
     // load initial scene
     world::reset();
-    PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, globals::PLAYER_HEIGHT, 16));
+    PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, gameplay_config::PLAYER_HEIGHT, 16));
 
     // main loop
     while (!globals::WINDOW_SHOULD_CLOSE) {

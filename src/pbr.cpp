@@ -1,6 +1,5 @@
 #include "pbr.hpp"
 
-#include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
@@ -49,7 +48,7 @@ PBRShader::PBRShader(const std::string &vs_file, const std::string &fs_file) {
     displacement_scale_loc = get_uniform_loc(shader, "u_displacement_scale");
 
     // per-light uniforms (resolve for all array indices)
-    for (int i = 0; i < globals::MAX_N_LIGHTS; ++i) {
+    for (int i = 0; i < render_config::MAX_N_LIGHTS; ++i) {
         std::string prefix = "u_lights[" + std::to_string(i) + "].";
         auto &ll = light_locs[i];
 

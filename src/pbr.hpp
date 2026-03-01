@@ -1,6 +1,6 @@
 #pragma once
 
-#include "globals.hpp"
+#include "render_config.hpp"
 #include "raylib/raylib.h"
 #include <array>
 #include <string>
@@ -28,7 +28,7 @@ private:
     int tiling_loc;
     int displacement_scale_loc;
 
-    std::array<LightLocs, globals::MAX_N_LIGHTS> light_locs;
+    std::array<LightLocs, render_config::MAX_N_LIGHTS> light_locs;
 
 public:
     PBRShader();

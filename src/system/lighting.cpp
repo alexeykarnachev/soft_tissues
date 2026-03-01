@@ -4,79 +4,87 @@
 #include "../globals.hpp"
 #include "../pbr.hpp"
 #include "../resources.hpp"
-#include "render.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
+#include <unordered_map>
 
 namespace soft_tissues::system::lighting {
 
-void draw_shadow_maps(
-    pbr::PBRShader &pbr_shader,
-    RenderState &render_state,
-    SceneDrawFn draw_scene
-) {
+static std::unordered_map<entt::entity, ShadowData> SHADOW_DATA;
+
+ShadowData *get_shadow_data(entt::entity entity) {
+    auto it = SHADOW_DATA.find(entity);
+    if (it == SHADOW_DATA.end()) return nullptr;
+    return &it->second;
+}
+
+void cleanup_shadow_data(entt::entity entity) {
+    auto it = SHADOW_DATA.find(entity);
+    if (it == SHADOW_DATA.end()) return;
+
+    if (it->second.shadow_map != nullptr) {
+        resources::free_shadow_map(it->second.shadow_map);
+    }
+
+    SHADOW_DATA.erase(it);
+}
+
+void cleanup_all_shadow_data() {
+    for (auto &[entity, sd] : SHADOW_DATA) {
+        if (sd.shadow_map != nullptr) {
+            resources::free_shadow_map(sd.shadow_map);
+        }
+    }
+
+    SHADOW_DATA.clear();
+}
+
+std::vector<ShadowPassJob> prepare_shadow_passes() {
+    std::vector<ShadowPassJob> jobs;
+
     for (auto entity : globals::registry.view<component::Light>()) {
         auto &light = globals::registry.get<component::Light>(entity);
+        auto &sd = SHADOW_DATA[entity];
 
         // if shadows were turned off, free the shadow map back to the pool
-        if (!light.casts_shadows && light.shadow_map != nullptr) {
-            resources::free_shadow_map(light.shadow_map);
-            light.shadow_map = nullptr;
+        if (!light.casts_shadows && sd.shadow_map != nullptr) {
+            resources::free_shadow_map(sd.shadow_map);
+            sd.shadow_map = nullptr;
         }
 
         if (!light.casts_shadows || !light.is_on) continue;
 
         if (light.shadow_type == light::ShadowType::DYNAMIC) {
-            light.needs_update = true;
+            sd.needs_update = true;
         }
 
-        if (!light.needs_update) continue;
+        if (!sd.needs_update) continue;
 
         // assign shadow map if not assigned yet
-        if (light.shadow_map == nullptr) {
-            light.shadow_map = resources::get_shadow_map();
+        if (sd.shadow_map == nullptr) {
+            sd.shadow_map = resources::get_shadow_map();
 
-            if (light.shadow_map == nullptr) {
+            if (sd.shadow_map == nullptr) {
                 continue;
             }
         }
 
-        // draw shadow map
+        // build camera for this light
         auto tr = globals::registry.get<component::Transform>(entity);
         Vector3 position = tr.get_position();
         Vector3 direction = tr.get_forward();
 
         switch (light.light_type) {
             case light::LightType::SPOT: {
-                BeginTextureMode(*light.shadow_map);
-                ClearBackground(YELLOW);
-
                 Camera3D camera = {0};
                 camera.position = position;
                 camera.target = Vector3Add(position, direction);
-                // TODO: Implement and use tr.get_up or even tr.get_camera
                 camera.up = {0.0, 1.0, 0.0};
                 camera.fovy = 90.0;
                 camera.projection = CAMERA_PERSPECTIVE;
 
-                BeginMode3D(camera);
-
-                Matrix v = rlGetMatrixModelview();
-                Matrix p = rlGetMatrixProjection();
-                light.vp_mat = MatrixMultiply(v, p);
-
-                // draw scene from light's perspective
-                bool prev_shadow_map_pass = render_state.is_shadow_map_pass;
-                render_state.is_shadow_map_pass = true;
-
-                render::begin_frame(pbr_shader, render_state);
-                draw_scene();
-
-                render_state.is_shadow_map_pass = prev_shadow_map_pass;
-
-                EndMode3D();
-                EndTextureMode();
+                jobs.push_back({entity, camera, sd.shadow_map});
             } break;
             default: {
                 TraceLog(
@@ -86,11 +94,18 @@ void draw_shadow_maps(
                 light.casts_shadows = false;
             } break;
         }
+    }
 
-        // render static shadow map only once
-        if (light.shadow_type == light::ShadowType::STATIC) {
-            light.needs_update = false;
-        }
+    return jobs;
+}
+
+void finalize_shadow_pass(entt::entity entity, Matrix vp_mat) {
+    auto &sd = SHADOW_DATA[entity];
+    sd.vp_mat = vp_mat;
+
+    auto &light = globals::registry.get<component::Light>(entity);
+    if (light.shadow_type == light::ShadowType::STATIC) {
+        sd.needs_update = false;
     }
 }
 
@@ -98,7 +113,7 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
     int light_idx = 0;
 
     for (auto entity : globals::registry.view<component::Light>()) {
-        if (light_idx >= globals::MAX_N_LIGHTS) break;
+        if (light_idx >= render_config::MAX_N_LIGHTS) break;
 
         auto &light = globals::registry.get<component::Light>(entity);
         if (!light.is_on) continue;
@@ -111,18 +126,18 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         Vector4 color = ColorNormalize(light.color);
 
         // shadow map
-        if (light.shadow_map != nullptr) {
-            // NOTE: this "10" is an arbitrary slot number,
-            // maybe I should factor out it somehow!
+        auto *sd = get_shadow_data(entity);
+        if (sd != nullptr && sd->shadow_map != nullptr) {
             int slot = 10 + light_idx;
 
             rlActiveTextureSlot(slot);
-            rlEnableTexture(light.shadow_map->texture.id);
+            rlEnableTexture(sd->shadow_map->texture.id);
             SetShaderValue(shader, locs.shadow_map, &slot, SHADER_UNIFORM_INT);
         }
 
         // common params
         int casts_shadows = (int)light.casts_shadows;
+        Matrix vp_mat = (sd != nullptr) ? sd->vp_mat : MatrixIdentity();
 
         Vector3 position = tr.get_position();
         SetShaderValue(shader, locs.position, &position, SHADER_UNIFORM_VEC3);
@@ -130,7 +145,7 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         SetShaderValue(shader, locs.color, &color, SHADER_UNIFORM_VEC3);
         SetShaderValue(shader, locs.intensity, &light.intensity, SHADER_UNIFORM_FLOAT);
         SetShaderValue(shader, locs.casts_shadows, &casts_shadows, SHADER_UNIFORM_INT);
-        SetShaderValueMatrix(shader, locs.vp_mat, light.vp_mat);
+        SetShaderValueMatrix(shader, locs.vp_mat, vp_mat);
 
         // type params
         switch (light.light_type) {
