@@ -6,10 +6,7 @@
 #include "utils.hpp"
 #include "world.hpp"
 #include <cstdint>
-#include <cstdio>
 #include <nlohmann/json.hpp>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 
 namespace soft_tissues::tile {

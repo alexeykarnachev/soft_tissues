@@ -3,9 +3,6 @@
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
 
 namespace soft_tissues::editor::rooms_editor {
 

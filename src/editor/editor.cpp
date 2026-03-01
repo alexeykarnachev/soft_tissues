@@ -59,7 +59,6 @@ void load() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     GLFWwindow *window = (GLFWwindow *)GetWindowHandle();
-    glfwGetWindowUserPointer(window);
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460 core");
     ImGui::StyleColorsDark();

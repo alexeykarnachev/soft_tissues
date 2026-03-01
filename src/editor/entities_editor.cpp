@@ -6,9 +6,6 @@
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
-#include <cassert>
-#include <cstdio>
-#include <stdio.h>
 #include <string>
 
 namespace soft_tissues::editor::entities_editor {

@@ -88,13 +88,10 @@ Rectangle get_bound_rect() {
 }
 
 tile::Tile *get_tile_at_row_col(int row, int col) {
-    uint32_t idx = row * N_COLS + col;
-    tile::Tile *tile = nullptr;
-    if (idx < N_TILES) {
-        tile = &TILES[idx];
-    }
+    if (row < 0 || row >= N_ROWS || col < 0 || col >= N_COLS) return nullptr;
 
-    return tile;
+    int idx = row * N_COLS + col;
+    return &TILES[idx];
 }
 
 tile::Tile *get_tile_at_position(Vector2 pos) {
@@ -193,12 +190,12 @@ std::vector<tile::Tile *> get_tiles_between_corners(
 }
 
 int add_room() {
-    for (auto [room_id, room_tiles] : ROOM_ID_TO_TILES) {
+    for (auto &[room_id, room_tiles] : ROOM_ID_TO_TILES) {
         if (room_tiles.size() == 0) return room_id;
     }
 
     int id = 0;
-    for (auto [room_id, _] : ROOM_ID_TO_TILES) {
+    for (auto &[room_id, _] : ROOM_ID_TO_TILES) {
         if (room_id >= id) id = room_id + 1;
     }
     ROOM_ID_TO_TILES[id] = {};
@@ -312,7 +309,7 @@ std::vector<tile::Tile *> get_room_tiles(int room_id) {
 
 std::vector<tile::Tile *> get_not_room_tiles(int except_room_id) {
     std::vector<tile::Tile *> tiles;
-    for (auto [room_id, room_tiles] : ROOM_ID_TO_TILES) {
+    for (auto &[room_id, room_tiles] : ROOM_ID_TO_TILES) {
         if (room_id != except_room_id) {
             tiles.insert(tiles.end(), room_tiles.begin(), room_tiles.end());
         }
@@ -323,7 +320,7 @@ std::vector<tile::Tile *> get_not_room_tiles(int except_room_id) {
 
 std::vector<tile::Tile *> get_all_rooms_tiles() {
     std::vector<tile::Tile *> tiles;
-    for (auto [room_id, room_tiles] : ROOM_ID_TO_TILES) {
+    for (auto &[room_id, room_tiles] : ROOM_ID_TO_TILES) {
         tiles.insert(tiles.end(), room_tiles.begin(), room_tiles.end());
     }
 

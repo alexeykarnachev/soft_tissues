@@ -6,10 +6,6 @@
 #include "raylib/rlgl.h"
 #include "utils.hpp"
 #include <array>
-#include <cmath>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
@@ -75,7 +71,7 @@ void unload() {
 
     // -------------------------------------------------------------------
     // materials pbr (unload before shader since they reference it)
-    for (auto [_, material] : MATERIALS_PBR) {
+    for (auto &[_, material] : MATERIALS_PBR) {
         material.unload();
     }
 
@@ -85,7 +81,7 @@ void unload() {
 
     // -------------------------------------------------------------------
     // meshes
-    for (auto [_, mesh] : MESHES) {
+    for (auto &[_, mesh] : MESHES) {
         UnloadMesh(mesh);
     }
 
@@ -102,6 +98,10 @@ Material get_material_color(Color color) {
     return material;
 }
 
+pbr::PBRShader &get_pbr_shader() {
+    return PBR_SHADER;
+}
+
 pbr::MaterialPBR get_material_pbr(std::string key) {
     return MATERIALS_PBR.at(key);
 }
@@ -112,7 +112,7 @@ Mesh get_mesh(std::string key) {
 
 std::vector<std::string> get_material_pbr_keys() {
     std::vector<std::string> keys;
-    for (auto [key, _] : MATERIALS_PBR) {
+    for (auto &[key, _] : MATERIALS_PBR) {
         keys.push_back(key);
     }
 

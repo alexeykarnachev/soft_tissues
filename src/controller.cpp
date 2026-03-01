@@ -5,8 +5,6 @@
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
-#include "raylib/rcamera.h"
-#include <cstdio>
 
 namespace soft_tissues::controller {
 
@@ -44,8 +42,8 @@ void update_translation() {
 }
 
 void update_rotation() {
-    static int tick_idx = 0;
-    if (tick_idx++ < 5) return;
+    static bool initialized = false;
+    if (!initialized) { initialized = true; return; }
 
     Vector2 mouse_delta = GetMouseDelta();
     mouse_delta = Vector2Scale(mouse_delta, globals::PLAYER_CAMERA_SENSITIVITY);

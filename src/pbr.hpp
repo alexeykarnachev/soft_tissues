@@ -73,6 +73,7 @@ public:
     void unload();
 };
 
+void begin_frame(PBRShader &pbr_shader);
 void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix matrix);
 
 }  // namespace soft_tissues::pbr

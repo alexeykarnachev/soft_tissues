@@ -183,13 +183,8 @@ void MaterialPBR::unload() {
 }
 
 // -----------------------------------------------------------------------
-// draw_mesh
-void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix matrix) {
-    Material material = material_pbr.get_material();
-    PBRShader &pbr_shader = material_pbr.get_pbr_shader();
-
-    pbr_shader.set_tiling(material_pbr.get_tiling());
-    pbr_shader.set_displacement_scale(material_pbr.get_displacement_scale());
+// per-frame and per-draw
+void begin_frame(PBRShader &pbr_shader) {
     pbr_shader.set_shadow_map_pass(globals::IS_SHADOW_MAP_PASS);
 
     Matrix mat = MatrixInvert(rlGetMatrixModelview());
@@ -197,7 +192,6 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
 
     if (!globals::IS_SHADOW_MAP_PASS) {
         pbr_shader.set_light_enabled(globals::IS_LIGHT_ENABLED);
-        pbr_shader.set_constant_color(constant_color);
         pbr_shader.set_shadow_map_bias(globals::SHADOW_MAP_BIAS);
         pbr_shader.set_shadow_map_max_dist(globals::SHADOW_MAP_MAX_DIST);
 
@@ -215,6 +209,18 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
 
             pbr_shader.set_n_lights(light_idx);
         }
+    }
+}
+
+void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix matrix) {
+    Material material = material_pbr.get_material();
+    PBRShader &pbr_shader = material_pbr.get_pbr_shader();
+
+    pbr_shader.set_tiling(material_pbr.get_tiling());
+    pbr_shader.set_displacement_scale(material_pbr.get_displacement_scale());
+
+    if (!globals::IS_SHADOW_MAP_PASS) {
+        pbr_shader.set_constant_color(constant_color);
     }
 
     DrawMesh(mesh, material, matrix);

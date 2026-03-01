@@ -183,7 +183,9 @@ void gen_mesh_tangents(Mesh *mesh) {
         Vector2 deltaUV1 = Vector2Subtract(uv1, uv0);
         Vector2 deltaUV2 = Vector2Subtract(uv2, uv0);
 
-        float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+        float denom = deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x;
+        if (fabsf(denom) < 1e-8f) continue;
+        float r = 1.0f / denom;
         Vector3 tangent = Vector3Scale(
             Vector3Subtract(
                 Vector3Scale(deltaPos1, deltaUV2.y), Vector3Scale(deltaPos2, deltaUV1.y)

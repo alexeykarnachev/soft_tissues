@@ -8,7 +8,7 @@
 
 namespace soft_tissues::tile {
 
-using namespace utils;
+using utils::Direction;
 
 class TileMaterials {
 public:

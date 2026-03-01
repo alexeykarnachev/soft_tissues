@@ -84,6 +84,7 @@ void Light::draw_shadow_map() {
             globals::IS_SHADOW_MAP_PASS = true;
 
             // TODO: Maybe factor out into draw_scene()
+            pbr::begin_frame(resources::get_pbr_shader());
             world::draw_tiles();
             world::draw_meshes();
 

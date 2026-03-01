@@ -6,13 +6,11 @@
 #include "controller.hpp"
 #include "editor/editor.hpp"
 #include "globals.hpp"
-#include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "resources.hpp"
 #include "world.hpp"
-#include <cstdio>
 
 namespace soft_tissues::game {
 
@@ -62,8 +60,7 @@ static void draw_player() {
     auto tr = globals::registry.get<component::Transform>(player);
 
     Vector3 position = tr.get_position();
-    Matrix t = MatrixTranslate(position.x, position.y, position.z);
-    Matrix transform = t;
+    Matrix transform = MatrixTranslate(position.x, position.y, position.z);
 
     Model model = PLAYER_MODEL;
     model.transform = MatrixMultiply(model.transform, transform);
@@ -102,6 +99,7 @@ static void draw() {
             world::draw_grid();
         }
 
+        pbr::begin_frame(resources::get_pbr_shader());
         world::draw_tiles();
         world::draw_meshes();
     }

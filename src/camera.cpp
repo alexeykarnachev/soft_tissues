@@ -6,7 +6,6 @@
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rcamera.h"
-#include <cstdio>
 
 namespace soft_tissues::camera {
 
