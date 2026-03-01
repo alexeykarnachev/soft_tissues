@@ -4,6 +4,10 @@
 #include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
 
+namespace soft_tissues::pbr {
+class PBRShader;
+}
+
 namespace soft_tissues::light {
 
 enum class LightType {
@@ -78,7 +82,7 @@ public:
 
     void draw_shadow_map();
 
-    void set_shader_uniform(Shader shader, int idx);
+    void set_shader_uniform(pbr::PBRShader &pbr_shader, int idx);
 
     nlohmann::json to_json() const;
     static Light from_json(entt::entity entity, const nlohmann::json &json_data);

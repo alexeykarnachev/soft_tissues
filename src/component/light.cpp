@@ -1,6 +1,7 @@
 #include "light.hpp"
 
 #include "../globals.hpp"
+#include "../pbr.hpp"
 #include "../resources.hpp"
 #include "../serializers.hpp"
 #include "../utils.hpp"
@@ -117,17 +118,13 @@ void Light::draw_shadow_map() {
     }
 }
 
-static int get_uniform_loc(Shader shader, int idx, std::string param_name) {
-    std::string name = "u_lights[" + std::to_string(idx) + "]";
-    name = name + "." + param_name;
-
-    return utils::get_uniform_loc(shader, name);
-}
-
-void Light::set_shader_uniform(Shader shader, int idx) {
+void Light::set_shader_uniform(pbr::PBRShader &pbr_shader, int idx) {
     if (!this->is_on) {
         throw std::runtime_error("Can't set light shader uniform, is_on = false");
     }
+
+    Shader shader = pbr_shader.get_shader();
+    const auto &locs = pbr_shader.get_light_locs(idx);
 
     auto tr = globals::registry.get<component::Transform>(this->entity);
     Vector3 direction = tr.get_forward();
@@ -142,62 +139,40 @@ void Light::set_shader_uniform(Shader shader, int idx) {
 
         rlActiveTextureSlot(slot);
         rlEnableTexture(this->shadow_map->texture.id);
-        SetShaderValue(
-            shader,
-            GetShaderLocation(shader, TextFormat("u_shadow_maps[%d]", idx)),
-            &slot,
-            SHADER_UNIFORM_INT
-        );
+        SetShaderValue(shader, locs.shadow_map, &slot, SHADER_UNIFORM_INT);
     }
 
     // -------------------------------------------------------------------
     // common params
-    int position_loc = get_uniform_loc(shader, idx, "position");
-    int type_loc = get_uniform_loc(shader, idx, "type");
-    int color_loc = get_uniform_loc(shader, idx, "color");
-    int intensity_loc = get_uniform_loc(shader, idx, "intensity");
-    int casts_shadows_loc = get_uniform_loc(shader, idx, "casts_shadows");
-    int vp_mat_loc = get_uniform_loc(shader, idx, "vp_mat");
-
     int casts_shadows = (int)this->casts_shadows;
 
     Vector3 position = tr.get_position();
-    SetShaderValue(shader, position_loc, &position, SHADER_UNIFORM_VEC3);
-    SetShaderValue(shader, type_loc, &this->light_type, SHADER_UNIFORM_INT);
-    SetShaderValue(shader, color_loc, &color, SHADER_UNIFORM_VEC3);
-    SetShaderValue(shader, intensity_loc, &this->intensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(shader, casts_shadows_loc, &casts_shadows, SHADER_UNIFORM_INT);
-    SetShaderValueMatrix(shader, vp_mat_loc, this->vp_mat);
+    SetShaderValue(shader, locs.position, &position, SHADER_UNIFORM_VEC3);
+    SetShaderValue(shader, locs.type, &this->light_type, SHADER_UNIFORM_INT);
+    SetShaderValue(shader, locs.color, &color, SHADER_UNIFORM_VEC3);
+    SetShaderValue(shader, locs.intensity, &this->intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shader, locs.casts_shadows, &casts_shadows, SHADER_UNIFORM_INT);
+    SetShaderValueMatrix(shader, locs.vp_mat, this->vp_mat);
 
     // -------------------------------------------------------------------
     // type params
     switch (this->light_type) {
         case LightType::POINT: {
-            int attenuation_loc = get_uniform_loc(shader, idx, "attenuation");
-
             Vector3 attenuation = this->params.point.attenuation;
-
-            SetShaderValue(shader, attenuation_loc, &attenuation, SHADER_UNIFORM_VEC3);
+            SetShaderValue(shader, locs.attenuation, &attenuation, SHADER_UNIFORM_VEC3);
         } break;
         case LightType::DIRECTIONAL: {
-            int direction_loc = get_uniform_loc(shader, idx, "direction");
-
-            SetShaderValue(shader, direction_loc, &direction, SHADER_UNIFORM_VEC3);
+            SetShaderValue(shader, locs.direction, &direction, SHADER_UNIFORM_VEC3);
         } break;
         case LightType::SPOT: {
-            int attenuation_loc = get_uniform_loc(shader, idx, "attenuation");
-            int direction_loc = get_uniform_loc(shader, idx, "direction");
-            int inner_cutoff_loc = get_uniform_loc(shader, idx, "inner_cutoff");
-            int outer_cutoff_loc = get_uniform_loc(shader, idx, "outer_cutoff");
-
             Vector3 attenuation = this->params.spot.attenuation;
             float inner_cutoff = this->params.spot.inner_cutoff;
             float outer_cutoff = this->params.spot.outer_cutoff;
 
-            SetShaderValue(shader, attenuation_loc, &attenuation, SHADER_UNIFORM_VEC3);
-            SetShaderValue(shader, direction_loc, &direction, SHADER_UNIFORM_VEC3);
-            SetShaderValue(shader, inner_cutoff_loc, &inner_cutoff, SHADER_UNIFORM_FLOAT);
-            SetShaderValue(shader, outer_cutoff_loc, &outer_cutoff, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(shader, locs.attenuation, &attenuation, SHADER_UNIFORM_VEC3);
+            SetShaderValue(shader, locs.direction, &direction, SHADER_UNIFORM_VEC3);
+            SetShaderValue(shader, locs.inner_cutoff, &inner_cutoff, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(shader, locs.outer_cutoff, &outer_cutoff, SHADER_UNIFORM_FLOAT);
         } break;
         default: break;
     }
