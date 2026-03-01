@@ -22,7 +22,9 @@ void update_translation() {
     float length = Vector3Length(dir);
     if (length <= EPSILON) return;
 
-    auto player = globals::registry.view<component::Player>().front();
+    auto view = globals::registry.view<component::Player>();
+    if (view.size() == 0) return;
+    auto player = view.front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
     Vector3 forward = tr.get_forward();
@@ -52,7 +54,9 @@ void update_rotation() {
     float pitch_delta = -mouse_delta.y;
     if (yaw_delta == 0 && pitch_delta == 0) return;
 
-    auto player = globals::registry.view<component::Player>().front();
+    auto view = globals::registry.view<component::Player>();
+    if (view.size() == 0) return;
+    auto player = view.front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
     float pitch = tr._rotation.x + pitch_delta;
@@ -64,7 +68,9 @@ void update_rotation() {
 }
 
 void update_flashlight() {
-    auto flashlight = globals::registry.view<component::Flashlight>().front();
+    auto view = globals::registry.view<component::Flashlight>();
+    if (view.size() == 0) return;
+    auto flashlight = view.front();
     auto &light = globals::registry.get<component::Light>(flashlight);
 
     // toggle

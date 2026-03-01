@@ -56,7 +56,9 @@ static void update_editor_mode() {
 }
 
 static void update_first_person_mode() {
-    auto player = globals::registry.view<component::Player>().front();
+    auto view = globals::registry.view<component::Player>();
+    if (view.size() == 0) return;
+    auto player = view.front();
     auto tr = globals::registry.get<component::Transform>(player);
 
     Vector3 position = tr.get_position();

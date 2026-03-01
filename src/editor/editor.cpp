@@ -296,7 +296,9 @@ void update_hovered_entity() {
 
     if (picked_id != 0) {
         int picked_idx = picked_id - 1;
-        HOVERED_ENTITY = entities[picked_idx];
+        if (picked_idx < (int)entities.size()) {
+            HOVERED_ENTITY = entities[picked_idx];
+        }
     }
 }
 
