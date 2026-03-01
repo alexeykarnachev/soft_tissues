@@ -173,7 +173,7 @@ static void update_and_draw_light() {
 
             case light::LightType::SPOT: {
                 gui::spot_light_params(light);
-            }
+            } break;
 
             default: break;
         }
