@@ -492,6 +492,16 @@ void save(std::string file_path) {
             entity_json["Light"] = component.to_json();
         }
 
+        // Player
+        if (globals::registry.all_of<component::Player>(entity)) {
+            entity_json["Player"] = component::Player().to_json();
+        }
+
+        // Flashlight
+        if (globals::registry.all_of<component::Flashlight>(entity)) {
+            entity_json["Flashlight"] = component::Flashlight().to_json();
+        }
+
         json["entities"].push_back(entity_json);
     }
 
@@ -512,7 +522,13 @@ void save(std::string file_path) {
 }
 
 void load(std::string file_path) {
-    reset();
+    // clear state without spawning a new player — the loaded data will restore it
+    for (int i = 0; i < N_TILES; ++i) {
+        TILES[i] = tile::Tile(i);
+    }
+    ROOM_ID_TO_TILES.clear();
+    TILE_TO_ROOM_ID.clear();
+    globals::registry.clear();
 
     // -------------------------------------------------------------------
     // load file
@@ -573,6 +589,16 @@ void load(std::string file_path) {
         if (entity_json.contains("Light")) {
             auto light = component::Light::from_json(new_entity, entity_json["Light"]);
             globals::registry.emplace<component::Light>(new_entity, std::move(light));
+        }
+
+        // Player
+        if (entity_json.contains("Player")) {
+            globals::registry.emplace<component::Player>(new_entity);
+        }
+
+        // Flashlight
+        if (entity_json.contains("Flashlight")) {
+            globals::registry.emplace<component::Flashlight>(new_entity);
         }
     }
 

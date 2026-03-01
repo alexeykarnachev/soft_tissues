@@ -3,6 +3,7 @@
 #include "entt/entity/fwd.hpp"
 #include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 
 namespace soft_tissues::pbr {
 class PBRShader;
@@ -68,7 +69,7 @@ public:
     float intensity;
 
     RenderTexture2D *shadow_map;
-    Matrix vp_mat;
+    Matrix vp_mat = MatrixIdentity();
 
     Params params;
 

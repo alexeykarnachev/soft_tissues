@@ -56,6 +56,8 @@ private:
     PBRShader *pbr_shader = nullptr;
 
     std::string dir_path;
+    Vector2 tiling = {1.0, 1.0};
+    float displacement_scale = 0.0;
 
 public:
     MaterialPBR();
@@ -64,6 +66,8 @@ public:
     Texture get_texture();
     Material get_material();
     PBRShader &get_pbr_shader();
+    Vector2 get_tiling();
+    float get_displacement_scale();
     std::string get_name();
 
     void unload();

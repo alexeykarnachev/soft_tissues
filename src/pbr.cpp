@@ -128,7 +128,9 @@ MaterialPBR::MaterialPBR() = default;
 
 MaterialPBR::MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 tiling, float displacement_scale)
     : pbr_shader(&pbr_shader)
-    , dir_path(dir_path) {
+    , dir_path(dir_path)
+    , tiling(tiling)
+    , displacement_scale(displacement_scale) {
     Material material = LoadMaterialDefault();
     material.shader = pbr_shader.get_shader();
 
@@ -139,10 +141,6 @@ MaterialPBR::MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 ti
     material.maps[MATERIAL_MAP_ROUGHNESS].texture = load_texture(dir_path, "roughness.png");
     material.maps[MATERIAL_MAP_OCCLUSION].texture = load_texture(dir_path, "occlusion.png");
     material.maps[MATERIAL_MAP_HEIGHT].texture = load_texture(dir_path, "height.png");
-
-    // per-material uniforms
-    pbr_shader.set_tiling(tiling);
-    pbr_shader.set_displacement_scale(displacement_scale);
 
     this->material = material;
 }
@@ -157,6 +155,14 @@ Material MaterialPBR::get_material() {
 
 PBRShader &MaterialPBR::get_pbr_shader() {
     return *this->pbr_shader;
+}
+
+Vector2 MaterialPBR::get_tiling() {
+    return this->tiling;
+}
+
+float MaterialPBR::get_displacement_scale() {
+    return this->displacement_scale;
 }
 
 std::string MaterialPBR::get_name() {
@@ -182,6 +188,8 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
     Material material = material_pbr.get_material();
     PBRShader &pbr_shader = material_pbr.get_pbr_shader();
 
+    pbr_shader.set_tiling(material_pbr.get_tiling());
+    pbr_shader.set_displacement_scale(material_pbr.get_displacement_scale());
     pbr_shader.set_shadow_map_pass(globals::IS_SHADOW_MAP_PASS);
 
     Matrix mat = MatrixInvert(rlGetMatrixModelview());
@@ -199,7 +207,7 @@ void draw_mesh(Mesh mesh, MaterialPBR material_pbr, Color constant_color, Matrix
             for (auto entity : globals::registry.view<component::Light>()) {
                 if (light_idx >= globals::MAX_N_LIGHTS) break;
 
-                auto light = globals::registry.get<component::Light>(entity);
+                auto &light = globals::registry.get<component::Light>(entity);
                 if (!light.is_on) continue;
 
                 light.set_shader_uniform(pbr_shader, light_idx++);
