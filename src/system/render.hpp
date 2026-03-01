@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../pbr.hpp"
-#include "../render_state.hpp"
+#include "core/pbr.hpp"
+#include "render_state.hpp"
 #include "raylib/raylib.h"
 
 namespace soft_tissues::system::render {

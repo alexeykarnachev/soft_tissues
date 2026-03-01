@@ -1,6 +1,6 @@
 #include "render.hpp"
 
-#include "../pbr.hpp"
+#include "core/pbr.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"

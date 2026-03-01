@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../component/component.hpp"
-#include "../tile.hpp"
+#include "component/component.hpp"
+#include "core/tile.hpp"
 #include "entt/entity/fwd.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"

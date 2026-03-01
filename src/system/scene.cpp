@@ -1,11 +1,11 @@
 #include "scene.hpp"
 
-#include "../component/component.hpp"
-#include "../globals.hpp"
-#include "../resources.hpp"
-#include "../world.hpp"
-#include "render.hpp"
-#include "transform.hpp"
+#include "component/component.hpp"
+#include "globals.hpp"
+#include "core/resources.hpp"
+#include "core/world.hpp"
+#include "system/render.hpp"
+#include "system/transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../render_state.hpp"
+#include "render_state.hpp"
 
 namespace soft_tissues::system::scene {
 

@@ -1,9 +1,9 @@
 #include "camera.hpp"
 
-#include "../component/component.hpp"
-#include "../gameplay_config.hpp"
-#include "../globals.hpp"
-#include "transform.hpp"
+#include "component/component.hpp"
+#include "gameplay_config.hpp"
+#include "globals.hpp"
+#include "system/transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rcamera.h"

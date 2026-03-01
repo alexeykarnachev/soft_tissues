@@ -1,7 +1,7 @@
 #include "transform.hpp"
 
-#include "../component/component.hpp"
-#include "../globals.hpp"
+#include "component/component.hpp"
+#include "globals.hpp"
 #include "raylib/raymath.h"
 
 namespace soft_tissues::system::transform {

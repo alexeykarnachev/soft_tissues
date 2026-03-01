@@ -1,5 +1,5 @@
-#include "../resources.hpp"
-#include "../tile.hpp"
+#include "core/resources.hpp"
+#include "core/tile.hpp"
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"

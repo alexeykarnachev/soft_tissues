@@ -5,15 +5,15 @@
 #include "system/controller.hpp"
 #include "editor/editor.hpp"
 #include "globals.hpp"
-#include "prefabs.hpp"
+#include "core/prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
-#include "resources.hpp"
+#include "core/resources.hpp"
 #include "system/lighting.hpp"
 #include "system/render.hpp"
 #include "system/scene.hpp"
-#include "world.hpp"
+#include "core/world.hpp"
 
 namespace soft_tissues::game {
 

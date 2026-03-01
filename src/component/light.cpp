@@ -1,6 +1,6 @@
 #include "light.hpp"
 
-#include "../serializers.hpp"
+#include "serializers.hpp"
 #include <stdexcept>
 #include <string>
 

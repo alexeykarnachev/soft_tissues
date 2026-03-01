@@ -1,6 +1,6 @@
 #include "transform.hpp"
 
-#include "../serializers.hpp"
+#include "serializers.hpp"
 #include "raylib/raymath.h"
 
 namespace soft_tissues::component {

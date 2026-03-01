@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pbr.hpp"
+#include "core/pbr.hpp"
 #include "entt/entity/fwd.hpp"
 #include "raylib/raylib.h"
 #include <vector>

@@ -1,6 +1,6 @@
 #include "mesh.hpp"
 
-#include "../serializers.hpp"
+#include "serializers.hpp"
 
 namespace soft_tissues::component {
 
