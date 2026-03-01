@@ -1,6 +1,5 @@
 #include "world.hpp"
 
-#include "camera.hpp"
 #include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
@@ -12,7 +11,6 @@
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
-#include <string>
 #include <unordered_map>
 
 namespace soft_tissues::world {
@@ -93,9 +91,9 @@ tile::Tile *get_tile_at_position(Vector2 pos) {
     return get_tile_at_row_col(row, col);
 }
 
-tile::Tile *get_tile_at_cursor(Vector2 *out_pos) {
+tile::Tile *get_tile_at_cursor(Camera3D camera, Vector2 *out_pos) {
     Rectangle rect = world::get_bound_rect();
-    RayCollision collision = utils::get_cursor_floor_rect_collision(rect, camera::CAMERA);
+    RayCollision collision = utils::get_cursor_floor_rect_collision(rect, camera);
 
     tile::Tile *tile = nullptr;
 
