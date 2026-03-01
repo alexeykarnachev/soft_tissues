@@ -285,8 +285,8 @@ void update_hovered_entity() {
 
     float x_fract = Clamp(mouse_position.x / screen_width, 0.0, 1.0);
     float y_fract = Clamp(1.0 - (mouse_position.y / screen_height), 0.0, 1.0);
-    int x = (int)(PICKING_FBO_SIZE * x_fract);
-    int y = (int)(PICKING_FBO_SIZE * y_fract);
+    int x = Clamp((int)(PICKING_FBO_SIZE * x_fract), 0, PICKING_FBO_SIZE - 1);
+    int y = Clamp((int)(PICKING_FBO_SIZE * y_fract), 0, PICKING_FBO_SIZE - 1);
 
     // NOTE: Currently I pick only r-component (256 entities max)
     int byte_loc = 4 * (y * PICKING_FBO_SIZE + x);

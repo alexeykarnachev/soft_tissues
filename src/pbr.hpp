@@ -53,7 +53,7 @@ public:
 class MaterialPBR {
 private:
     Material material;
-    PBRShader *pbr_shader;
+    PBRShader *pbr_shader = nullptr;
 
     std::string dir_path;
 

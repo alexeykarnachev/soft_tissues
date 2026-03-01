@@ -17,8 +17,7 @@
 namespace soft_tissues::game {
 
 static void load_window() {
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
-    SetConfigFlags(FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
 
     // InitWindow(globals::SCREEN_WIDTH, globals::SCREEN_HEIGHT, "Soft Tissues");
     // ToggleFullscreen();
