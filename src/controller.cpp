@@ -48,7 +48,7 @@ void update_rotation() {
     if (tick_idx++ < 5) return;
 
     Vector2 mouse_delta = GetMouseDelta();
-    mouse_delta = Vector2Scale(mouse_delta, globals::PLAYER_CAMERA_SENSETIVITY);
+    mouse_delta = Vector2Scale(mouse_delta, globals::PLAYER_CAMERA_SENSITIVITY);
 
     float yaw_delta = -mouse_delta.x;
     float pitch_delta = -mouse_delta.y;

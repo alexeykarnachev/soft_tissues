@@ -150,7 +150,7 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     Vector2 position = this->get_floor_position();
     float y = elevation + 0.5;
 
-    Matrix matrix;
+    Matrix matrix = MatrixIdentity();
     switch (direction) {
         case Direction::NORTH: {
             Matrix t = MatrixTranslate(position.x, y, position.y - 0.5);

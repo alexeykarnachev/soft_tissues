@@ -17,7 +17,7 @@ static const int SHADOW_MAP_SIZE = 1024;
 
 static constexpr float PLAYER_HEIGHT = 1.8;
 static constexpr float PLAYER_SPEED = 1.0;
-static constexpr float PLAYER_CAMERA_SENSETIVITY = 0.0015;
+static constexpr float PLAYER_CAMERA_SENSITIVITY = 0.0015;
 
 extern entt::registry registry;
 

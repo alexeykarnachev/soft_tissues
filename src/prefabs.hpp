@@ -26,8 +26,7 @@ entt::entity spawn_spot_light(
     float inner_cutoff,
     float outer_cutoff
 );
-entt::entity spawn_flashlight(Vector3 position);
-entt::entity spawn_ambient_light(Color color, float intenstiy);
+entt::entity spawn_ambient_light(Color color, float intensity);
 entt::entity spawn_player(Vector2 position);
 
 }  // namespace soft_tissues::prefabs
