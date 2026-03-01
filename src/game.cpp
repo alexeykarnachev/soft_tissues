@@ -2,10 +2,11 @@
 
 #include "camera.hpp"
 #include "component/component.hpp"
-#include "controller.hpp"
+#include "system/controller.hpp"
 #include "editor/editor.hpp"
 #include "gameplay_config.hpp"
 #include "globals.hpp"
+#include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
@@ -34,7 +35,7 @@ static void update() {
     globals::update();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
-        controller::update();
+        system::controller::update();
     }
 
     camera::update();
@@ -151,6 +152,7 @@ void run() {
 
     // load initial scene
     world::reset();
+    prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, gameplay_config::PLAYER_HEIGHT, 16));
 
     // main loop

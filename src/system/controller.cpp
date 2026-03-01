@@ -1,15 +1,15 @@
 #include "controller.hpp"
 
-#include "component/component.hpp"
-#include "gameplay_config.hpp"
-#include "globals.hpp"
-#include "system/transform.hpp"
+#include "../component/component.hpp"
+#include "../gameplay_config.hpp"
+#include "../globals.hpp"
+#include "transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 
-namespace soft_tissues::controller {
+namespace soft_tissues::system::controller {
 
-void update_translation() {
+static void update_translation() {
     // -------------------------------------------------------------------
     // moving
     Vector3 dir = Vector3Zero();
@@ -26,8 +26,8 @@ void update_translation() {
     auto player = view.front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
-    Vector3 forward = system::transform::get_forward(player);
-    Vector3 right = system::transform::get_right(player);
+    Vector3 forward = transform::get_forward(player);
+    Vector3 right = transform::get_right(player);
 
     forward.y = 0.0;
     right.y = 0.0;
@@ -42,7 +42,7 @@ void update_translation() {
     tr.step(step);
 }
 
-void update_rotation() {
+static void update_rotation() {
     static bool initialized = false;
     if (!initialized) { initialized = true; return; }
 
@@ -66,7 +66,7 @@ void update_rotation() {
     tr.rotation.y = yaw;
 }
 
-void update_flashlight() {
+static void update_flashlight() {
     auto view = globals::registry.view<component::Flashlight>();
     if (view.size() == 0) return;
     auto flashlight = view.front();
@@ -82,4 +82,4 @@ void update() {
     update_flashlight();
 }
 
-}  // namespace soft_tissues::controller
+}  // namespace soft_tissues::system::controller

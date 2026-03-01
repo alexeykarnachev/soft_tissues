@@ -2,7 +2,6 @@
 
 #include "camera.hpp"
 #include "globals.hpp"
-#include "prefabs.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "tile.hpp"
@@ -43,9 +42,6 @@ void reset() {
 
     // registry
     globals::registry.clear();
-
-    // player
-    prefabs::spawn_player(world::ORIGIN);
 }
 
 tile::Tile *get_tiles() {

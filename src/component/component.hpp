@@ -3,19 +3,12 @@
 #include "entt/entity/fwd.hpp"
 #include "light.hpp"
 #include "mesh.hpp"
+#include "shadow_data.hpp"
 #include "transform.hpp"
-#include "raylib/raylib.h"
-#include "raylib/raymath.h"
 
 namespace soft_tissues::component {
 
-struct ShadowData {
-    RenderTexture2D *shadow_map = nullptr;
-    Matrix vp_mat = MatrixIdentity();
-    bool needs_update = true;
-};
-
-// TODO: Factor out components below to their own modules when the time comes.
+// Tag and small components — move to own files when they grow.
 
 class Player {
 public:

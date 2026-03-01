@@ -4,6 +4,7 @@
 #include "../component/component.hpp"
 #include "../game.hpp"
 #include "../globals.hpp"
+#include "../prefabs.hpp"
 #include "../resources.hpp"
 #include "../system/transform.hpp"
 #include "../world.hpp"
@@ -197,6 +198,7 @@ static void update_and_draw_globals() {
     ImGui::SameLine(0.0, 5.0);
     if (gui::button_color("Reset", gui::COLOR_RED)) {
         world::reset();
+        prefabs::spawn_player(world::ORIGIN);
     }
 }
 
