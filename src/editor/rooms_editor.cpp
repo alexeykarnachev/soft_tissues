@@ -95,14 +95,14 @@ void update_and_draw() {
         ImGui::EndTabBar();
         ImGui::Separator();
 
-        static tile::Tile *start_tile = NULL;
-        static tile::Tile *end_tile = NULL;
+        static tile::Tile *start_tile = nullptr;
+        static tile::Tile *end_tile = nullptr;
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             start_tile = tile_at_cursor;
             end_tile = tile_at_cursor;
-        } else if (start_tile != NULL && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-            if (tile_at_cursor != NULL) end_tile = tile_at_cursor;
+        } else if (start_tile != nullptr && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+            if (tile_at_cursor != nullptr) end_tile = tile_at_cursor;
 
             GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
         } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
@@ -117,8 +117,8 @@ void update_and_draw() {
             }
 
             GHOST_TILES.clear();
-            start_tile = NULL;
-            end_tile = NULL;
+            start_tile = nullptr;
+            end_tile = nullptr;
         }
 
         world::set_room_tile_materials(ROOM_ID, MATERIALS);

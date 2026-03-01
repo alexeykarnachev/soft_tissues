@@ -24,14 +24,14 @@ Light::Light(
     , shadow_type(ShadowType::DYNAMIC)
     , color(color)
     , intensity(intensity)
-    , shadow_map(NULL)
+    , shadow_map(nullptr)
     , params(params) {}
 
 void Light::draw_shadow_map() {
     // if shadows were turned off, free the shadow map back to the pool
-    if (!this->casts_shadows && this->shadow_map != NULL) {
+    if (!this->casts_shadows && this->shadow_map != nullptr) {
         resources::free_shadow_map(this->shadow_map);
-        this->shadow_map = NULL;
+        this->shadow_map = nullptr;
     }
 
     if (!this->casts_shadows || !this->is_on) return;
@@ -44,10 +44,10 @@ void Light::draw_shadow_map() {
 
     // -------------------------------------------------------------------
     // assign shadow map if not assigned yet
-    if (this->shadow_map == NULL) {
+    if (this->shadow_map == nullptr) {
         this->shadow_map = resources::get_shadow_map();
 
-        if (this->shadow_map == NULL) {
+        if (this->shadow_map == nullptr) {
             return;
         }
     }
@@ -121,7 +121,7 @@ void Light::set_shader_uniform(pbr::PBRShader &pbr_shader, int idx) {
 
     // -------------------------------------------------------------------
     // shadow map
-    if (this->shadow_map != NULL) {
+    if (this->shadow_map != nullptr) {
         // NOTE: this "10" is an arbitrary slot number,
         // maybe I should factor out it somehow!
         int slot = 10 + idx;

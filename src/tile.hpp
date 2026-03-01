@@ -20,7 +20,7 @@ public:
     TileMaterials(std::string material_pbr_key);
     TileMaterials(std::string floor_key, std::string wall_key, std::string ceil_key);
 
-    nlohmann::json to_json();
+    nlohmann::json to_json() const;
     static TileMaterials from_json(const nlohmann::json &json_data);
 };
 

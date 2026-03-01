@@ -12,8 +12,8 @@ static void draw_tile_perimiter(tile::Tile *tile, Color solid_color, Color door_
     static float w = 0.2;
     static float h = w + 1.0;
 
-    if (tile == NULL) {
-        throw std::runtime_error("Can't draw tile perimiter for the NULL tile");
+    if (tile == nullptr) {
+        throw std::runtime_error("Can't draw tile perimiter for a nullptr tile");
     };
 
     Vector2 center = tile->get_floor_position();

@@ -30,7 +30,7 @@ TileMaterials::TileMaterials(
     , wall_key(wall_key)
     , ceil_key(ceil_key) {}
 
-nlohmann::json TileMaterials::to_json() {
+nlohmann::json TileMaterials::to_json() const {
     return {
         {"floor", this->floor_key},
         {"wall", this->wall_key},

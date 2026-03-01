@@ -47,7 +47,7 @@ static void update_and_draw_mesh() {
     gui::push_id();
     ImGui::SeparatorText("Mesh");
 
-    if (mesh == NULL) {
+    if (mesh == nullptr) {
         if (gui::button("Add [M]esh") || IsKeyPressed(KEY_M)) {
             mesh::MyMesh my_mesh(ENTITY, "cube", "brick_wall");
             globals::registry.emplace<component::MyMesh>(ENTITY, my_mesh);
@@ -66,7 +66,7 @@ static void update_and_draw_light() {
     gui::push_id();
     ImGui::SeparatorText("Light");
 
-    if (light == NULL) {
+    if (light == nullptr) {
         if (gui::button("Add [L]ight") || IsKeyPressed(KEY_L)) {
             light::Params params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
             light::Light light(ENTITY, light::LightType::POINT, GREEN, 20.0, params);
@@ -160,7 +160,7 @@ static void update_and_draw_light() {
             ImGui::EndCombo();
         }
 
-        if (light->shadow_map != NULL) {
+        if (light->shadow_map != nullptr) {
             gui::image(light->shadow_map->texture, 150.0, 150.0);
         }
 

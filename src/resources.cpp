@@ -120,7 +120,7 @@ std::vector<std::string> get_material_pbr_keys() {
 }
 
 RenderTexture2D *get_shadow_map() {
-    if (FREE_SHADOW_MAP_IDXS.size() == 0) return NULL;
+    if (FREE_SHADOW_MAP_IDXS.size() == 0) return nullptr;
 
     auto idx = *FREE_SHADOW_MAP_IDXS.begin();
     FREE_SHADOW_MAP_IDXS.erase(FREE_SHADOW_MAP_IDXS.begin());
@@ -129,7 +129,7 @@ RenderTexture2D *get_shadow_map() {
 }
 
 void free_shadow_map(RenderTexture2D *shadow_map) {
-    if (shadow_map == NULL) {
+    if (shadow_map == nullptr) {
         throw std::runtime_error("Can't free nullptr shadow map");
     }
 

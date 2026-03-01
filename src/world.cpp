@@ -89,7 +89,7 @@ Rectangle get_bound_rect() {
 
 tile::Tile *get_tile_at_row_col(int row, int col) {
     uint32_t idx = row * N_COLS + col;
-    tile::Tile *tile = NULL;
+    tile::Tile *tile = nullptr;
     if (idx < N_TILES) {
         tile = &TILES[idx];
     }
@@ -106,14 +106,14 @@ tile::Tile *get_tile_at_cursor(Vector2 *out_pos) {
     Rectangle rect = world::get_bound_rect();
     RayCollision collision = utils::get_cursor_floor_rect_collision(rect, camera::CAMERA);
 
-    tile::Tile *tile = NULL;
+    tile::Tile *tile = nullptr;
 
     if (collision.hit) {
         Vector2 point = {collision.point.x, collision.point.z};
         auto [row, col] = get_row_col_at_position(point);
         tile = get_tile_at_row_col(row, col);
 
-        if (out_pos != NULL) *out_pos = point;
+        if (out_pos != nullptr) *out_pos = point;
     }
 
     return tile;
@@ -121,13 +121,13 @@ tile::Tile *get_tile_at_cursor(Vector2 *out_pos) {
 
 tile::Tile *get_nearest_tile_neighbor_at_position(Vector2 pos) {
     auto tile = get_tile_at_position(pos);
-    if (tile == NULL) return NULL;
+    if (tile == nullptr) return nullptr;
 
-    tile::Tile *nearest_nb = NULL;
+    tile::Tile *nearest_nb = nullptr;
 
     float nearest_dist = FLT_MAX;
     for (auto nb : get_tile_neighbors(tile)) {
-        if (nb == NULL) continue;
+        if (nb == nullptr) continue;
 
         float dist = Vector2DistanceSqr(pos, nb->get_floor_position());
         if (dist < nearest_dist) {
@@ -219,7 +219,7 @@ void remove_room(int room_id) {
 }
 
 static void fix_tile_walls(tile::Tile *tile) {
-    if (tile == NULL) return;
+    if (tile == nullptr) return;
 
     int room_id = get_tile_room_id(tile);
     if (room_id == -1) return;
@@ -231,7 +231,7 @@ static void fix_tile_walls(tile::Tile *tile) {
         Direction nb_direction = flip_direction(tile_direction);
         auto nb = neighbors[i];
 
-        if (nb == NULL || get_tile_room_id(nb) == -1) {
+        if (nb == nullptr || get_tile_room_id(nb) == -1) {
             tile->set_solid_wall(tile_direction);
         } else {
             bool is_door_between = tile->has_door_wall(tile_direction)
@@ -337,8 +337,8 @@ void set_room_tile_materials(int room_id, tile::TileMaterials materials) {
 }
 
 void add_tile_to_room(tile::Tile *tile, int room_id) {
-    if (tile == NULL) {
-        throw std::runtime_error("Can't add NULL tile to the room");
+    if (tile == nullptr) {
+        throw std::runtime_error("Can't add nullptr tile to the room");
     }
 
     if (TILE_TO_ROOM_ID.count(tile) != 0) {

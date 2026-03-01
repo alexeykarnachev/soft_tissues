@@ -136,6 +136,7 @@ void run() {
     }
 
     // unload
+    UnloadModel(PLAYER_MODEL);
     editor::unload();
     resources::unload();
     CloseWindow();

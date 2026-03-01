@@ -31,9 +31,9 @@ Transform::Transform(
 Quaternion Transform::get_quaternion() {
     auto parent = globals::registry.try_get<component::Parent>(this->entity);
     Quaternion parent_q = QuaternionIdentity();
-    if (parent != NULL) {
-        auto parent_tr = globals::registry.get<component::Transform>(parent->entity);
-        parent_q = parent_tr.get_quaternion();
+    if (parent != nullptr) {
+        auto parent_tr = globals::registry.try_get<component::Transform>(parent->entity);
+        if (parent_tr) parent_q = parent_tr->get_quaternion();
     }
 
     auto my_q = QuaternionFromEuler(
@@ -58,9 +58,9 @@ Matrix Transform::get_matrix() {
 Vector3 Transform::get_position() {
     auto parent = globals::registry.try_get<component::Parent>(this->entity);
     Vector3 parent_pos = Vector3Zero();
-    if (parent != NULL) {
-        auto parent_tr = globals::registry.get<component::Transform>(parent->entity);
-        parent_pos = parent_tr.get_position();
+    if (parent != nullptr) {
+        auto parent_tr = globals::registry.try_get<component::Transform>(parent->entity);
+        if (parent_tr) parent_pos = parent_tr->get_position();
     }
 
     auto position = Vector3Add(parent_pos, this->_position);
