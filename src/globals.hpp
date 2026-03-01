@@ -10,9 +10,6 @@ enum class GameState {
     PLAY,
 };
 
-static const int SCREEN_WIDTH = 0;
-static const int SCREEN_HEIGHT = 0;
-
 static const int MAX_N_LIGHTS = 8;
 
 static const int MAX_N_SHADOW_MAPS = MAX_N_LIGHTS;
