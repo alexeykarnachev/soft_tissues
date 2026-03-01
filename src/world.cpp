@@ -1,6 +1,5 @@
 #include "world.hpp"
 
-#include "globals.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "tile.hpp"
@@ -30,16 +29,12 @@ static std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
 static std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
 
 void reset() {
-    // tiles
     for (int i = 0; i < N_TILES; ++i) {
         TILES[i] = tile::Tile(i);
     }
 
     ROOM_ID_TO_TILES.clear();
     TILE_TO_ROOM_ID.clear();
-
-    // registry
-    globals::registry.clear();
 }
 
 tile::Tile *get_tiles() {
@@ -353,7 +348,6 @@ void clear_state() {
     }
     ROOM_ID_TO_TILES.clear();
     TILE_TO_ROOM_ID.clear();
-    globals::registry.clear();
 }
 
 std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids() {

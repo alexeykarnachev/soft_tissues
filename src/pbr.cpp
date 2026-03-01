@@ -69,7 +69,7 @@ PBRShader::PBRShader(const std::string &vs_file, const std::string &fs_file) {
     }
 }
 
-Shader PBRShader::get_shader() {
+Shader PBRShader::get_shader() const {
     return shader;
 }
 
@@ -116,7 +116,7 @@ void PBRShader::set_displacement_scale(float scale) {
     SetShaderValue(shader, displacement_scale_loc, &scale, SHADER_UNIFORM_FLOAT);
 }
 
-const PBRShader::LightLocs &PBRShader::get_light_locs(int idx) {
+const PBRShader::LightLocs &PBRShader::get_light_locs(int idx) const {
     return light_locs[idx];
 }
 

@@ -82,4 +82,16 @@ void update() {
     update_flashlight();
 }
 
+void update_game_state() {
+    if (IsKeyPressed(KEY_F1)) {
+        if (globals::GAME_STATE == globals::GameState::PLAY) {
+            globals::GAME_STATE = globals::GameState::EDITOR;
+            EnableCursor();
+        } else if (globals::GAME_STATE == globals::GameState::EDITOR) {
+            globals::GAME_STATE = globals::GameState::PLAY;
+            DisableCursor();
+        }
+    }
+}
+
 }  // namespace soft_tissues::system::controller

@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-#include "camera.hpp"
+#include "system/camera.hpp"
 #include "component/component.hpp"
 #include "system/controller.hpp"
 #include "editor/editor.hpp"
@@ -33,12 +33,13 @@ static Model PLAYER_MODEL;
 
 static void update() {
     globals::update();
+    system::controller::update_game_state();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
         system::controller::update();
     }
 
-    camera::update();
+    system::camera::update();
 }
 
 static void draw_cursor() {
@@ -108,7 +109,7 @@ static void draw() {
     rlEnableDepthTest();
     ClearBackground(BLANK);
 
-    BeginMode3D(camera::CAMERA);
+    BeginMode3D(system::camera::CAMERA);
     {
         if (globals::GAME_STATE == globals::GameState::EDITOR) {
             draw_player();
@@ -151,6 +152,7 @@ void run() {
     globals::registry.on_destroy<component::ShadowData>().connect<&on_shadow_data_destroyed>();
 
     // load initial scene
+    globals::registry.clear();
     world::reset();
     prefabs::spawn_player(world::ORIGIN);
     PLAYER_MODEL = LoadModelFromMesh(GenMeshCylinder(0.25, gameplay_config::PLAYER_HEIGHT, 16));

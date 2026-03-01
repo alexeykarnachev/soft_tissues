@@ -52,8 +52,7 @@ typedef union {
     AmbientParams ambient;
 } LightParams;
 
-class Light {
-public:
+struct Light {
     bool is_on;
     bool casts_shadows;
 

@@ -1,4 +1,4 @@
-#include "../camera.hpp"
+#include "../system/camera.hpp"
 #include "../resources.hpp"
 #include "../world.hpp"
 #include "editor.hpp"
@@ -70,7 +70,7 @@ void update_and_draw() {
 
     // ---------------------------------------------------------------
     Vector2 tile_at_cursor_pos;
-    tile::Tile *tile_at_cursor = world::get_tile_at_cursor(camera::CAMERA, &tile_at_cursor_pos);
+    tile::Tile *tile_at_cursor = world::get_tile_at_cursor(system::camera::CAMERA, &tile_at_cursor_pos);
 
     if (ROOM_ID != -1) {
         ImGui::BeginTabBar("Materials");

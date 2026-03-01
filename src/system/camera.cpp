@@ -1,14 +1,14 @@
 #include "camera.hpp"
 
-#include "component/component.hpp"
-#include "gameplay_config.hpp"
-#include "globals.hpp"
-#include "system/transform.hpp"
+#include "../component/component.hpp"
+#include "../gameplay_config.hpp"
+#include "../globals.hpp"
+#include "transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rcamera.h"
 
-namespace soft_tissues::camera {
+namespace soft_tissues::system::camera {
 
 Camera3D CAMERA = {
     .position = {0.0, 1.0, 0.0},
@@ -60,10 +60,10 @@ static void update_first_person_mode() {
     if (view.size() == 0) return;
     auto player = view.front();
 
-    Vector3 position = system::transform::get_world_position(player);
+    Vector3 position = transform::get_world_position(player);
     position.y += gameplay_config::PLAYER_HEIGHT;
 
-    Vector3 forward = system::transform::get_forward(player);
+    Vector3 forward = transform::get_forward(player);
     Vector3 target = Vector3Add(position, forward);
 
     CAMERA.position = position;
@@ -77,4 +77,4 @@ void update() {
     }
 }
 
-}  // namespace soft_tissues::camera
+}  // namespace soft_tissues::system::camera

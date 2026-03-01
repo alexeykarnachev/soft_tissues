@@ -1,4 +1,4 @@
-#include "../camera.hpp"
+#include "../system/camera.hpp"
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../system/transform.hpp"
@@ -138,7 +138,7 @@ static XYZColors get_xyz_colors(Vector3 current_axis, bool is_hot) {
 }
 
 static void draw(HandleColors colors) {
-    Camera3D camera = camera::CAMERA;
+    Camera3D camera = system::camera::CAMERA;
 
     Vector3 position = system::transform::get_world_position(ENTITY);
     float radius = SIZE * Vector3Distance(camera.position, position);
@@ -374,7 +374,7 @@ static void update() {
     if (!is_mouse_moved) return;
 
     Vector3 position = system::transform::get_world_position(ENTITY);
-    Camera3D camera = camera::CAMERA;
+    Camera3D camera = system::camera::CAMERA;
     switch (STATE) {
         case ACTIVE_ROT: {
             Vector2 p1 = Vector2Subtract(

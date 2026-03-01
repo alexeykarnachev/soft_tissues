@@ -34,7 +34,7 @@ public:
     PBRShader();
     PBRShader(const std::string &vs_file, const std::string &fs_file);
 
-    Shader get_shader();
+    Shader get_shader() const;
     void unload();
 
     void set_shadow_map_pass(bool value);
@@ -47,7 +47,7 @@ public:
     void set_tiling(Vector2 tiling);
     void set_displacement_scale(float scale);
 
-    const LightLocs &get_light_locs(int idx);
+    const LightLocs &get_light_locs(int idx) const;
 };
 
 class MaterialPBR {

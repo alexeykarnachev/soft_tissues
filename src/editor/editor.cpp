@@ -1,6 +1,6 @@
 #include "editor.hpp"
 
-#include "../camera.hpp"
+#include "../system/camera.hpp"
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../prefabs.hpp"
@@ -196,6 +196,7 @@ static void update_and_draw_globals() {
     // reset
     ImGui::SameLine(0.0, 5.0);
     if (gui::button_color("Reset", gui::COLOR_RED)) {
+        globals::registry.clear();
         world::reset();
         prefabs::spawn_player(world::ORIGIN);
     }
@@ -205,7 +206,7 @@ void update_and_draw() {
     auto io = ImGui::GetIO();
     IS_GUI_INTERACTED = io.WantCaptureMouse;
 
-    BeginMode3D(camera::CAMERA);
+    BeginMode3D(system::camera::CAMERA);
     begin();
 
     ImGui::Begin("Editor", NULL, ImGuiWindowFlags_AlwaysAutoResize);
@@ -238,7 +239,7 @@ void update_hovered_entity() {
     rlClearScreenBuffers();
     rlEnableDepthTest();
     rlDisableColorBlend();
-    BeginMode3D(camera::CAMERA);
+    BeginMode3D(system::camera::CAMERA);
     {
         // meshes
         auto meshes = globals::registry.view<component::MyMesh>();

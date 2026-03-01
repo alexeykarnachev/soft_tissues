@@ -91,6 +91,7 @@ void save(std::string file_path) {
 }
 
 void load(std::string file_path) {
+    globals::registry.clear();
     world::clear_state();
 
     // -------------------------------------------------------------------
