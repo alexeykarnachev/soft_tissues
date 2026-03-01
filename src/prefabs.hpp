@@ -12,10 +12,10 @@ entt::entity spawn_mesh(
 );
 entt::entity spawn_light(
     Vector3 position,
-    light::LightType light_type,
+    component::LightType light_type,
     Color color,
     float intensity,
-    light::Params params
+    component::LightParams params
 );
 entt::entity spawn_spot_light(
     Vector3 position,

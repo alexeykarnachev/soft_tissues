@@ -124,7 +124,7 @@ void load(std::string file_path) {
         // Transform
         if (entity_json.contains("Transform")) {
             auto transform = component::Transform::from_json(
-                new_entity, entity_json["Transform"]
+                entity_json["Transform"]
             );
             globals::registry.emplace<component::Transform>(new_entity, transform);
         }

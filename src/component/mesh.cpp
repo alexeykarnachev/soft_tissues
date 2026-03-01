@@ -2,7 +2,7 @@
 
 #include "../serializers.hpp"
 
-namespace soft_tissues::mesh {
+namespace soft_tissues::component {
 
 MyMesh::MyMesh(std::string mesh_key, std::string material_pbr_key)
     : mesh_key(mesh_key)
@@ -29,4 +29,4 @@ MyMesh MyMesh::from_json(const nlohmann::json &json_data) {
     return mesh;
 }
 
-}  // namespace soft_tissues::mesh
+}  // namespace soft_tissues::component

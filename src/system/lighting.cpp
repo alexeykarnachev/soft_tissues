@@ -3,49 +3,26 @@
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../pbr.hpp"
+#include "../render_config.hpp"
 #include "../resources.hpp"
+#include "transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
-#include <unordered_map>
 
 namespace soft_tissues::system::lighting {
-
-static std::unordered_map<entt::entity, ShadowData> SHADOW_DATA;
-
-ShadowData *get_shadow_data(entt::entity entity) {
-    auto it = SHADOW_DATA.find(entity);
-    if (it == SHADOW_DATA.end()) return nullptr;
-    return &it->second;
-}
-
-void cleanup_shadow_data(entt::entity entity) {
-    auto it = SHADOW_DATA.find(entity);
-    if (it == SHADOW_DATA.end()) return;
-
-    if (it->second.shadow_map != nullptr) {
-        resources::free_shadow_map(it->second.shadow_map);
-    }
-
-    SHADOW_DATA.erase(it);
-}
-
-void cleanup_all_shadow_data() {
-    for (auto &[entity, sd] : SHADOW_DATA) {
-        if (sd.shadow_map != nullptr) {
-            resources::free_shadow_map(sd.shadow_map);
-        }
-    }
-
-    SHADOW_DATA.clear();
-}
 
 std::vector<ShadowPassJob> prepare_shadow_passes() {
     std::vector<ShadowPassJob> jobs;
 
     for (auto entity : globals::registry.view<component::Light>()) {
         auto &light = globals::registry.get<component::Light>(entity);
-        auto &sd = SHADOW_DATA[entity];
+
+        // ensure ShadowData component exists
+        if (!globals::registry.all_of<component::ShadowData>(entity)) {
+            globals::registry.emplace<component::ShadowData>(entity);
+        }
+        auto &sd = globals::registry.get<component::ShadowData>(entity);
 
         // if shadows were turned off, free the shadow map back to the pool
         if (!light.casts_shadows && sd.shadow_map != nullptr) {
@@ -55,7 +32,7 @@ std::vector<ShadowPassJob> prepare_shadow_passes() {
 
         if (!light.casts_shadows || !light.is_on) continue;
 
-        if (light.shadow_type == light::ShadowType::DYNAMIC) {
+        if (light.shadow_type == component::ShadowType::DYNAMIC) {
             sd.needs_update = true;
         }
 
@@ -71,12 +48,11 @@ std::vector<ShadowPassJob> prepare_shadow_passes() {
         }
 
         // build camera for this light
-        auto tr = globals::registry.get<component::Transform>(entity);
-        Vector3 position = tr.get_position();
-        Vector3 direction = tr.get_forward();
+        Vector3 position = transform::get_world_position(entity);
+        Vector3 direction = transform::get_forward(entity);
 
         switch (light.light_type) {
-            case light::LightType::SPOT: {
+            case component::LightType::SPOT: {
                 Camera3D camera = {0};
                 camera.position = position;
                 camera.target = Vector3Add(position, direction);
@@ -100,11 +76,11 @@ std::vector<ShadowPassJob> prepare_shadow_passes() {
 }
 
 void finalize_shadow_pass(entt::entity entity, Matrix vp_mat) {
-    auto &sd = SHADOW_DATA[entity];
+    auto &sd = globals::registry.get<component::ShadowData>(entity);
     sd.vp_mat = vp_mat;
 
     auto &light = globals::registry.get<component::Light>(entity);
-    if (light.shadow_type == light::ShadowType::STATIC) {
+    if (light.shadow_type == component::ShadowType::STATIC) {
         sd.needs_update = false;
     }
 }
@@ -121,12 +97,11 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         Shader shader = pbr_shader.get_shader();
         const auto &locs = pbr_shader.get_light_locs(light_idx);
 
-        auto tr = globals::registry.get<component::Transform>(entity);
-        Vector3 direction = tr.get_forward();
+        Vector3 direction = transform::get_forward(entity);
         Vector4 color = ColorNormalize(light.color);
 
         // shadow map
-        auto *sd = get_shadow_data(entity);
+        auto *sd = globals::registry.try_get<component::ShadowData>(entity);
         if (sd != nullptr && sd->shadow_map != nullptr) {
             int slot = 10 + light_idx;
 
@@ -139,7 +114,7 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         int casts_shadows = (int)light.casts_shadows;
         Matrix vp_mat = (sd != nullptr) ? sd->vp_mat : MatrixIdentity();
 
-        Vector3 position = tr.get_position();
+        Vector3 position = transform::get_world_position(entity);
         SetShaderValue(shader, locs.position, &position, SHADER_UNIFORM_VEC3);
         SetShaderValue(shader, locs.type, &light.light_type, SHADER_UNIFORM_INT);
         SetShaderValue(shader, locs.color, &color, SHADER_UNIFORM_VEC3);
@@ -149,14 +124,14 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
 
         // type params
         switch (light.light_type) {
-            case light::LightType::POINT: {
+            case component::LightType::POINT: {
                 Vector3 attenuation = light.params.point.attenuation;
                 SetShaderValue(shader, locs.attenuation, &attenuation, SHADER_UNIFORM_VEC3);
             } break;
-            case light::LightType::DIRECTIONAL: {
+            case component::LightType::DIRECTIONAL: {
                 SetShaderValue(shader, locs.direction, &direction, SHADER_UNIFORM_VEC3);
             } break;
-            case light::LightType::SPOT: {
+            case component::LightType::SPOT: {
                 Vector3 attenuation = light.params.spot.attenuation;
                 float inner_cutoff = light.params.spot.inner_cutoff;
                 float outer_cutoff = light.params.spot.outer_cutoff;

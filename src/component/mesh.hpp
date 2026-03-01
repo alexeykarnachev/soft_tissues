@@ -3,7 +3,7 @@
 #include "raylib/raylib.h"
 #include <nlohmann/json.hpp>
 
-namespace soft_tissues::mesh {
+namespace soft_tissues::component {
 
 class MyMesh {
 
@@ -18,4 +18,4 @@ public:
     static MyMesh from_json(const nlohmann::json &json_data);
 };
 
-}  // namespace soft_tissues::mesh
+}  // namespace soft_tissues::component

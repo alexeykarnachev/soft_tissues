@@ -5,6 +5,7 @@
 #include "../resources.hpp"
 #include "../world.hpp"
 #include "render.hpp"
+#include "transform.hpp"
 #include "raylib/raylib.h"
 
 namespace soft_tissues::system::scene {
@@ -94,8 +95,7 @@ void draw_meshes(const RenderState &render_state) {
 
     for (auto entity : view) {
         auto my_mesh = globals::registry.get<component::MyMesh>(entity);
-        auto tr = globals::registry.get<component::Transform>(entity);
-        Matrix matrix = tr.get_matrix();
+        Matrix matrix = transform::get_world_matrix(entity);
 
         auto mesh = resources::get_mesh(my_mesh.mesh_key);
         auto material_pbr = resources::get_material_pbr(my_mesh.material_pbr_key);

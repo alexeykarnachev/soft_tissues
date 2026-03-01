@@ -143,27 +143,27 @@ MaterialPBR::MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 ti
     this->material = material;
 }
 
-Texture MaterialPBR::get_texture() {
+Texture MaterialPBR::get_texture() const {
     return this->material.maps[0].texture;
 }
 
-Material MaterialPBR::get_material() {
+Material MaterialPBR::get_material() const {
     return this->material;
 }
 
-PBRShader &MaterialPBR::get_pbr_shader() {
+PBRShader &MaterialPBR::get_pbr_shader() const {
     return *this->pbr_shader;
 }
 
-Vector2 MaterialPBR::get_tiling() {
+Vector2 MaterialPBR::get_tiling() const {
     return this->tiling;
 }
 
-float MaterialPBR::get_displacement_scale() {
+float MaterialPBR::get_displacement_scale() const {
     return this->displacement_scale;
 }
 
-std::string MaterialPBR::get_name() {
+std::string MaterialPBR::get_name() const {
     std::filesystem::path path(this->dir_path);
     auto parent_name = path.parent_path().filename().string();
     return parent_name;

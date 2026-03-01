@@ -103,11 +103,11 @@ pbr::PBRShader &get_pbr_shader() {
     return PBR_SHADER;
 }
 
-pbr::MaterialPBR get_material_pbr(std::string key) {
+const pbr::MaterialPBR &get_material_pbr(const std::string &key) {
     return MATERIALS_PBR.at(key);
 }
 
-Mesh get_mesh(std::string key) {
+const Mesh &get_mesh(const std::string &key) {
     return MESHES.at(key);
 }
 

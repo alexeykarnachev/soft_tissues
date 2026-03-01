@@ -1,7 +1,7 @@
 #include "../component/component.hpp"
 #include "../globals.hpp"
 #include "../prefabs.hpp"
-#include "../system/lighting.hpp"
+#include "../system/transform.hpp"
 #include "editor.hpp"
 #include "entt/entity/entity.hpp"
 #include "imgui/imgui.h"
@@ -20,7 +20,7 @@ static void update_and_draw_transformation() {
 
     {
         static float speed = 0.1;
-        float *v = (float *)&tr._position;
+        float *v = (float *)&tr.position;
 
         gui::push_id();
         ImGui::DragFloat3("Position", v, speed);
@@ -31,7 +31,7 @@ static void update_and_draw_transformation() {
         static float speed = PI / 16.0;
         static float min = -2.0 * PI;
         static float max = 2.0 * PI;
-        float *v = (float *)&tr._rotation;
+        float *v = (float *)&tr.rotation;
 
         gui::push_id();
         ImGui::DragFloat3("Rotation", v, speed, min, max);
@@ -47,7 +47,7 @@ static void update_and_draw_mesh() {
 
     if (mesh == nullptr) {
         if (gui::button("Add [M]esh") || IsKeyPressed(KEY_M)) {
-            mesh::MyMesh my_mesh("cube", "brick_wall");
+            component::MyMesh my_mesh("cube", "brick_wall");
             globals::registry.emplace<component::MyMesh>(ENTITY, my_mesh);
         }
     } else {
@@ -59,15 +59,14 @@ static void update_and_draw_mesh() {
 
 static void update_and_draw_light() {
     auto light = globals::registry.try_get<component::Light>(ENTITY);
-    auto &tr = globals::registry.get<component::Transform>(ENTITY);
 
     gui::push_id();
     ImGui::SeparatorText("Light");
 
     if (light == nullptr) {
         if (gui::button("Add [L]ight") || IsKeyPressed(KEY_L)) {
-            light::Params params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
-            light::Light light(light::LightType::POINT, GREEN, 20.0, params);
+            component::LightParams params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
+            component::Light light(component::LightType::POINT, GREEN, 20.0, params);
             globals::registry.emplace<component::Light>(ENTITY, light);
         }
     } else {
@@ -91,12 +90,12 @@ static void update_and_draw_light() {
         // ---------------------------------------------------------------
         // shadow type selection
         gui::push_id();
-        auto selected_type_name = light::shadow_type_to_str(light->shadow_type);
+        auto selected_type_name = component::shadow_type_to_str(light->shadow_type);
 
         if (ImGui::BeginCombo("Shadow type", selected_type_name.c_str())) {
 
-            for (auto type : light::SHADOW_TYPES) {
-                auto type_name = light::shadow_type_to_str(type);
+            for (auto type : component::SHADOW_TYPES) {
+                auto type_name = component::shadow_type_to_str(type);
                 if (ImGui::Selectable(type_name.c_str(), type == light->shadow_type)) {
                     light->shadow_type = type;
                 }
@@ -108,31 +107,31 @@ static void update_and_draw_light() {
 
         // ---------------------------------------------------------------
         // light type selection
-        selected_type_name = light::light_type_to_str(light->light_type);
+        selected_type_name = component::light_type_to_str(light->light_type);
         if (ImGui::BeginCombo("Light type", selected_type_name.c_str())) {
-            for (auto type : light::LIGHT_TYPES) {
-                auto type_name = light::light_type_to_str(type);
+            for (auto type : component::LIGHT_TYPES) {
+                auto type_name = component::light_type_to_str(type);
                 if (ImGui::Selectable(type_name.c_str(), type == light->light_type)) {
                     light->light_type = type;
 
                     // after selecting the light type, initialize it with some
                     // meaningful default light settings
                     switch (type) {
-                        case light::LightType::POINT: {
+                        case component::LightType::POINT: {
                             light->params.point.attenuation = {1.0, 1.5, 0.75};
 
                             light->color = GREEN;
                             light->intensity = 20.0;
                         } break;
 
-                        case light::LightType::DIRECTIONAL: {
+                        case component::LightType::DIRECTIONAL: {
                             light->color = YELLOW;
                             light->intensity = 5.0;
 
-                            tr.set_forward({0.0, -1.0, 0.0});
+                            system::transform::set_forward(ENTITY,{0.0, -1.0, 0.0});
                         } break;
 
-                        case light::LightType::SPOT: {
+                        case component::LightType::SPOT: {
                             light->params.spot.attenuation = {1.0, 1.2, 0.2};
                             light->params.spot.inner_cutoff = 0.95;
                             light->params.spot.outer_cutoff = 0.80;
@@ -140,10 +139,10 @@ static void update_and_draw_light() {
                             light->color = {255, 255, 220, 255};
                             light->intensity = 50.0;
 
-                            tr.set_forward({0.0, -1.0, 0.0});
+                            system::transform::set_forward(ENTITY,{0.0, -1.0, 0.0});
                         } break;
 
-                        case light::LightType::AMBIENT: {
+                        case component::LightType::AMBIENT: {
                             light->params.ambient = {};
 
                             light->color = WHITE;
@@ -158,7 +157,7 @@ static void update_and_draw_light() {
             ImGui::EndCombo();
         }
 
-        auto *sd = system::lighting::get_shadow_data(ENTITY);
+        auto *sd = globals::registry.try_get<component::ShadowData>(ENTITY);
         if (sd != nullptr && sd->shadow_map != nullptr) {
             gui::image(sd->shadow_map->texture, 150.0, 150.0);
         }
@@ -166,11 +165,11 @@ static void update_and_draw_light() {
         // ---------------------------------------------------------------
         // specific light type params
         switch (light->light_type) {
-            case light::LightType::POINT: {
+            case component::LightType::POINT: {
                 gui::point_light_params(light);
             } break;
 
-            case light::LightType::SPOT: {
+            case component::LightType::SPOT: {
                 gui::spot_light_params(light);
             } break;
 

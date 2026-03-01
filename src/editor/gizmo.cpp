@@ -1,6 +1,7 @@
 #include "../camera.hpp"
 #include "../component/component.hpp"
 #include "../globals.hpp"
+#include "../system/transform.hpp"
 #include "editor.hpp"
 #include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
@@ -137,10 +138,9 @@ static XYZColors get_xyz_colors(Vector3 current_axis, bool is_hot) {
 }
 
 static void draw(HandleColors colors) {
-    auto tr = globals::registry.get<component::Transform>(ENTITY);
     Camera3D camera = camera::CAMERA;
 
-    Vector3 position = tr.get_position();
+    Vector3 position = system::transform::get_world_position(ENTITY);
     float radius = SIZE * Vector3Distance(camera.position, position);
 
     BeginMode3D(camera);
@@ -373,7 +373,7 @@ static void update() {
     bool is_mouse_moved = (fabs(delta.x) + fabs(delta.y)) > EPSILON;
     if (!is_mouse_moved) return;
 
-    Vector3 position = tr.get_position();
+    Vector3 position = system::transform::get_world_position(ENTITY);
     Camera3D camera = camera::CAMERA;
     switch (STATE) {
         case ACTIVE_ROT: {
@@ -451,7 +451,7 @@ static void update() {
     // -------------------------------------------------------------------
     // update entity
     if (Vector3Length(UPDATE.translation) > EPSILON) {
-        tr._position = Vector3Add(tr._position, UPDATE.translation);
+        tr.position = Vector3Add(tr.position, UPDATE.translation);
     }
 
     if (std::abs(UPDATE.angle) > EPSILON) {

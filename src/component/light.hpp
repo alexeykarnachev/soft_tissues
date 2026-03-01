@@ -2,8 +2,10 @@
 
 #include "nlohmann/json.hpp"
 #include "raylib/raylib.h"
+#include <array>
+#include <string>
 
-namespace soft_tissues::light {
+namespace soft_tissues::component {
 
 enum class LightType {
     POINT = 0,
@@ -29,25 +31,26 @@ constexpr std::array<ShadowType, 2> SHADOW_TYPES = {
     ShadowType::DYNAMIC,
 };
 
-struct Point {
+struct PointParams {
     Vector3 attenuation;
 };
 
-struct Directional {};
+struct DirectionalParams {};
 
-struct Spot {
+struct SpotParams {
     Vector3 attenuation;
     float inner_cutoff;
     float outer_cutoff;
 };
-struct Ambient {};
+
+struct AmbientParams {};
 
 typedef union {
-    Point point;
-    Directional directional;
-    Spot spot;
-    Ambient ambient;
-} Params;
+    PointParams point;
+    DirectionalParams directional;
+    SpotParams spot;
+    AmbientParams ambient;
+} LightParams;
 
 class Light {
 public:
@@ -60,13 +63,13 @@ public:
     Color color;
     float intensity;
 
-    Params params;
+    LightParams params;
 
     Light(
         LightType light_type,
         Color color,
         float intensity,
-        Params params
+        LightParams params
     );
 
     nlohmann::json to_json() const;
@@ -79,4 +82,4 @@ std::string shadow_type_to_str(ShadowType type);
 LightType str_to_light_type(std::string str);
 ShadowType str_to_shadow_type(std::string str);
 
-}  // namespace soft_tissues::light
+}  // namespace soft_tissues::component

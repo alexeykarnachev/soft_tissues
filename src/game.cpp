@@ -13,6 +13,7 @@
 #include "system/lighting.hpp"
 #include "system/render.hpp"
 #include "system/scene.hpp"
+#include "system/transform.hpp"
 #include "world.hpp"
 
 namespace soft_tissues::game {
@@ -51,8 +52,7 @@ static void draw_cursor() {
 static void draw_light_shells() {
     auto view = globals::registry.view<component::Light>();
     for (auto entity : view) {
-        auto tr = globals::registry.get<component::Transform>(entity);
-        DrawSphere(tr.get_position(), 0.2, WHITE);
+        DrawSphere(system::transform::get_world_position(entity), 0.2, WHITE);
     }
 }
 
@@ -60,9 +60,8 @@ static void draw_player() {
     auto view = globals::registry.view<component::Player>();
     if (view.size() == 0) return;
     auto player = view.front();
-    auto tr = globals::registry.get<component::Transform>(player);
 
-    Vector3 position = tr.get_position();
+    Vector3 position = system::transform::get_world_position(player);
     Matrix transform = MatrixTranslate(position.x, position.y, position.z);
 
     Model model = PLAYER_MODEL;
@@ -134,8 +133,11 @@ static void draw() {
     EndDrawing();
 }
 
-static void on_light_destroyed(entt::registry &, entt::entity entity) {
-    system::lighting::cleanup_shadow_data(entity);
+static void on_shadow_data_destroyed(entt::registry &, entt::entity entity) {
+    auto *sd = globals::registry.try_get<component::ShadowData>(entity);
+    if (sd != nullptr && sd->shadow_map != nullptr) {
+        resources::free_shadow_map(sd->shadow_map);
+    }
 }
 
 void run() {
@@ -145,7 +147,7 @@ void run() {
     editor::load();
 
     // register cleanup hooks
-    globals::registry.on_destroy<component::Light>().connect<&on_light_destroyed>();
+    globals::registry.on_destroy<component::ShadowData>().connect<&on_shadow_data_destroyed>();
 
     // load initial scene
     world::reset();

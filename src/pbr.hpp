@@ -63,12 +63,12 @@ public:
     MaterialPBR();
     MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 tiling, float displacement_scale);
 
-    Texture get_texture();
-    Material get_material();
-    PBRShader &get_pbr_shader();
-    Vector2 get_tiling();
-    float get_displacement_scale();
-    std::string get_name();
+    Texture get_texture() const;
+    Material get_material() const;
+    PBRShader &get_pbr_shader() const;
+    Vector2 get_tiling() const;
+    float get_displacement_scale() const;
+    std::string get_name() const;
 
     void unload();
 };

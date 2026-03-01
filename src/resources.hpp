@@ -10,8 +10,8 @@ extern Material DEFAULT_MATERIAL;
 
 pbr::PBRShader &get_pbr_shader();
 Material get_material_color(Color color);
-pbr::MaterialPBR get_material_pbr(std::string key);
-Mesh get_mesh(std::string key);
+const pbr::MaterialPBR &get_material_pbr(const std::string &key);
+const Mesh &get_mesh(const std::string &key);
 
 std::vector<std::string> get_material_pbr_keys();
 

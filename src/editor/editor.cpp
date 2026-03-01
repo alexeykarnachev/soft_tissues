@@ -5,6 +5,7 @@
 #include "../game.hpp"
 #include "../globals.hpp"
 #include "../resources.hpp"
+#include "../system/transform.hpp"
 #include "../world.hpp"
 #include "../world_serializer.hpp"
 #include "GLFW/glfw3.h"
@@ -241,12 +242,11 @@ void update_hovered_entity() {
         // meshes
         auto meshes = globals::registry.view<component::MyMesh>();
         for (auto entity : meshes) {
-            auto tr = globals::registry.get<component::Transform>(entity);
             auto my_mesh = globals::registry.get<component::MyMesh>(entity);
 
             auto mesh = resources::get_mesh(my_mesh.mesh_key);
             auto material = resources::get_material_color({id, 0, 0, 255});
-            auto matrix = tr.get_matrix();
+            auto matrix = system::transform::get_world_matrix(entity);
 
             DrawMesh(mesh, material, matrix);
 
@@ -258,9 +258,8 @@ void update_hovered_entity() {
         // light shells
         auto lights = globals::registry.view<component::Light>();
         for (auto entity : lights) {
-            auto tr = globals::registry.get<component::Transform>(entity);
             Color color = {id, 0, 0, 255};
-            DrawSphere(tr.get_position(), 0.2, color);
+            DrawSphere(system::transform::get_world_position(entity), 0.2, color);
 
             entities.push_back(entity);
             // TODO: Check for overflow

@@ -4,9 +4,9 @@
 #include <stdexcept>
 #include <string>
 
-namespace soft_tissues::light {
+namespace soft_tissues::component {
 
-Light::Light(LightType light_type, Color color, float intensity, Params params)
+Light::Light(LightType light_type, Color color, float intensity, LightParams params)
     : is_on(true)
     , casts_shadows(false)
     , light_type(light_type)
@@ -94,7 +94,7 @@ Light Light::from_json(const nlohmann::json &json_data) {
 
     // -------------------------------------------------------------------
     // type params
-    Params params = {0};
+    LightParams params = {0};
     switch (light_type) {
         case LightType::POINT:
             params.point.attenuation = json_data["params"]["attenuation"];
@@ -116,4 +116,4 @@ Light Light::from_json(const nlohmann::json &json_data) {
     return light;
 }
 
-}  // namespace soft_tissues::light
+}  // namespace soft_tissues::component

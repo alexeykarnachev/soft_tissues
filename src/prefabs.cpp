@@ -1,10 +1,9 @@
 #include "prefabs.hpp"
 
 #include "component/component.hpp"
-#include "component/light.hpp"
-#include "entt/entity/fwd.hpp"
 #include "gameplay_config.hpp"
 #include "globals.hpp"
+#include "system/transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 
@@ -12,7 +11,7 @@ namespace soft_tissues::prefabs {
 
 entt::entity spawn_entity() {
     auto entity = globals::registry.create();
-    auto transform = component::Transform(entity, {0.0, 0.0, 0.0});
+    auto transform = component::Transform({0.0, 0.0, 0.0});
 
     globals::registry.emplace<component::Transform>(entity, transform);
 
@@ -23,7 +22,7 @@ entt::entity spawn_mesh(
     Vector3 position, std::string mesh_key, std::string material_pbr_key
 ) {
     auto entity = globals::registry.create();
-    auto transform = component::Transform(entity, position);
+    auto transform = component::Transform(position);
     auto my_mesh = component::MyMesh(mesh_key, material_pbr_key);
 
     globals::registry.emplace<component::Transform>(entity, transform);
@@ -34,15 +33,15 @@ entt::entity spawn_mesh(
 
 entt::entity spawn_light(
     Vector3 position,
-    light::LightType light_type,
+    component::LightType light_type,
     Color color,
     float intensity,
-    light::Params params
+    component::LightParams params
 ) {
     auto entity = globals::registry.create();
-    auto transform = component::Transform(entity, position);
+    auto transform = component::Transform(position);
 
-    light::Light light(light_type, color, intensity, params);
+    component::Light light(light_type, color, intensity, params);
 
     globals::registry.emplace<component::Transform>(entity, transform);
     globals::registry.emplace<component::Light>(entity, light);
@@ -61,22 +60,21 @@ entt::entity spawn_spot_light(
 ) {
     direction = Vector3Normalize(direction);
 
-    light::Params params
+    component::LightParams params
         = {.spot = {
                .attenuation = attenuation,
                .inner_cutoff = inner_cutoff,
                .outer_cutoff = outer_cutoff,
            }};
 
-    auto entity = spawn_light(position, light::LightType::SPOT, color, intensity, params);
-    auto &tr = globals::registry.get<component::Transform>(entity);
-    tr.set_forward(direction);
+    auto entity = spawn_light(position, component::LightType::SPOT, color, intensity, params);
+    system::transform::set_forward(entity, direction);
 
     return entity;
 }
 
 entt::entity spawn_ambient_light(Color color, float intensity) {
-    return spawn_light(Vector3Zero(), light::LightType::AMBIENT, color, intensity, {});
+    return spawn_light(Vector3Zero(), component::LightType::AMBIENT, color, intensity, {});
 }
 
 entt::entity spawn_player(Vector2 position) {
@@ -86,7 +84,7 @@ entt::entity spawn_player(Vector2 position) {
     // player
     {
         auto entity = globals::registry.create();
-        auto transform = component::Transform(entity, {position.x, 0.0, position.y});
+        auto transform = component::Transform({position.x, 0.0, position.y});
 
         globals::registry.emplace<component::Transform>(entity, transform);
         globals::registry.emplace<component::Player>(entity);
@@ -98,7 +96,7 @@ entt::entity spawn_player(Vector2 position) {
     {
         static const Vector3 position = {0.0, gameplay_config::PLAYER_HEIGHT, 0.0};
 
-        static const light::LightType type = light::LightType::SPOT;
+        static const component::LightType type = component::LightType::SPOT;
         static const Color color = {255, 255, 220, 255};
         static const auto intensity = 50.0;
 
@@ -106,7 +104,7 @@ entt::entity spawn_player(Vector2 position) {
         static const float inner_cutoff = 0.95;
         static const float outer_cutoff = 0.80;
 
-        light::Params params
+        component::LightParams params
             = {.spot = {
                    .attenuation = attenuation,
                    .inner_cutoff = inner_cutoff,

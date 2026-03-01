@@ -1,9 +1,9 @@
 #include "controller.hpp"
 
 #include "component/component.hpp"
-#include "component/light.hpp"
 #include "gameplay_config.hpp"
 #include "globals.hpp"
+#include "system/transform.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 
@@ -26,8 +26,8 @@ void update_translation() {
     auto player = view.front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
-    Vector3 forward = tr.get_forward();
-    Vector3 right = tr.get_right();
+    Vector3 forward = system::transform::get_forward(player);
+    Vector3 right = system::transform::get_right(player);
 
     forward.y = 0.0;
     right.y = 0.0;
@@ -58,12 +58,12 @@ void update_rotation() {
     auto player = view.front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
-    float pitch = tr._rotation.x + pitch_delta;
+    float pitch = tr.rotation.x + pitch_delta;
     pitch = Clamp(pitch, -0.5 * PI + 0.025, 0.5 * PI - 0.025);
-    float yaw = tr._rotation.y + yaw_delta;
+    float yaw = tr.rotation.y + yaw_delta;
 
-    tr._rotation.x = pitch;
-    tr._rotation.y = yaw;
+    tr.rotation.x = pitch;
+    tr.rotation.y = yaw;
 }
 
 void update_flashlight() {
