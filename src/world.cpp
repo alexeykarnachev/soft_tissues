@@ -16,13 +16,8 @@ namespace soft_tissues::world {
 
 using namespace utils;
 
-int const HEIGHT = 3;
-int const N_ROWS = 16;
-int const N_COLS = 16;
-Vector2 const ORIGIN = {0.0, 0.0};
-
-static int const N_TILES = N_ROWS * N_COLS;
-static Vector2 const SIZE = {N_COLS, N_ROWS};
+static constexpr int N_TILES = N_ROWS * N_COLS;
+static const Vector2 SIZE = {N_COLS, N_ROWS};
 
 static std::array<tile::Tile, N_TILES> TILES;
 static std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;

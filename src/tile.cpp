@@ -4,7 +4,7 @@
 #include "raylib/raymath.h"
 #include "serializers.hpp"
 #include "utils.hpp"
-#include "world.hpp"
+#include "world_config.hpp"
 #include <cstdint>
 #include "nlohmann/json.hpp"
 #include <string>
@@ -120,7 +120,8 @@ Vector2 Tile::get_floor_position() {
     uint32_t col = this->id % world::N_COLS;
 
     Vector2 pos = {col + 0.5f, row + 0.5f};
-    pos = Vector2Subtract(pos, Vector2Scale(world::get_size(), 0.5));
+    Vector2 size = {(float)world::N_COLS, (float)world::N_ROWS};
+    pos = Vector2Subtract(pos, Vector2Scale(size, 0.5));
     pos = Vector2Add(pos, world::ORIGIN);
 
     return pos;

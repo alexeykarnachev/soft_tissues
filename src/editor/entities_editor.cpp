@@ -65,7 +65,7 @@ static void update_and_draw_light() {
 
     if (light == nullptr) {
         if (gui::button("Add [L]ight") || IsKeyPressed(KEY_L)) {
-            component::LightParams params = {.point = {.attenuation = {1.0, 1.5, 0.75}}};
+            component::LightParams params = component::PointParams{{1.0, 1.5, 0.75}};
             component::Light light(component::LightType::POINT, GREEN, 20.0, params);
             globals::registry.emplace<component::Light>(ENTITY, light);
         }
@@ -118,33 +118,29 @@ static void update_and_draw_light() {
                     // meaningful default light settings
                     switch (type) {
                         case component::LightType::POINT: {
-                            light->params.point.attenuation = {1.0, 1.5, 0.75};
-
+                            light->params = component::PointParams{{1.0, 1.5, 0.75}};
                             light->color = GREEN;
                             light->intensity = 20.0;
                         } break;
 
                         case component::LightType::DIRECTIONAL: {
+                            light->params = component::DirectionalParams{};
                             light->color = YELLOW;
                             light->intensity = 5.0;
-
                             system::transform::set_forward(ENTITY,{0.0, -1.0, 0.0});
                         } break;
 
                         case component::LightType::SPOT: {
-                            light->params.spot.attenuation = {1.0, 1.2, 0.2};
-                            light->params.spot.inner_cutoff = 0.95;
-                            light->params.spot.outer_cutoff = 0.80;
-
+                            light->params = component::SpotParams{
+                                {1.0, 1.2, 0.2}, 0.95f, 0.80f
+                            };
                             light->color = {255, 255, 220, 255};
                             light->intensity = 50.0;
-
                             system::transform::set_forward(ENTITY,{0.0, -1.0, 0.0});
                         } break;
 
                         case component::LightType::AMBIENT: {
-                            light->params.ambient = {};
-
+                            light->params = component::AmbientParams{};
                             light->color = WHITE;
                             light->intensity = 0.1;
                         } break;

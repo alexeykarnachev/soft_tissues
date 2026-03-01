@@ -39,8 +39,8 @@ static void update_game_state() {
     }
 }
 
-static void update() {
-    globals::update();
+static bool update() {
+    bool should_close = globals::update();
     update_game_state();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
@@ -48,6 +48,8 @@ static void update() {
     }
 
     system::camera::update();
+
+    return should_close;
 }
 
 static void draw_cursor() {
@@ -133,6 +135,14 @@ static void on_shadow_data_destroyed(entt::registry &, entt::entity entity) {
     }
 }
 
+static void on_light_destroyed(entt::registry &reg, entt::entity entity) {
+    auto *sd = reg.try_get<component::ShadowData>(entity);
+    if (sd != nullptr && sd->shadow_map != nullptr) {
+        resources::free_shadow_map(sd->shadow_map);
+        sd->shadow_map = nullptr;
+    }
+}
+
 void run() {
     // load engine
     load_window();
@@ -141,6 +151,7 @@ void run() {
 
     // register cleanup hooks
     globals::registry.on_destroy<component::ShadowData>().connect<&on_shadow_data_destroyed>();
+    globals::registry.on_destroy<component::Light>().connect<&on_light_destroyed>();
 
     // load initial scene
     globals::registry.clear();
@@ -148,8 +159,8 @@ void run() {
     prefabs::spawn_player(world::ORIGIN);
 
     // main loop
-    while (!globals::WINDOW_SHOULD_CLOSE) {
-        update();
+    while (true) {
+        if (update()) break;
         draw();
     }
 

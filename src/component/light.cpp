@@ -63,18 +63,18 @@ nlohmann::json Light::to_json() const {
     // -------------------------------------------------------------------
     // type params
     switch (this->light_type) {
-        case LightType::POINT:
+        case LightType::POINT: {
+            auto &p = std::get<PointParams>(this->params);
+            json["params"] = {{"attenuation", p.attenuation}};
+        } break;
+        case LightType::SPOT: {
+            auto &p = std::get<SpotParams>(this->params);
             json["params"] = {
-                {"attenuation", this->params.point.attenuation},
+                {"attenuation", p.attenuation},
+                {"inner_cutoff", p.inner_cutoff},
+                {"outer_cutoff", p.outer_cutoff}
             };
-            break;
-        case LightType::SPOT:
-            json["params"] = {
-                {"attenuation", this->params.spot.attenuation},
-                {"inner_cutoff", this->params.spot.inner_cutoff},
-                {"outer_cutoff", this->params.spot.outer_cutoff}
-            };
-            break;
+        } break;
         default: json["params"] = {}; break;
     }
 
@@ -94,17 +94,26 @@ Light Light::from_json(const nlohmann::json &json_data) {
 
     // -------------------------------------------------------------------
     // type params
-    LightParams params = {0};
+    LightParams params = PointParams{};
     switch (light_type) {
-        case LightType::POINT:
-            params.point.attenuation = json_data["params"]["attenuation"];
+        case LightType::POINT: {
+            PointParams p;
+            p.attenuation = json_data["params"]["attenuation"];
+            params = p;
+        } break;
+        case LightType::SPOT: {
+            SpotParams p;
+            p.attenuation = json_data["params"]["attenuation"];
+            p.inner_cutoff = json_data["params"]["inner_cutoff"];
+            p.outer_cutoff = json_data["params"]["outer_cutoff"];
+            params = p;
+        } break;
+        case LightType::DIRECTIONAL:
+            params = DirectionalParams{};
             break;
-        case LightType::SPOT:
-            params.spot.attenuation = json_data["params"]["attenuation"];
-            params.spot.inner_cutoff = json_data["params"]["inner_cutoff"];
-            params.spot.outer_cutoff = json_data["params"]["outer_cutoff"];
+        case LightType::AMBIENT:
+            params = AmbientParams{};
             break;
-        default: break;
     }
 
     Light light(light_type, color, intensity, params);

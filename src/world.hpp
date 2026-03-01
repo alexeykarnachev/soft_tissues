@@ -2,15 +2,11 @@
 
 #include "raylib/raylib.h"
 #include "tile.hpp"
+#include "world_config.hpp"
 #include <array>
 #include <vector>
 
 namespace soft_tissues::world {
-
-extern const int HEIGHT;
-extern const int N_ROWS;
-extern const int N_COLS;
-extern const Vector2 ORIGIN;
 
 void reset();
 

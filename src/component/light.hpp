@@ -4,6 +4,7 @@
 #include "raylib/raylib.h"
 #include <array>
 #include <string>
+#include <variant>
 
 namespace soft_tissues::component {
 
@@ -45,12 +46,8 @@ struct SpotParams {
 
 struct AmbientParams {};
 
-typedef union {
-    PointParams point;
-    DirectionalParams directional;
-    SpotParams spot;
-    AmbientParams ambient;
-} LightParams;
+// Variant order must match LightType enum values (POINT=0, DIRECTIONAL=1, SPOT=2, AMBIENT=3).
+using LightParams = std::variant<PointParams, DirectionalParams, SpotParams, AmbientParams>;
 
 struct Light {
     bool is_on;

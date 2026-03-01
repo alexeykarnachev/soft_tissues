@@ -126,21 +126,18 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         // type params
         switch (light.light_type) {
             case component::LightType::POINT: {
-                Vector3 attenuation = light.params.point.attenuation;
-                SetShaderValue(shader, locs.attenuation, &attenuation, SHADER_UNIFORM_VEC3);
+                auto &p = std::get<component::PointParams>(light.params);
+                SetShaderValue(shader, locs.attenuation, &p.attenuation, SHADER_UNIFORM_VEC3);
             } break;
             case component::LightType::DIRECTIONAL: {
                 SetShaderValue(shader, locs.direction, &direction, SHADER_UNIFORM_VEC3);
             } break;
             case component::LightType::SPOT: {
-                Vector3 attenuation = light.params.spot.attenuation;
-                float inner_cutoff = light.params.spot.inner_cutoff;
-                float outer_cutoff = light.params.spot.outer_cutoff;
-
-                SetShaderValue(shader, locs.attenuation, &attenuation, SHADER_UNIFORM_VEC3);
+                auto &p = std::get<component::SpotParams>(light.params);
+                SetShaderValue(shader, locs.attenuation, &p.attenuation, SHADER_UNIFORM_VEC3);
                 SetShaderValue(shader, locs.direction, &direction, SHADER_UNIFORM_VEC3);
-                SetShaderValue(shader, locs.inner_cutoff, &inner_cutoff, SHADER_UNIFORM_FLOAT);
-                SetShaderValue(shader, locs.outer_cutoff, &outer_cutoff, SHADER_UNIFORM_FLOAT);
+                SetShaderValue(shader, locs.inner_cutoff, &p.inner_cutoff, SHADER_UNIFORM_FLOAT);
+                SetShaderValue(shader, locs.outer_cutoff, &p.outer_cutoff, SHADER_UNIFORM_FLOAT);
             } break;
             default: break;
         }

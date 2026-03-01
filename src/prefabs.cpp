@@ -60,12 +60,7 @@ entt::entity spawn_spot_light(
 ) {
     direction = Vector3Normalize(direction);
 
-    component::LightParams params
-        = {.spot = {
-               .attenuation = attenuation,
-               .inner_cutoff = inner_cutoff,
-               .outer_cutoff = outer_cutoff,
-           }};
+    component::LightParams params = component::SpotParams{attenuation, inner_cutoff, outer_cutoff};
 
     auto entity = spawn_light(position, component::LightType::SPOT, color, intensity, params);
     system::transform::set_forward(entity, direction);
@@ -74,7 +69,7 @@ entt::entity spawn_spot_light(
 }
 
 entt::entity spawn_ambient_light(Color color, float intensity) {
-    return spawn_light(Vector3Zero(), component::LightType::AMBIENT, color, intensity, {});
+    return spawn_light(Vector3Zero(), component::LightType::AMBIENT, color, intensity, component::AmbientParams{});
 }
 
 entt::entity spawn_player(Vector2 position) {
@@ -104,12 +99,7 @@ entt::entity spawn_player(Vector2 position) {
         static const float inner_cutoff = 0.95;
         static const float outer_cutoff = 0.80;
 
-        component::LightParams params
-            = {.spot = {
-                   .attenuation = attenuation,
-                   .inner_cutoff = inner_cutoff,
-                   .outer_cutoff = outer_cutoff,
-               }};
+        component::LightParams params = component::SpotParams{attenuation, inner_cutoff, outer_cutoff};
         auto entity = spawn_light(position, type, color, intensity, params);
         globals::registry.emplace<component::Flashlight>(entity);
 
