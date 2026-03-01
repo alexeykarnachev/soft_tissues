@@ -34,6 +34,7 @@ public:
     PBRShader();
     PBRShader(const std::string &vs_file, const std::string &fs_file);
 
+    // Returns Shader by value (shallow copy sharing GPU handle). Do not call UnloadShader() on the copy.
     Shader get_shader() const;
     void unload();
 
@@ -64,6 +65,7 @@ public:
     MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 tiling, float displacement_scale);
 
     Texture get_texture() const;
+    // Returns Material by value (shallow copy sharing internal maps pointer). Do not call UnloadMaterial() on the copy.
     Material get_material() const;
     PBRShader &get_pbr_shader() const;
     Vector2 get_tiling() const;

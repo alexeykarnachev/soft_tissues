@@ -59,21 +59,17 @@ void draw_tiles(const RenderState &render_state) {
         if (world::get_tile_room_id(&tile) == -1) continue;
 
         // draw floor
+        const auto &floor_material_pbr = resources::get_material_pbr(tile.materials.floor_key);
         render::draw_mesh(
-            mesh,
-            resources::get_material_pbr(tile.materials.floor_key),
-            tile.constant_color,
-            tile.get_floor_matrix(),
-            render_state
+            mesh, floor_material_pbr, tile.constant_color,
+            tile.get_floor_matrix(), render_state
         );
 
         // draw ceil
+        const auto &ceil_material_pbr = resources::get_material_pbr(tile.materials.ceil_key);
         render::draw_mesh(
-            mesh,
-            resources::get_material_pbr(tile.materials.ceil_key),
-            tile.constant_color,
-            tile.get_ceil_matrix(),
-            render_state
+            mesh, ceil_material_pbr, tile.constant_color,
+            tile.get_ceil_matrix(), render_state
         );
 
         // draw solid walls

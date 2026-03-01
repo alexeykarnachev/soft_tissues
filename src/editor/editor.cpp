@@ -243,7 +243,7 @@ void update_hovered_entity() {
         // meshes
         auto meshes = globals::registry.view<component::MyMesh>();
         for (auto entity : meshes) {
-            auto my_mesh = globals::registry.get<component::MyMesh>(entity);
+            const auto &my_mesh = globals::registry.get<component::MyMesh>(entity);
 
             const auto &mesh = resources::get_mesh(my_mesh.mesh_key);
             auto material = resources::get_material_color({id, 0, 0, 255});

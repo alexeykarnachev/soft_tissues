@@ -43,6 +43,7 @@ std::vector<ShadowPassJob> prepare_shadow_passes() {
             sd.shadow_map = resources::get_shadow_map();
 
             if (sd.shadow_map == nullptr) {
+                TraceLog(LOG_WARNING, "Shadow map pool exhausted, skipping light");
                 continue;
             }
         }
