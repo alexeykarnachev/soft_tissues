@@ -2,7 +2,6 @@
 
 #include "pbr.hpp"
 #include "gameplay_config.hpp"
-#include "render_config.hpp"
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
 #include "utils.hpp"

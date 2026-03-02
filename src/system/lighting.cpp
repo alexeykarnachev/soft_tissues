@@ -3,7 +3,6 @@
 #include "component/component.hpp"
 #include "globals.hpp"
 #include "core/pbr.hpp"
-#include "render_config.hpp"
 #include "core/resources.hpp"
 #include "system/transform.hpp"
 #include "raylib/raylib.h"

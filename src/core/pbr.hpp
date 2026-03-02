@@ -1,9 +1,17 @@
 #pragma once
 
-#include "render_config.hpp"
 #include "raylib/raylib.h"
 #include <array>
 #include <string>
+
+namespace soft_tissues::render_config {
+
+static constexpr int MAX_N_LIGHTS = 8;
+static constexpr int MAX_N_SHADOW_MAPS = MAX_N_LIGHTS;
+static constexpr int SHADOW_MAP_SIZE = 1024;
+static constexpr int SHADOW_MAP_TEXTURE_SLOT_OFFSET = 10;
+
+}  // namespace soft_tissues::render_config
 
 namespace soft_tissues::pbr {
 
