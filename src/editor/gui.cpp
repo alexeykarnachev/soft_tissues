@@ -3,8 +3,6 @@
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
-#include <cmath>
-#include <cstdio>
 #include <vector>
 
 namespace soft_tissues::editor::gui {
@@ -74,7 +72,7 @@ void material_picker(std::string *material_pbr_key) {
         ImGui::Separator();
 
         std::vector<std::string> keys = resources::get_material_pbr_keys();
-        for (auto another_material_pbr_key : keys) {
+        for (const auto &another_material_pbr_key : keys) {
             bool is_selected = another_material_pbr_key == *material_pbr_key;
 
             if (ImGui::MenuItem(another_material_pbr_key.c_str(), NULL, is_selected)) {

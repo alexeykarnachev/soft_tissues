@@ -75,7 +75,7 @@ struct Light {
 std::string light_type_to_str(LightType type);
 std::string shadow_type_to_str(ShadowType type);
 
-LightType str_to_light_type(std::string str);
-ShadowType str_to_shadow_type(std::string str);
+LightType str_to_light_type(const std::string &str);
+ShadowType str_to_shadow_type(const std::string &str);
 
 }  // namespace soft_tissues::component

@@ -18,14 +18,14 @@ TileMaterials::TileMaterials() = default;
 TileMaterials::TileMaterials(std::string material_pbr_key)
     : floor_key(material_pbr_key)
     , wall_key(material_pbr_key)
-    , ceil_key(material_pbr_key) {}
+    , ceil_key(std::move(material_pbr_key)) {}
 
 TileMaterials::TileMaterials(
     std::string floor_key, std::string wall_key, std::string ceil_key
 )
-    : floor_key(floor_key)
-    , wall_key(wall_key)
-    , ceil_key(ceil_key) {}
+    : floor_key(std::move(floor_key))
+    , wall_key(std::move(wall_key))
+    , ceil_key(std::move(ceil_key)) {}
 
 nlohmann::json TileMaterials::to_json() const {
     return {
@@ -59,7 +59,7 @@ Tile::Tile(
     , materials(materials)
     , constant_color(constant_color) {}
 
-uint32_t Tile::get_id() {
+uint32_t Tile::get_id() const {
     return this->id;
 }
 
@@ -82,40 +82,40 @@ void Tile::set_door_wall(Direction direction) {
     this->walls[direction] = TileWall::DOOR;
 }
 
-bool Tile::has_any_wall(Direction direction) {
+bool Tile::has_any_wall(Direction direction) const {
     return this->walls[direction] != TileWall::NONE;
 }
 
-bool Tile::has_solid_wall(Direction direction) {
+bool Tile::has_solid_wall(Direction direction) const {
     return this->walls[direction] == TileWall::SOLID;
 }
 
-bool Tile::has_door_wall(Direction direction) {
+bool Tile::has_door_wall(Direction direction) const {
     return this->walls[direction] == TileWall::DOOR;
 }
 
-bool Tile::has_any_wall() {
+bool Tile::has_any_wall() const {
     for (int i = 0; i < 4; ++i) {
         if (this->has_any_wall((Direction)i)) return true;
     }
     return false;
 }
 
-bool Tile::has_solid_wall() {
+bool Tile::has_solid_wall() const {
     for (int i = 0; i < 4; ++i) {
         if (this->has_solid_wall((Direction)i)) return true;
     }
     return false;
 }
 
-bool Tile::has_door_wall() {
+bool Tile::has_door_wall() const {
     for (int i = 0; i < 4; ++i) {
         if (this->has_door_wall((Direction)i)) return true;
     }
     return false;
 }
 
-Vector2 Tile::get_floor_position() {
+Vector2 Tile::get_floor_position() const {
     uint32_t row = this->id / world::N_COLS;
     uint32_t col = this->id % world::N_COLS;
 
@@ -127,14 +127,14 @@ Vector2 Tile::get_floor_position() {
     return pos;
 }
 
-Matrix Tile::get_floor_matrix() {
+Matrix Tile::get_floor_matrix() const {
     Vector2 position = this->get_floor_position();
     Matrix matrix = MatrixTranslate(position.x, 0.0, position.y);
 
     return matrix;
 }
 
-Matrix Tile::get_ceil_matrix() {
+Matrix Tile::get_ceil_matrix() const {
     Vector2 position = this->get_floor_position();
 
     Matrix t = MatrixTranslate(position.x, world::HEIGHT, position.y);
@@ -144,7 +144,7 @@ Matrix Tile::get_ceil_matrix() {
     return matrix;
 }
 
-Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
+Matrix Tile::get_wall_matrix(Direction direction, int elevation) const {
     Vector2 position = this->get_floor_position();
     float y = elevation + 0.5;
 
@@ -179,7 +179,7 @@ Matrix Tile::get_wall_matrix(Direction direction, int elevation) {
     return matrix;
 }
 
-nlohmann::json Tile::to_json() {
+nlohmann::json Tile::to_json() const {
     return nlohmann::json{
         {"id", this->id},
         {"walls", this->walls},

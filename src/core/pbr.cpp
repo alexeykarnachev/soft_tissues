@@ -126,7 +126,7 @@ MaterialPBR::MaterialPBR() = default;
 
 MaterialPBR::MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 tiling, float displacement_scale)
     : pbr_shader(&pbr_shader)
-    , dir_path(dir_path)
+    , dir_path(std::move(dir_path))
     , tiling(tiling)
     , displacement_scale(displacement_scale) {
     Material material = LoadMaterialDefault();

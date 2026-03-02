@@ -36,9 +36,9 @@ public:
     std::function<void()> fn;
 
     Tab(std::string name, int key, std::function<void()> fn)
-        : name(name)
+        : name(std::move(name))
         , key(key)
-        , fn(fn) {}
+        , fn(std::move(fn)) {}
 };
 
 static std::array<Tab, 2> TABS = {
@@ -202,7 +202,7 @@ static void update_and_draw_globals() {
 }
 
 void update_and_draw() {
-    auto io = ImGui::GetIO();
+    const auto &io = ImGui::GetIO();
     IS_GUI_INTERACTED = io.WantCaptureMouse;
 
     BeginMode3D(system::camera::CAMERA);
@@ -243,6 +243,8 @@ void update_hovered_entity() {
         // meshes
         auto meshes = globals::registry.view<component::MyMesh>();
         for (auto entity : meshes) {
+            if (id == 255) break;
+
             const auto &my_mesh = globals::registry.get<component::MyMesh>(entity);
 
             const auto &mesh = resources::get_mesh(my_mesh.mesh_key);
@@ -252,18 +254,18 @@ void update_hovered_entity() {
             DrawMesh(mesh, material, matrix);
 
             entities.push_back(entity);
-            // TODO: Check for overflow
             id += 1;
         }
 
         // light shells
         auto lights = globals::registry.view<component::Light>();
         for (auto entity : lights) {
+            if (id == 255) break;
+
             Color color = {id, 0, 0, 255};
             DrawSphere(system::transform::get_world_position(entity), 0.2, color);
 
             entities.push_back(entity);
-            // TODO: Check for overflow
             id += 1;
         }
     }

@@ -54,8 +54,8 @@ static bool update() {
 }
 
 static void draw_cursor() {
-    static float radius = 5.0;
-    static Color color = WHITE;
+    static const float radius = 5.0;
+    static const Color color = WHITE;
 
     float x = 0.5 * GetScreenWidth();
     float y = 0.5 * GetScreenHeight();
@@ -63,7 +63,7 @@ static void draw_cursor() {
 }
 
 static void draw() {
-    auto &render_state = globals::RENDER_STATE;
+    const auto &render_state = globals::RENDER_STATE;
     auto &pbr_shader = resources::get_pbr_shader();
 
     // -------------------------------------------------------------------

@@ -148,7 +148,7 @@ void update_and_draw() {
                 }
             }
         }
-    } else {
+    } else if (tile_at_cursor) {
         int room_id = world::get_tile_room_id(tile_at_cursor);
         utils::draw_room_perimiter(room_id, YELLOW);
 

@@ -1,6 +1,7 @@
-#include "utils.hpp"
+#include "editor.hpp"
 
 #include "core/world.hpp"
+#include "utils.hpp"
 #include <stdexcept>
 
 namespace soft_tissues::editor::utils {

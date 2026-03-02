@@ -19,7 +19,7 @@ Direction flip_direction(Direction direction);
 
 // -----------------------------------------------------------------------
 // texture
-Texture load_texture(std::string dir_path, std::string file_name);
+Texture load_texture(const std::string &dir_path, const std::string &file_name);
 
 // -----------------------------------------------------------------------
 // shader
@@ -29,8 +29,8 @@ Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_n
 
 // -----------------------------------------------------------------------
 // shader attributes and uniforms
-int get_attribute_loc(Shader shader, std::string name, bool is_fail_allowed = false);
-int get_uniform_loc(Shader shader, std::string name, bool is_fail_allowed = false);
+int get_attribute_loc(Shader shader, const std::string &name, bool is_fail_allowed = false);
+int get_uniform_loc(Shader shader, const std::string &name, bool is_fail_allowed = false);
 
 // -----------------------------------------------------------------------
 // math and geometry

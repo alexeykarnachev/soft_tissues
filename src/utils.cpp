@@ -27,13 +27,17 @@ Direction flip_direction(Direction direction) {
 
 // -----------------------------------------------------------------------
 // texture
-Texture load_texture(std::string dir_path, std::string file_name) {
+Texture load_texture(const std::string &dir_path, const std::string &file_name) {
     Texture texture;
     auto file_path = dir_path + "/" + file_name;
 
     if (!std::filesystem::exists(file_path)) {
         unsigned char pixels[4] = {0, 0, 0, 0};
         texture.id = rlLoadTexture(pixels, 1, 1, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
+        texture.width = 1;
+        texture.height = 1;
+        texture.mipmaps = 1;
+        texture.format = RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
         TraceLog(LOG_INFO, "Texture is missing: %s", file_path.c_str());
         return texture;
     }
@@ -87,7 +91,7 @@ Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_n
 
 // -----------------------------------------------------------------------
 // shader attributes and uniforms
-int get_attribute_loc(Shader shader, std::string name, bool is_fail_allowed) {
+int get_attribute_loc(Shader shader, const std::string &name, bool is_fail_allowed) {
     int loc = GetShaderLocationAttrib(shader, name.c_str());
     if (!is_fail_allowed && loc == -1) {
         throw std::runtime_error("Failed to find vertex attribute: " + name);
@@ -96,7 +100,7 @@ int get_attribute_loc(Shader shader, std::string name, bool is_fail_allowed) {
     return loc;
 }
 
-int get_uniform_loc(Shader shader, std::string name, bool is_fail_allowed) {
+int get_uniform_loc(Shader shader, const std::string &name, bool is_fail_allowed) {
     int loc = GetShaderLocation(shader, name.c_str());
     if (!is_fail_allowed && loc == -1) {
         throw std::runtime_error("Failed to find uniform: " + name);

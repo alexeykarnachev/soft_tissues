@@ -66,9 +66,7 @@ std::vector<ShadowPassJob> prepare_shadow_passes() {
                 TraceLog(
                     LOG_WARNING, "Shadow mapping for this type of light is not implemented"
                 );
-
-                light.casts_shadows = false;
-            } break;
+            } continue;
         }
     }
 

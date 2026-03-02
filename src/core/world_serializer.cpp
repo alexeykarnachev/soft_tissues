@@ -15,7 +15,7 @@
 
 namespace soft_tissues::world_serializer {
 
-void save(std::string file_path) {
+void save(const std::string &file_path) {
     nlohmann::json json;
 
     // -------------------------------------------------------------------
@@ -90,12 +90,8 @@ void save(std::string file_path) {
     file.close();
 }
 
-void load(std::string file_path) {
-    globals::registry.clear();
-    world::clear_state();
-
-    // -------------------------------------------------------------------
-    // load file
+void load(const std::string &file_path) {
+    // parse file before clearing state — a failed parse must not wipe the world
     std::ifstream file(file_path);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open file: " + file_path);
@@ -103,6 +99,10 @@ void load(std::string file_path) {
 
     nlohmann::json json;
     file >> json;
+    file.close();
+
+    globals::registry.clear();
+    world::clear_state();
 
     // -------------------------------------------------------------------
     // TILES
@@ -171,8 +171,6 @@ void load(std::string file_path) {
             child_entity, component::Parent{parent_entity}
         );
     }
-
-    file.close();
 }
 
 }  // namespace soft_tissues::world_serializer

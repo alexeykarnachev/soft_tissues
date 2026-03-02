@@ -24,7 +24,7 @@ static std::unordered_map<std::string, Mesh> MESHES;
 static std::unordered_set<int> FREE_SHADOW_MAP_IDXS;
 static std::array<RenderTexture2D, render_config::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
 
-static std::string get_material_pbr_dir_path(std::string key) {
+static std::string get_material_pbr_dir_path(const std::string &key) {
     return "resources/pbr/" + key + "/";
 }
 
@@ -45,7 +45,7 @@ void load() {
         "muddy_scattered_brickwork",
     };
 
-    for (auto key : material_keys) {
+    for (const auto &key : material_keys) {
         auto dir_path = get_material_pbr_dir_path(key);
         auto material_pbr = pbr::MaterialPBR(PBR_SHADER, dir_path, {1.0, 1.0}, 0.0);
         MATERIALS_PBR[key] = material_pbr;

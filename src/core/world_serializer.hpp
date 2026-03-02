@@ -4,7 +4,7 @@
 
 namespace soft_tissues::world_serializer {
 
-void save(std::string file_path);
-void load(std::string file_path);
+void save(const std::string &file_path);
+void load(const std::string &file_path);
 
 }  // namespace soft_tissues::world_serializer

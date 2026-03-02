@@ -5,8 +5,8 @@
 namespace soft_tissues::component {
 
 MyMesh::MyMesh(std::string mesh_key, std::string material_pbr_key)
-    : mesh_key(mesh_key)
-    , material_pbr_key(material_pbr_key)
+    : mesh_key(std::move(mesh_key))
+    , material_pbr_key(std::move(material_pbr_key))
     , constant_color(BLANK) {}
 
 nlohmann::json MyMesh::to_json() const {

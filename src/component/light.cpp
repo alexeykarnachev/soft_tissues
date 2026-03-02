@@ -33,7 +33,7 @@ std::string shadow_type_to_str(ShadowType type) {
     }
 }
 
-LightType str_to_light_type(std::string str) {
+LightType str_to_light_type(const std::string &str) {
     if (str == "POINT") return LightType::POINT;
     if (str == "DIRECTIONAL") return LightType::DIRECTIONAL;
     if (str == "SPOT") return LightType::SPOT;
@@ -41,7 +41,7 @@ LightType str_to_light_type(std::string str) {
     throw std::runtime_error("Invalid light type string: " + str);
 }
 
-ShadowType str_to_shadow_type(std::string str) {
+ShadowType str_to_shadow_type(const std::string &str) {
     if (str == "STATIC") return ShadowType::STATIC;
     if (str == "DYNAMIC") return ShadowType::DYNAMIC;
     throw std::runtime_error("Invalid shadow type string: " + str);
@@ -84,8 +84,8 @@ nlohmann::json Light::to_json() const {
 Light Light::from_json(const nlohmann::json &json_data) {
     // -------------------------------------------------------------------
     // common params
-    LightType light_type = str_to_light_type(json_data["light_type"]);
-    ShadowType shadow_type = str_to_shadow_type(json_data["shadow_type"]);
+    LightType light_type = str_to_light_type(json_data["light_type"].get<std::string>());
+    ShadowType shadow_type = str_to_shadow_type(json_data["shadow_type"].get<std::string>());
 
     Color color = json_data["color"];
     float intensity = json_data["intensity"];

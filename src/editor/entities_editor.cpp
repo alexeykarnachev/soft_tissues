@@ -3,10 +3,8 @@
 #include "core/prefabs.hpp"
 #include "system/transform.hpp"
 #include "editor.hpp"
-#include "entt/entity/entity.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
-#include "raylib/rlgl.h"
 #include <string>
 
 namespace soft_tissues::editor::entities_editor {

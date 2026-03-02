@@ -30,7 +30,6 @@ enum class TileWall {
     SOLID,
 };
 
-// TODO: add const to query methods (get_id, to_json, has_*_wall, get_*_matrix, etc.)
 class Tile {
 private:
     uint32_t id;
@@ -49,7 +48,7 @@ public:
         Color constant_color
     );
 
-    uint32_t get_id();
+    uint32_t get_id() const;
 
     void remove_wall(Direction direction);
     void remove_all_walls();
@@ -57,19 +56,19 @@ public:
     void set_solid_wall(Direction direction);
     void set_door_wall(Direction direction);
 
-    bool has_any_wall(Direction direction);
-    bool has_solid_wall(Direction direction);
-    bool has_door_wall(Direction direction);
-    bool has_any_wall();
-    bool has_solid_wall();
-    bool has_door_wall();
+    bool has_any_wall(Direction direction) const;
+    bool has_solid_wall(Direction direction) const;
+    bool has_door_wall(Direction direction) const;
+    bool has_any_wall() const;
+    bool has_solid_wall() const;
+    bool has_door_wall() const;
 
-    Vector2 get_floor_position();
-    Matrix get_floor_matrix();
-    Matrix get_ceil_matrix();
-    Matrix get_wall_matrix(Direction direction, int elevation);
+    Vector2 get_floor_position() const;
+    Matrix get_floor_matrix() const;
+    Matrix get_ceil_matrix() const;
+    Matrix get_wall_matrix(Direction direction, int elevation) const;
 
-    nlohmann::json to_json();
+    nlohmann::json to_json() const;
     static Tile from_json(const nlohmann::json &json_data);
 };
 
