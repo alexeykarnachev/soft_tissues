@@ -3,6 +3,7 @@
 #include "editor.hpp"
 #include "imgui/imgui.h"
 #include "raylib/raylib.h"
+#include <cstdint>
 #include <vector>
 
 namespace soft_tissues::editor::gui {
@@ -56,7 +57,7 @@ bool button_color(const char *name, ImVec4 color, bool is_enabled) {
 }
 
 void image(unsigned int texture, float width, float height) {
-    ImGui::Image((ImTextureID)(long)texture, {width, height}, {0, 1}, {1, 0});
+    ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<intptr_t>(texture)), {width, height}, {0, 1}, {1, 0});
 }
 
 void image(Texture texture, float width, float height) {

@@ -11,6 +11,11 @@ namespace soft_tissues::editor::entities_editor {
 
 entt::entity ENTITY = entt::null;
 
+void reset() {
+    ENTITY = entt::null;
+    gizmo::detach();
+}
+
 static void update_and_draw_transformation() {
     auto &tr = globals::registry.get<component::Transform>(ENTITY);
 

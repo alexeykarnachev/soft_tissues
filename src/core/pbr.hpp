@@ -43,6 +43,11 @@ public:
     PBRShader();
     PBRShader(const std::string &vs_file, const std::string &fs_file);
 
+    PBRShader(const PBRShader &) = delete;
+    PBRShader &operator=(const PBRShader &) = delete;
+    PBRShader(PBRShader &&) = default;
+    PBRShader &operator=(PBRShader &&) = default;
+
     // Returns Shader by value (shallow copy sharing GPU handle). Do not call UnloadShader() on the copy.
     Shader get_shader() const;
     void unload();
@@ -72,6 +77,11 @@ private:
 public:
     MaterialPBR();
     MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 tiling, float displacement_scale);
+
+    MaterialPBR(const MaterialPBR &) = delete;
+    MaterialPBR &operator=(const MaterialPBR &) = delete;
+    MaterialPBR(MaterialPBR &&) = default;
+    MaterialPBR &operator=(MaterialPBR &&) = default;
 
     Texture get_texture() const;
     // Returns Material by value (shallow copy sharing internal maps pointer). Do not call UnloadMaterial() on the copy.

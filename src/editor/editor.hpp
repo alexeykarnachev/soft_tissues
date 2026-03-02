@@ -20,6 +20,7 @@ void update_hovered_entity();
 // -----------------------------------------------------------------------
 namespace rooms_editor {
 
+void reset();
 void update_and_draw();
 
 }  // namespace rooms_editor
@@ -27,6 +28,7 @@ void update_and_draw();
 // -----------------------------------------------------------------------
 namespace entities_editor {
 
+void reset();
 void update_and_draw();
 
 }  // namespace entities_editor

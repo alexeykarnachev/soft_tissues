@@ -5,6 +5,7 @@
 #include "raylib/rlgl.h"
 #include "utils.hpp"
 #include <filesystem>
+#include <stdexcept>
 
 namespace soft_tissues::pbr {
 
@@ -117,6 +118,9 @@ void PBRShader::set_displacement_scale(float scale) {
 }
 
 const PBRShader::LightLocs &PBRShader::get_light_locs(int idx) const {
+    if (idx < 0 || idx >= render_config::MAX_N_LIGHTS) {
+        throw std::runtime_error("Light index out of bounds");
+    }
     return light_locs[idx];
 }
 

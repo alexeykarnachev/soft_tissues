@@ -2,6 +2,7 @@
 
 #include "component/component.hpp"
 #include "globals.hpp"
+#include "prefabs.hpp"
 #include "tile.hpp"
 #include "world.hpp"
 #include "nlohmann/json.hpp"
@@ -32,6 +33,18 @@ void save(const std::string &file_path) {
     json["entities"] = nlohmann::json::array();
     auto view = globals::registry.view<entt::entity>();
     for (auto entity : view) {
+        // skip entities with no serializable components
+        bool has_serializable =
+            globals::registry.any_of<
+                component::Transform,
+                component::MyMesh,
+                component::Parent,
+                component::Light,
+                component::Player,
+                component::Flashlight
+            >(entity);
+        if (!has_serializable) continue;
+
         nlohmann::json entity_json;
 
         // id
@@ -170,6 +183,13 @@ void load(const std::string &file_path) {
         globals::registry.emplace<component::Parent>(
             child_entity, component::Parent{parent_entity}
         );
+    }
+
+    // ensure a player exists — corrupt or hand-edited saves may lack one
+    auto player_view = globals::registry.view<component::Player>();
+    if (player_view.empty()) {
+        TraceLog(LOG_WARNING, "Loaded world has no player, spawning default");
+        prefabs::spawn_player(world::ORIGIN);
     }
 }
 

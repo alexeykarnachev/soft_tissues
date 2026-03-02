@@ -2,7 +2,7 @@ APPNAME := soft_tissues
 
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -Wall -pedantic -std=c++2a -I./deps/include -I./src
+CXXFLAGS := -Wall -pedantic -std=c++2a -I./deps/include -I./src -MMD -MP
 LDFLAGS := -L./deps/lib/linux -lraylib -limgui -lGL -lpthread -ldl
 
 CXXFLAGS += -O3
@@ -16,18 +16,19 @@ OBJDIR := $(BUILDDIR)/obj
 TARGET := $(BUILDDIR)/$(APPNAME)
 
 # Source files and object files
-SRCFILES = \
-	$(shell find $(SRCDIR) -name '*.cpp') \
-	./deps/src/ImGuiFileDialog.cpp
-
+SRCFILES := $(shell find $(SRCDIR) -name '*.cpp')
 OBJFILES := $(SRCFILES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+DEPFILES := $(OBJFILES:.o=.d)
+
+# External source compiled alongside (not tracked for deps)
+EXTRA_SRCS := ./deps/src/ImGuiFileDialog.cpp
 
 # Default target
 all: $(TARGET)
 
 # Build target
 $(TARGET): $(OBJFILES)
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(EXTRA_SRCS) $(LDFLAGS)
 
 # Build object files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
@@ -41,5 +42,7 @@ $(OBJDIR):
 # Clean up build files
 clean:
 	rm -rf $(OBJDIR) $(TARGET)
+
+-include $(DEPFILES)
 
 .PHONY: all clean

@@ -182,6 +182,8 @@ static void update_and_draw_globals() {
     if (ImGuiFileDialog::Instance()->Display("OPEN_WORLD")) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
+            entities_editor::reset();
+            rooms_editor::reset();
             world_serializer::load(file_path);
             TraceLog(LOG_INFO, "World opened: %s", file_path.c_str());
         }
@@ -193,6 +195,8 @@ static void update_and_draw_globals() {
     // reset
     ImGui::SameLine(0.0, 5.0);
     if (gui::button_color("Reset", gui::COLOR_RED)) {
+        entities_editor::reset();
+        rooms_editor::reset();
         globals::registry.clear();
         world::reset();
         prefabs::spawn_player(world::ORIGIN);

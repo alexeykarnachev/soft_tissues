@@ -47,8 +47,7 @@ void load() {
 
     for (const auto &key : material_keys) {
         auto dir_path = get_material_pbr_dir_path(key);
-        auto material_pbr = pbr::MaterialPBR(PBR_SHADER, dir_path, {1.0, 1.0}, 0.0);
-        MATERIALS_PBR[key] = material_pbr;
+        MATERIALS_PBR.emplace(key, pbr::MaterialPBR(PBR_SHADER, dir_path, {1.0, 1.0}, 0.0));
     }
 
     // -------------------------------------------------------------------

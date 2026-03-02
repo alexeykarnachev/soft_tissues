@@ -33,7 +33,7 @@ enum class TileWall {
 
 class Tile {
 private:
-    uint32_t id;
+    uint32_t id = 0;
     std::array<TileWall, 4> walls = {TileWall::NONE};
 
 public:

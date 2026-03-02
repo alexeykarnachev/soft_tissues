@@ -11,6 +11,11 @@ static int ROOM_ID = -1;
 static std::vector<tile::Tile *> GHOST_TILES;
 static tile::TileMaterials MATERIALS;
 
+void reset() {
+    ROOM_ID = -1;
+    GHOST_TILES.clear();
+}
+
 static void select_room(int id) {
     ROOM_ID = id;
     auto tiles = world::get_room_tiles(id);
