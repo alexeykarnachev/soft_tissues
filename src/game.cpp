@@ -41,6 +41,7 @@ static void update_game_state() {
 
 static bool update() {
     bool should_close = globals::update();
+    should_close = should_close || (IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_F4));
     update_game_state();
 
     if (globals::GAME_STATE == globals::GameState::PLAY) {
@@ -128,18 +129,10 @@ static void draw() {
     EndDrawing();
 }
 
-static void on_shadow_data_destroyed(entt::registry &, entt::entity entity) {
-    auto *sd = globals::registry.try_get<component::ShadowData>(entity);
-    if (sd != nullptr && sd->shadow_map != nullptr) {
-        resources::free_shadow_map(sd->shadow_map);
-    }
-}
-
-static void on_light_destroyed(entt::registry &reg, entt::entity entity) {
+static void on_shadow_data_destroyed(entt::registry &reg, entt::entity entity) {
     auto *sd = reg.try_get<component::ShadowData>(entity);
     if (sd != nullptr && sd->shadow_map != nullptr) {
         resources::free_shadow_map(sd->shadow_map);
-        sd->shadow_map = nullptr;
     }
 }
 
@@ -151,7 +144,6 @@ void run() {
 
     // register cleanup hooks
     globals::registry.on_destroy<component::ShadowData>().connect<&on_shadow_data_destroyed>();
-    globals::registry.on_destroy<component::Light>().connect<&on_light_destroyed>();
 
     // load initial scene
     globals::registry.clear();

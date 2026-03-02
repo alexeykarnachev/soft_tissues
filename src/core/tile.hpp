@@ -30,6 +30,7 @@ enum class TileWall {
     SOLID,
 };
 
+// TODO: add const to query methods (get_id, to_json, has_*_wall, get_*_matrix, etc.)
 class Tile {
 private:
     uint32_t id;

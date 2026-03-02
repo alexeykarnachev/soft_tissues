@@ -12,9 +12,7 @@ GameState GAME_STATE = GameState::PLAY;
 
 bool update() {
     FRAME_DT = GetFrameTime();
-
-    bool is_alt_f4_pressed = IsKeyDown(KEY_LEFT_ALT) && IsKeyPressed(KEY_F4);
-    return WindowShouldClose() || is_alt_f4_pressed;
+    return WindowShouldClose();
 }
 
 }  // namespace soft_tissues::globals
