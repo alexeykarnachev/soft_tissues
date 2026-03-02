@@ -23,10 +23,10 @@ entt::entity spawn_mesh(
 ) {
     auto entity = globals::registry.create();
     auto transform = component::Transform(position);
-    auto my_mesh = component::MyMesh(mesh_key, material_pbr_key);
+    auto my_mesh = component::MyMesh(std::move(mesh_key), std::move(material_pbr_key));
 
     globals::registry.emplace<component::Transform>(entity, transform);
-    globals::registry.emplace<component::MyMesh>(entity, my_mesh);
+    globals::registry.emplace<component::MyMesh>(entity, std::move(my_mesh));
 
     return entity;
 }
@@ -41,10 +41,10 @@ entt::entity spawn_light(
     auto entity = globals::registry.create();
     auto transform = component::Transform(position);
 
-    component::Light light(light_type, color, intensity, params);
+    component::Light light(light_type, color, intensity, std::move(params));
 
     globals::registry.emplace<component::Transform>(entity, transform);
-    globals::registry.emplace<component::Light>(entity, light);
+    globals::registry.emplace<component::Light>(entity, std::move(light));
 
     return entity;
 }

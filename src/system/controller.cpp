@@ -22,7 +22,7 @@ static void update_translation() {
     if (length <= EPSILON) return;
 
     auto view = globals::registry.view<component::Player>();
-    if (view.size() == 0) return;
+    if (view.empty()) return;
     auto player = view.front();
 
     Vector3 forward = transform::get_forward(player);
@@ -54,7 +54,7 @@ static void update_rotation() {
     if (yaw_delta == 0 && pitch_delta == 0) return;
 
     auto view = globals::registry.view<component::Player>();
-    if (view.size() == 0) return;
+    if (view.empty()) return;
     auto player = view.front();
     auto &tr = globals::registry.get<component::Transform>(player);
 
@@ -68,7 +68,7 @@ static void update_rotation() {
 
 static void update_flashlight() {
     auto view = globals::registry.view<component::Flashlight>();
-    if (view.size() == 0) return;
+    if (view.empty()) return;
     auto flashlight = view.front();
     auto &light = globals::registry.get<component::Light>(flashlight);
 

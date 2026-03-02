@@ -133,6 +133,7 @@ static void on_shadow_data_destroyed(entt::registry &reg, entt::entity entity) {
     auto *sd = reg.try_get<component::ShadowData>(entity);
     if (sd != nullptr && sd->shadow_map != nullptr) {
         resources::free_shadow_map(sd->shadow_map);
+        sd->shadow_map = nullptr;
     }
 }
 

@@ -6,6 +6,7 @@
 #include "core/world.hpp"
 #include "system/render.hpp"
 #include "system/transform.hpp"
+#include "utils.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 
@@ -103,7 +104,7 @@ void draw_meshes(const RenderState &render_state) {
 
 void draw_player() {
     auto view = globals::registry.view<component::Player>();
-    if (view.size() == 0) return;
+    if (view.empty()) return;
     auto player = view.front();
 
     Vector3 position = transform::get_world_position(player);

@@ -173,7 +173,7 @@ std::vector<tile::Tile *> get_tiles_between_corners(
 
 int add_room() {
     for (auto &[room_id, room_tiles] : ROOM_ID_TO_TILES) {
-        if (room_tiles.size() == 0) return room_id;
+        if (room_tiles.empty()) return room_id;
     }
 
     int id = 0;

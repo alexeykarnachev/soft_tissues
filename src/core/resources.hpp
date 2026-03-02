@@ -2,6 +2,7 @@
 
 #include "pbr.hpp"
 #include "raylib/raylib.h"
+#include <string>
 #include <vector>
 
 namespace soft_tissues::resources {

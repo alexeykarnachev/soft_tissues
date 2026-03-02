@@ -133,12 +133,12 @@ MaterialPBR::MaterialPBR(PBRShader &pbr_shader, std::string dir_path, Vector2 ti
     material.shader = pbr_shader.get_shader();
 
     // texture maps
-    material.maps[MATERIAL_MAP_ALBEDO].texture = load_texture(dir_path, "albedo.png");
-    material.maps[MATERIAL_MAP_METALNESS].texture = load_texture(dir_path, "metalness.png");
-    material.maps[MATERIAL_MAP_NORMAL].texture = load_texture(dir_path, "normal.png");
-    material.maps[MATERIAL_MAP_ROUGHNESS].texture = load_texture(dir_path, "roughness.png");
-    material.maps[MATERIAL_MAP_OCCLUSION].texture = load_texture(dir_path, "occlusion.png");
-    material.maps[MATERIAL_MAP_HEIGHT].texture = load_texture(dir_path, "height.png");
+    material.maps[MATERIAL_MAP_ALBEDO].texture = load_texture(this->dir_path, "albedo.png");
+    material.maps[MATERIAL_MAP_METALNESS].texture = load_texture(this->dir_path, "metalness.png");
+    material.maps[MATERIAL_MAP_NORMAL].texture = load_texture(this->dir_path, "normal.png");
+    material.maps[MATERIAL_MAP_ROUGHNESS].texture = load_texture(this->dir_path, "roughness.png");
+    material.maps[MATERIAL_MAP_OCCLUSION].texture = load_texture(this->dir_path, "occlusion.png");
+    material.maps[MATERIAL_MAP_HEIGHT].texture = load_texture(this->dir_path, "height.png");
 
     this->material = material;
 }

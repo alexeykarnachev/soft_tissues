@@ -127,13 +127,13 @@ void load(const std::string &file_path) {
             auto transform = component::Transform::from_json(
                 entity_json["Transform"]
             );
-            globals::registry.emplace<component::Transform>(new_entity, transform);
+            globals::registry.emplace<component::Transform>(new_entity, std::move(transform));
         }
 
         // MyMesh
         if (entity_json.contains("MyMesh")) {
             auto my_mesh = component::MyMesh::from_json(entity_json["MyMesh"]);
-            globals::registry.emplace<component::MyMesh>(new_entity, my_mesh);
+            globals::registry.emplace<component::MyMesh>(new_entity, std::move(my_mesh));
         }
 
         // Parent

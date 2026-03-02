@@ -16,8 +16,6 @@
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
 #include <array>
-#include <cmath>
-#include <cstdio>
 #include <functional>
 
 namespace soft_tissues::editor {

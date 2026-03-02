@@ -16,7 +16,7 @@ static void select_room(int id) {
     auto tiles = world::get_room_tiles(id);
 
     // NOTE: Assume that the room materials is the first tile materials
-    if (tiles.size() > 0) MATERIALS = tiles[0]->materials;
+    if (!tiles.empty()) MATERIALS = tiles[0]->materials;
 }
 
 static void draw_tile_ghost(tile::Tile *tile, Color color) {

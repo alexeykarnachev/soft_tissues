@@ -27,7 +27,6 @@ void update_and_draw();
 // -----------------------------------------------------------------------
 namespace entities_editor {
 
-void update_entity_picking();
 void update_and_draw();
 
 }  // namespace entities_editor

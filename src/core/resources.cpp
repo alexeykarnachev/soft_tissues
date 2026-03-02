@@ -125,7 +125,7 @@ std::vector<std::string> get_material_pbr_keys() {
 }
 
 RenderTexture2D *get_shadow_map() {
-    if (FREE_SHADOW_MAP_IDXS.size() == 0) {
+    if (FREE_SHADOW_MAP_IDXS.empty()) {
         TraceLog(LOG_WARNING, "Shadow map pool exhausted");
         return nullptr;
     }
