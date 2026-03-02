@@ -48,7 +48,7 @@ void save(const std::string &file_path) {
         nlohmann::json entity_json;
 
         // id
-        entity_json["id"] = (uint32_t)entity;
+        entity_json["id"] = static_cast<uint32_t>(entity);
 
         // Transform
         if (globals::registry.all_of<component::Transform>(entity)) {

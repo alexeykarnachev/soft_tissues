@@ -6,11 +6,11 @@
 
 namespace soft_tissues::render_config {
 
-static constexpr int MAX_N_LIGHTS = 8;
-static constexpr int MAX_N_SHADOW_MAPS = MAX_N_LIGHTS;
-static constexpr int SHADOW_MAP_SIZE = 1024;
-static constexpr int SHADOW_MAP_TEXTURE_SLOT_OFFSET = 10;
-static constexpr float SHADOW_CAMERA_FOV = 90.0;
+inline constexpr int MAX_N_LIGHTS = 8;
+inline constexpr int MAX_N_SHADOW_MAPS = MAX_N_LIGHTS;
+inline constexpr int SHADOW_MAP_SIZE = 1024;
+inline constexpr int SHADOW_MAP_TEXTURE_SLOT_OFFSET = 10;
+inline constexpr float SHADOW_CAMERA_FOV = 90.0;
 
 }  // namespace soft_tissues::render_config
 
@@ -25,17 +25,17 @@ public:
     };
 
 private:
-    Shader shader;
+    Shader shader = {};
 
-    int is_shadow_map_pass_loc;
-    int camera_pos_loc;
-    int is_light_enabled_loc;
-    int constant_color_loc;
-    int shadow_map_bias_loc;
-    int shadow_map_max_dist_loc;
-    int n_lights_loc;
-    int tiling_loc;
-    int displacement_scale_loc;
+    int is_shadow_map_pass_loc = -1;
+    int camera_pos_loc = -1;
+    int is_light_enabled_loc = -1;
+    int constant_color_loc = -1;
+    int shadow_map_bias_loc = -1;
+    int shadow_map_max_dist_loc = -1;
+    int n_lights_loc = -1;
+    int tiling_loc = -1;
+    int displacement_scale_loc = -1;
 
     std::array<LightLocs, render_config::MAX_N_LIGHTS> light_locs;
 

@@ -89,18 +89,18 @@ entt::entity spawn_player(Vector2 position) {
 
     // flashlight
     {
-        static const Vector3 position = {0.0, gameplay_config::PLAYER_HEIGHT, 0.0};
+        static const Vector3 POSITION = {0.0, gameplay_config::PLAYER_HEIGHT, 0.0};
 
-        static const component::LightType type = component::LightType::SPOT;
-        static const Color color = {255, 255, 220, 255};
-        static const auto intensity = 50.0;
+        static const component::LightType TYPE = component::LightType::SPOT;
+        static const Color COLOR = {255, 255, 220, 255};
+        static const float INTENSITY = 50.0f;
 
-        static const Vector3 attenuation = {1.0, 1.2, 0.2};
-        static const float inner_cutoff = 0.95;
-        static const float outer_cutoff = 0.80;
+        static const Vector3 ATTENUATION = {1.0, 1.2, 0.2};
+        static const float INNER_CUTOFF = 0.95;
+        static const float OUTER_CUTOFF = 0.80;
 
-        component::LightParams params = component::SpotParams{attenuation, inner_cutoff, outer_cutoff};
-        auto entity = spawn_light(position, type, color, intensity, params);
+        component::LightParams params = component::SpotParams{ATTENUATION, INNER_CUTOFF, OUTER_CUTOFF};
+        auto entity = spawn_light(POSITION, TYPE, COLOR, INTENSITY, params);
         globals::registry.emplace<component::Flashlight>(entity);
 
         flashlight = entity;

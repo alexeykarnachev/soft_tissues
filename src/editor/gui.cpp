@@ -104,7 +104,7 @@ void tile_material_picker(
 
 void spot_light_params(component::Light *light) {
     auto &p = std::get<component::SpotParams>(light->params);
-    float *attenuation = (float *)&p.attenuation;
+    float *attenuation = reinterpret_cast<float *>(&p.attenuation);
     ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
     ImGui::SliderFloat("Inner cutoff", &p.inner_cutoff, 0.0, 1.0);
     ImGui::SliderFloat("Outer cutoff", &p.outer_cutoff, 0.0, 1.0);
@@ -112,7 +112,7 @@ void spot_light_params(component::Light *light) {
 
 void point_light_params(component::Light *light) {
     auto &p = std::get<component::PointParams>(light->params);
-    float *attenuation = (float *)&p.attenuation;
+    float *attenuation = reinterpret_cast<float *>(&p.attenuation);
     ImGui::SliderFloat2("Attenuation", &attenuation[1], 0.0, 5.0);
 }
 

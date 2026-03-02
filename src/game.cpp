@@ -54,12 +54,12 @@ static bool update() {
 }
 
 static void draw_cursor() {
-    static const float radius = 5.0;
-    static const Color color = WHITE;
+    static const float RADIUS = 5.0;
+    static const Color COLOR = WHITE;
 
     float x = 0.5 * GetScreenWidth();
     float y = 0.5 * GetScreenHeight();
-    DrawCircle(x, y, radius, color);
+    DrawCircle(x, y, RADIUS, COLOR);
 }
 
 static void draw() {

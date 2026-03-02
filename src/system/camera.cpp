@@ -19,9 +19,9 @@ Camera3D CAMERA = {
 };
 
 static void update_editor_mode() {
-    static const float rot_speed = 0.003;
-    static const float move_speed = 0.01;
-    static const float zoom_speed = 1.0;
+    static const float ROT_SPEED = 0.003;
+    static const float MOVE_SPEED = 0.01;
+    static const float ZOOM_SPEED = 1.0;
 
     bool is_mmb_down = IsMouseButtonDown(MOUSE_BUTTON_MIDDLE);
     bool is_shift_down = IsKeyDown(KEY_LEFT_SHIFT);
@@ -32,14 +32,14 @@ static void update_editor_mode() {
 
     // move
     if (is_moving) {
-        CameraMoveRight(&CAMERA, -move_speed * mouse_delta.x, true);
+        CameraMoveRight(&CAMERA, -MOVE_SPEED * mouse_delta.x, true);
 
         // camera basis
         auto z = GetCameraForward(&CAMERA);
         auto x = Vector3Normalize(Vector3CrossProduct(z, {0.0, 1.0, 0.0}));
         auto y = Vector3Normalize(Vector3CrossProduct(x, z));
 
-        Vector3 up = Vector3Scale(y, move_speed * mouse_delta.y);
+        Vector3 up = Vector3Scale(y, MOVE_SPEED * mouse_delta.y);
 
         CAMERA.position = Vector3Add(CAMERA.position, up);
         CAMERA.target = Vector3Add(CAMERA.target, up);
@@ -47,12 +47,12 @@ static void update_editor_mode() {
 
     // rotate
     if (is_rotating) {
-        CameraYaw(&CAMERA, -rot_speed * mouse_delta.x, true);
-        CameraPitch(&CAMERA, rot_speed * mouse_delta.y, true, true, false);
+        CameraYaw(&CAMERA, -ROT_SPEED * mouse_delta.x, true);
+        CameraPitch(&CAMERA, ROT_SPEED * mouse_delta.y, true, true, false);
     }
 
     // zoom
-    CameraMoveToTarget(&CAMERA, -GetMouseWheelMove() * zoom_speed);
+    CameraMoveToTarget(&CAMERA, -GetMouseWheelMove() * ZOOM_SPEED);
 }
 
 static void update_first_person_mode() {

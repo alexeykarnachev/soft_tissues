@@ -22,22 +22,22 @@ static void update_and_draw_transformation() {
     ImGui::SeparatorText("Transformation");
 
     {
-        static float speed = 0.1;
-        float *v = (float *)&tr.position;
+        static const float SPEED = 0.1;
+        float *v = reinterpret_cast<float *>(&tr.position);
 
         gui::push_id();
-        ImGui::DragFloat3("Position", v, speed);
+        ImGui::DragFloat3("Position", v, SPEED);
         gui::pop_id();
     }
 
     {
-        static float speed = PI / 16.0;
-        static float min = -2.0 * PI;
-        static float max = 2.0 * PI;
-        float *v = (float *)&tr.rotation;
+        static const float SPEED = PI / 16.0;
+        static const float MIN = -2.0 * PI;
+        static const float MAX = 2.0 * PI;
+        float *v = reinterpret_cast<float *>(&tr.rotation);
 
         gui::push_id();
-        ImGui::DragFloat3("Rotation", v, speed, min, max);
+        ImGui::DragFloat3("Rotation", v, SPEED, MIN, MAX);
         gui::pop_id();
     }
 }
@@ -81,7 +81,7 @@ static void update_and_draw_light() {
 
         // color
         auto color = ColorNormalize(light->color);
-        float *color_p = (float *)&color;
+        float *color_p = reinterpret_cast<float *>(&color);
         if (ImGui::ColorEdit3("Color", color_p)) {
             light->color = ColorFromNormalized(color);
         }
@@ -124,12 +124,14 @@ static void update_and_draw_light() {
                             light->params = component::PointParams{{1.0, 1.5, 0.75}};
                             light->color = GREEN;
                             light->intensity = 20.0;
+                            light->casts_shadows = false;
                         } break;
 
                         case component::LightType::DIRECTIONAL: {
                             light->params = component::DirectionalParams{};
                             light->color = YELLOW;
                             light->intensity = 5.0;
+                            light->casts_shadows = false;
                             system::transform::set_forward(ENTITY,{0.0, -1.0, 0.0});
                         } break;
 
@@ -146,6 +148,7 @@ static void update_and_draw_light() {
                             light->params = component::AmbientParams{};
                             light->color = WHITE;
                             light->intensity = 0.1;
+                            light->casts_shadows = false;
                         } break;
 
                         default: break;

@@ -96,21 +96,21 @@ bool Tile::has_door_wall(Direction direction) const {
 
 bool Tile::has_any_wall() const {
     for (int i = 0; i < 4; ++i) {
-        if (this->has_any_wall((Direction)i)) return true;
+        if (this->has_any_wall(static_cast<Direction>(i))) return true;
     }
     return false;
 }
 
 bool Tile::has_solid_wall() const {
     for (int i = 0; i < 4; ++i) {
-        if (this->has_solid_wall((Direction)i)) return true;
+        if (this->has_solid_wall(static_cast<Direction>(i))) return true;
     }
     return false;
 }
 
 bool Tile::has_door_wall() const {
     for (int i = 0; i < 4; ++i) {
-        if (this->has_door_wall((Direction)i)) return true;
+        if (this->has_door_wall(static_cast<Direction>(i))) return true;
     }
     return false;
 }

@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace soft_tissues::utils {
@@ -135,24 +136,25 @@ RayCollision get_cursor_floor_rect_collision(Rectangle rect, Camera camera) {
 // -----------------------------------------------------------------------
 // mesh
 void gen_mesh_tangents(Mesh *mesh) {
-    if ((mesh->vertices == NULL) || (mesh->texcoords == NULL)) {
+    if ((mesh->vertices == NULL) || (mesh->texcoords == NULL)
+        || (mesh->normals == NULL) || (mesh->indices == NULL)) {
         TRACELOG(
             LOG_WARNING,
-            "MESH: Tangents generation requires texcoord vertex attribute data"
+            "MESH: Tangents generation requires vertices, texcoords, normals, and indices"
         );
         return;
     }
 
     if (mesh->tangents == NULL)
-        mesh->tangents = (float *)malloc(mesh->vertexCount * 4 * sizeof(float));
+        mesh->tangents = static_cast<float *>(RL_MALLOC(mesh->vertexCount * 4 * sizeof(float)));
     else {
-        free(mesh->tangents);
-        mesh->tangents = (float *)malloc(mesh->vertexCount * 4 * sizeof(float));
+        RL_FREE(mesh->tangents);
+        mesh->tangents = static_cast<float *>(RL_MALLOC(mesh->vertexCount * 4 * sizeof(float)));
     }
     memset(mesh->tangents, 0, mesh->vertexCount * 4 * sizeof(float));
 
-    Vector3 *tan1 = (Vector3 *)malloc(mesh->vertexCount * sizeof(Vector3));
-    Vector3 *tan2 = (Vector3 *)malloc(mesh->vertexCount * sizeof(Vector3));
+    Vector3 *tan1 = static_cast<Vector3 *>(RL_MALLOC(mesh->vertexCount * sizeof(Vector3)));
+    Vector3 *tan2 = static_cast<Vector3 *>(RL_MALLOC(mesh->vertexCount * sizeof(Vector3)));
     memset(tan1, 0, mesh->vertexCount * sizeof(Vector3));
     memset(tan2, 0, mesh->vertexCount * sizeof(Vector3));
 

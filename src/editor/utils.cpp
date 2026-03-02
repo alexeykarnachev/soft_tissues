@@ -9,9 +9,9 @@ namespace soft_tissues::editor::utils {
 using namespace soft_tissues::utils;
 
 static void draw_tile_perimiter(tile::Tile *tile, Color solid_color, Color door_color) {
-    static float e = 3e-3;
-    static float w = 0.2;
-    static float h = w + 1.0;
+    static const float E = 3e-3;
+    static const float W = 0.2;
+    static const float H = W + 1.0;
 
     if (tile == nullptr) {
         throw std::runtime_error("Can't draw tile perimiter for a nullptr tile");
@@ -22,46 +22,46 @@ static void draw_tile_perimiter(tile::Tile *tile, Color solid_color, Color door_
     // TODO: Refactor these:
 
     // north
-    Vector3 pos = {center.x, e, center.y - 0.5f};
-    Vector2 size = {h, w};
+    Vector3 pos = {center.x, E, center.y - 0.5f};
+    Vector2 size = {H, W};
 
     if (tile->has_solid_wall(Direction::NORTH)) {
         DrawPlane(pos, size, solid_color);
     } else if (tile->has_door_wall(Direction::NORTH)) {
-        pos.y += e;
+        pos.y += E;
         DrawPlane(pos, size, door_color);
     }
 
     // south
-    pos = {center.x, e, center.y + 0.5f};
-    size = {h, w};
+    pos = {center.x, E, center.y + 0.5f};
+    size = {H, W};
 
     if (tile->has_solid_wall(Direction::SOUTH)) {
         DrawPlane(pos, size, solid_color);
     } else if (tile->has_door_wall(Direction::SOUTH)) {
-        pos.y += e;
+        pos.y += E;
         DrawPlane(pos, size, door_color);
     }
 
     // west
-    pos = {center.x - 0.5f, e, center.y};
-    size = {w, h};
+    pos = {center.x - 0.5f, E, center.y};
+    size = {W, H};
 
     if (tile->has_solid_wall(Direction::WEST)) {
         DrawPlane(pos, size, solid_color);
     } else if (tile->has_door_wall(Direction::WEST)) {
-        pos.y += e;
+        pos.y += E;
         DrawPlane(pos, size, door_color);
     }
 
     // east
-    pos = {center.x + 0.5f, e, center.y};
-    size = {w, h};
+    pos = {center.x + 0.5f, E, center.y};
+    size = {W, H};
 
     if (tile->has_solid_wall(Direction::EAST)) {
         DrawPlane(pos, size, solid_color);
     } else if (tile->has_door_wall(Direction::EAST)) {
-        pos.y += e;
+        pos.y += E;
         DrawPlane(pos, size, door_color);
     }
 }

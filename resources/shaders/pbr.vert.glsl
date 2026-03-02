@@ -51,7 +51,7 @@ void main() {
 
     for (int i = 0; i < u_n_lights; ++i) {
         mat4 vp_mat = u_lights[i].vp_mat;
-        vec4 ndc = vp_mat * u_model_mat * vec4(a_position, 1.0);
+        vec4 ndc = vp_mat * u_model_mat * vec4(position, 1.0);
         v_light_positions[i] = ndc;
     }
 }

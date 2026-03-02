@@ -130,19 +130,19 @@ std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
     uint32_t id = tile->get_id();
 
     if (row > 0) {
-        neighbors[(int)Direction::NORTH] = &TILES[id - N_COLS];
+        neighbors[static_cast<int>(Direction::NORTH)] = &TILES[id - N_COLS];
     }
 
     if (row < (N_ROWS - 1)) {
-        neighbors[(int)Direction::SOUTH] = &TILES[id + N_COLS];
+        neighbors[static_cast<int>(Direction::SOUTH)] = &TILES[id + N_COLS];
     }
 
     if (col > 0) {
-        neighbors[(int)Direction::WEST] = &TILES[id - 1];
+        neighbors[static_cast<int>(Direction::WEST)] = &TILES[id - 1];
     }
 
     if (col < (N_COLS - 1)) {
-        neighbors[(int)Direction::EAST] = &TILES[id + 1];
+        neighbors[static_cast<int>(Direction::EAST)] = &TILES[id + 1];
     }
 
     return neighbors;
@@ -206,7 +206,7 @@ static void fix_tile_walls(tile::Tile *tile) {
     auto neighbors = world::get_tile_neighbors(tile);
 
     for (size_t i = 0; i < neighbors.size(); ++i) {
-        Direction tile_direction = (Direction)i;
+        Direction tile_direction = static_cast<Direction>(i);
         Direction nb_direction = flip_direction(tile_direction);
         auto nb = neighbors[i];
 

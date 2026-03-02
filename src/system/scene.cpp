@@ -76,7 +76,7 @@ void draw_tiles(const RenderState &render_state) {
         // draw solid walls
         const auto &wall_material_pbr = resources::get_material_pbr(tile.materials.wall_key);
         for (int i_direction = 0; i_direction < 4; ++i_direction) {
-            Direction direction = (Direction)i_direction;
+            Direction direction = static_cast<Direction>(i_direction);
 
             if (tile.has_solid_wall(direction)) {
                 for (int i_height = 0; i_height < world::HEIGHT; ++i_height) {

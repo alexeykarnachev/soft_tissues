@@ -58,7 +58,7 @@ static void end() {
 void load() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    GLFWwindow *window = (GLFWwindow *)GetWindowHandle();
+    GLFWwindow *window = static_cast<GLFWwindow *>(GetWindowHandle());
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460 core");
     ImGui::StyleColorsDark();
@@ -78,11 +78,19 @@ void load() {
     PICKING_TEXTURE = rlLoadTexture(
         NULL, PICKING_FBO_SIZE, PICKING_FBO_SIZE, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1
     );
+    unsigned int picking_depth = rlLoadTextureDepth(PICKING_FBO_SIZE, PICKING_FBO_SIZE, true);
     rlActiveDrawBuffers(1);
     rlFramebufferAttach(
         PICKING_FBO,
         PICKING_TEXTURE,
         RL_ATTACHMENT_COLOR_CHANNEL0,
+        RL_ATTACHMENT_TEXTURE2D,
+        0
+    );
+    rlFramebufferAttach(
+        PICKING_FBO,
+        picking_depth,
+        RL_ATTACHMENT_DEPTH,
         RL_ATTACHMENT_TEXTURE2D,
         0
     );
@@ -204,11 +212,10 @@ static void update_and_draw_globals() {
 }
 
 void update_and_draw() {
-    const auto &io = ImGui::GetIO();
-    IS_GUI_INTERACTED = io.WantCaptureMouse;
-
     BeginMode3D(system::camera::CAMERA);
     begin();
+
+    IS_GUI_INTERACTED = ImGui::GetIO().WantCaptureMouse;
 
     ImGui::Begin("Editor", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     {
@@ -280,28 +287,30 @@ void update_hovered_entity() {
     // Pick the pixel under the mouse cursor
     // TODO: Factor out pixel picking (the same is in gizmo.cpp)
     Vector2 mouse_position = GetMousePosition();
-    unsigned char *pixels = (unsigned char *)rlReadTexturePixels(
+    auto *pixels = static_cast<unsigned char *>(rlReadTexturePixels(
         PICKING_TEXTURE,
         PICKING_FBO_SIZE,
         PICKING_FBO_SIZE,
         RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
-    );
+    ));
 
-    float x_fract = Clamp(mouse_position.x / screen_width, 0.0, 1.0);
-    float y_fract = Clamp(1.0 - (mouse_position.y / screen_height), 0.0, 1.0);
-    int x = Clamp((int)(PICKING_FBO_SIZE * x_fract), 0, PICKING_FBO_SIZE - 1);
-    int y = Clamp((int)(PICKING_FBO_SIZE * y_fract), 0, PICKING_FBO_SIZE - 1);
+    if (pixels != nullptr) {
+        float x_fract = Clamp(mouse_position.x / screen_width, 0.0, 1.0);
+        float y_fract = Clamp(1.0 - (mouse_position.y / screen_height), 0.0, 1.0);
+        int x = Clamp(static_cast<int>(PICKING_FBO_SIZE * x_fract), 0, PICKING_FBO_SIZE - 1);
+        int y = Clamp(static_cast<int>(PICKING_FBO_SIZE * y_fract), 0, PICKING_FBO_SIZE - 1);
 
-    // NOTE: Currently I pick only r-component (256 entities max)
-    int byte_loc = 4 * (y * PICKING_FBO_SIZE + x);
-    unsigned char picked_id = pixels[byte_loc];
+        // NOTE: Currently I pick only r-component (256 entities max)
+        int byte_loc = 4 * (y * PICKING_FBO_SIZE + x);
+        unsigned char picked_id = pixels[byte_loc];
 
-    free(pixels);
+        free(pixels);
 
-    if (picked_id != 0) {
-        int picked_idx = picked_id - 1;
-        if (picked_idx < (int)entities.size()) {
-            HOVERED_ENTITY = entities[picked_idx];
+        if (picked_id != 0) {
+            int picked_idx = picked_id - 1;
+            if (picked_idx < static_cast<int>(entities.size())) {
+                HOVERED_ENTITY = entities[picked_idx];
+            }
         }
     }
 }

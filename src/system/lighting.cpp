@@ -109,12 +109,13 @@ void set_light_uniforms(pbr::PBRShader &pbr_shader) {
         }
 
         // common params
-        int casts_shadows = (int)light.casts_shadows;
+        int casts_shadows = static_cast<int>(light.casts_shadows);
+        int light_type = static_cast<int>(light.light_type);
         Matrix vp_mat = (sd != nullptr) ? sd->vp_mat : MatrixIdentity();
 
         Vector3 position = transform::get_world_position(entity);
         SetShaderValue(shader, locs.position, &position, SHADER_UNIFORM_VEC3);
-        SetShaderValue(shader, locs.type, &light.light_type, SHADER_UNIFORM_INT);
+        SetShaderValue(shader, locs.type, &light_type, SHADER_UNIFORM_INT);
         SetShaderValue(shader, locs.color, &color, SHADER_UNIFORM_VEC3);
         SetShaderValue(shader, locs.intensity, &light.intensity, SHADER_UNIFORM_FLOAT);
         SetShaderValue(shader, locs.casts_shadows, &casts_shadows, SHADER_UNIFORM_INT);

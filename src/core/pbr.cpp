@@ -79,7 +79,7 @@ void PBRShader::unload() {
 }
 
 void PBRShader::set_shadow_map_pass(bool value) {
-    int v = (int)value;
+    int v = static_cast<int>(value);
     SetShaderValue(shader, is_shadow_map_pass_loc, &v, SHADER_UNIFORM_INT);
 }
 
@@ -88,7 +88,7 @@ void PBRShader::set_camera_pos(Vector3 pos) {
 }
 
 void PBRShader::set_light_enabled(bool value) {
-    int v = (int)value;
+    int v = static_cast<int>(value);
     SetShaderValue(shader, is_light_enabled_loc, &v, SHADER_UNIFORM_INT);
 }
 
@@ -174,6 +174,8 @@ std::string MaterialPBR::get_name() const {
 }
 
 void MaterialPBR::unload() {
+    if (this->material.maps == nullptr) return;
+
     // Unload textures only; the shared PBR shader is managed by resources
     UnloadTexture(this->material.maps[MATERIAL_MAP_ALBEDO].texture);
     UnloadTexture(this->material.maps[MATERIAL_MAP_METALNESS].texture);
@@ -182,6 +184,7 @@ void MaterialPBR::unload() {
     UnloadTexture(this->material.maps[MATERIAL_MAP_OCCLUSION].texture);
     UnloadTexture(this->material.maps[MATERIAL_MAP_HEIGHT].texture);
     RL_FREE(this->material.maps);
+    this->material.maps = nullptr;
 }
 
 }  // namespace soft_tissues::pbr
