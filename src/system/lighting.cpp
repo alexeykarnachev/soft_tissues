@@ -57,7 +57,7 @@ std::vector<ShadowPassJob> prepare_shadow_passes() {
                 camera.position = position;
                 camera.target = Vector3Add(position, direction);
                 camera.up = {0.0, 1.0, 0.0};
-                camera.fovy = 90.0;
+                camera.fovy = render_config::SHADOW_CAMERA_FOV;
                 camera.projection = CAMERA_PERSPECTIVE;
 
                 jobs.push_back({entity, camera, sd.shadow_map});

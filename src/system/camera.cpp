@@ -14,7 +14,7 @@ Camera3D CAMERA = {
     .position = {0.0, 1.0, 0.0},
     .target = {0.0, 0.0, -1.0},
     .up = {0.0, 1.0, 0.0},
-    .fovy = 70.0,
+    .fovy = gameplay_config::PLAYER_FOV,
     .projection = CAMERA_PERSPECTIVE,
 };
 
@@ -23,7 +23,7 @@ static void update_editor_mode() {
     static const float move_speed = 0.01;
     static const float zoom_speed = 1.0;
 
-    bool is_mmb_down = IsMouseButtonDown(2);
+    bool is_mmb_down = IsMouseButtonDown(MOUSE_BUTTON_MIDDLE);
     bool is_shift_down = IsKeyDown(KEY_LEFT_SHIFT);
     Vector2 mouse_delta = GetMouseDelta();
 

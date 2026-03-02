@@ -10,6 +10,7 @@ static constexpr int MAX_N_LIGHTS = 8;
 static constexpr int MAX_N_SHADOW_MAPS = MAX_N_LIGHTS;
 static constexpr int SHADOW_MAP_SIZE = 1024;
 static constexpr int SHADOW_MAP_TEXTURE_SLOT_OFFSET = 10;
+static constexpr float SHADOW_CAMERA_FOV = 90.0;
 
 }  // namespace soft_tissues::render_config
 
