@@ -89,7 +89,6 @@ public:
     PBRShader &get_pbr_shader() const;
     Vector2 get_tiling() const;
     float get_displacement_scale() const;
-    std::string get_name() const;
 
     void unload();
 };

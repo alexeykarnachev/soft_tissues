@@ -337,10 +337,6 @@ void add_tile_to_room(tile::Tile *tile, int room_id) {
     }
 }
 
-void clear_state() {
-    reset();
-}
-
 std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids() {
     std::vector<std::pair<tile::Tile *, int>> result;
     for (const auto &[tile, room_id] : TILE_TO_ROOM_ID) {
@@ -350,8 +346,8 @@ std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids() {
 }
 
 void load_tile_to_room(tile::Tile tile, int room_id) {
-    int tile_id = tile.get_id();
-    if (tile_id < 0 || tile_id >= N_TILES) {
+    uint32_t tile_id = tile.get_id();
+    if (tile_id >= N_TILES) {
         throw std::runtime_error("load_tile_to_room: tile_id out of bounds");
     }
     TILES[tile_id] = tile;

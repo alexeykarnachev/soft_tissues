@@ -26,6 +26,7 @@ bool IS_GUI_INTERACTED = false;
 static const int PICKING_FBO_SIZE = 1024;
 static unsigned int PICKING_FBO;
 static unsigned int PICKING_TEXTURE;
+static unsigned int PICKING_DEPTH;
 
 class Tab {
 public:
@@ -78,7 +79,7 @@ void load() {
     PICKING_TEXTURE = rlLoadTexture(
         NULL, PICKING_FBO_SIZE, PICKING_FBO_SIZE, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1
     );
-    unsigned int picking_depth = rlLoadTextureDepth(PICKING_FBO_SIZE, PICKING_FBO_SIZE, true);
+    PICKING_DEPTH = rlLoadTextureDepth(PICKING_FBO_SIZE, PICKING_FBO_SIZE, false);
     rlActiveDrawBuffers(1);
     rlFramebufferAttach(
         PICKING_FBO,
@@ -89,7 +90,7 @@ void load() {
     );
     rlFramebufferAttach(
         PICKING_FBO,
-        picking_depth,
+        PICKING_DEPTH,
         RL_ATTACHMENT_DEPTH,
         RL_ATTACHMENT_TEXTURE2D,
         0
@@ -109,8 +110,9 @@ void unload() {
 
     // -------------------------------------------------------------------
     // unload picking fbo
-    rlUnloadFramebuffer(PICKING_FBO);
+    rlUnloadTexture(PICKING_DEPTH);
     rlUnloadTexture(PICKING_TEXTURE);
+    rlUnloadFramebuffer(PICKING_FBO);
 }
 
 static void update_and_draw_tabs() {
@@ -304,7 +306,7 @@ void update_hovered_entity() {
         int byte_loc = 4 * (y * PICKING_FBO_SIZE + x);
         unsigned char picked_id = pixels[byte_loc];
 
-        free(pixels);
+        RL_FREE(pixels);
 
         if (picked_id != 0) {
             int picked_idx = picked_id - 1;

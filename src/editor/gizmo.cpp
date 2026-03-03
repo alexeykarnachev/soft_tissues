@@ -280,7 +280,7 @@ void load() {
     PICKING_TEXTURE = rlLoadTexture(
         NULL, PICKING_FBO_SIZE, PICKING_FBO_SIZE, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1
     );
-    unsigned int picking_depth = rlLoadTextureDepth(PICKING_FBO_SIZE, PICKING_FBO_SIZE, true);
+    unsigned int picking_depth = rlLoadTextureDepth(PICKING_FBO_SIZE, PICKING_FBO_SIZE, false);
     rlActiveDrawBuffers(1);
     rlFramebufferAttach(
         PICKING_FBO,

@@ -47,7 +47,6 @@ void set_room_tile_materials(int room_id, tile::TileMaterials materials);
 void add_tile_to_room(tile::Tile *tile, int room_id);
 
 // serialization helpers
-void clear_state();
 std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids();
 void load_tile_to_room(tile::Tile tile, int room_id);
 

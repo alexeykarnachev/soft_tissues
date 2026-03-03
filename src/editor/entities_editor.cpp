@@ -9,7 +9,7 @@
 
 namespace soft_tissues::editor::entities_editor {
 
-entt::entity ENTITY = entt::null;
+static entt::entity ENTITY = entt::null;
 
 void reset() {
     ENTITY = entt::null;

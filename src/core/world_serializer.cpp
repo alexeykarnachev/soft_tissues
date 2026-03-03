@@ -115,7 +115,7 @@ void load(const std::string &file_path) {
     file.close();
 
     globals::registry.clear();
-    world::clear_state();
+    world::reset();
 
     // -------------------------------------------------------------------
     // TILES

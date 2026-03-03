@@ -136,8 +136,8 @@ RayCollision get_cursor_floor_rect_collision(Rectangle rect, Camera camera) {
 // -----------------------------------------------------------------------
 // mesh
 void gen_mesh_tangents(Mesh *mesh) {
-    if ((mesh->vertices == NULL) || (mesh->texcoords == NULL)
-        || (mesh->normals == NULL) || (mesh->indices == NULL)) {
+    if ((mesh->vertices == nullptr) || (mesh->texcoords == nullptr)
+        || (mesh->normals == nullptr) || (mesh->indices == nullptr)) {
         TRACELOG(
             LOG_WARNING,
             "MESH: Tangents generation requires vertices, texcoords, normals, and indices"
@@ -145,7 +145,7 @@ void gen_mesh_tangents(Mesh *mesh) {
         return;
     }
 
-    if (mesh->tangents == NULL)
+    if (mesh->tangents == nullptr)
         mesh->tangents = static_cast<float *>(RL_MALLOC(mesh->vertexCount * 4 * sizeof(float)));
     else {
         RL_FREE(mesh->tangents);
@@ -183,24 +183,24 @@ void gen_mesh_tangents(Mesh *mesh) {
         Vector2 uv1 = {mesh->texcoords[index1 * 2 + 0], mesh->texcoords[index1 * 2 + 1]};
         Vector2 uv2 = {mesh->texcoords[index2 * 2 + 0], mesh->texcoords[index2 * 2 + 1]};
 
-        Vector3 deltaPos1 = Vector3Subtract(v1, v0);
-        Vector3 deltaPos2 = Vector3Subtract(v2, v0);
+        Vector3 delta_pos_1 = Vector3Subtract(v1, v0);
+        Vector3 delta_pos_2 = Vector3Subtract(v2, v0);
 
-        Vector2 deltaUV1 = Vector2Subtract(uv1, uv0);
-        Vector2 deltaUV2 = Vector2Subtract(uv2, uv0);
+        Vector2 delta_uv_1 = Vector2Subtract(uv1, uv0);
+        Vector2 delta_uv_2 = Vector2Subtract(uv2, uv0);
 
-        float denom = deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x;
+        float denom = delta_uv_1.x * delta_uv_2.y - delta_uv_1.y * delta_uv_2.x;
         if (fabsf(denom) < 1e-8f) continue;
         float r = 1.0f / denom;
         Vector3 tangent = Vector3Scale(
             Vector3Subtract(
-                Vector3Scale(deltaPos1, deltaUV2.y), Vector3Scale(deltaPos2, deltaUV1.y)
+                Vector3Scale(delta_pos_1, delta_uv_2.y), Vector3Scale(delta_pos_2, delta_uv_1.y)
             ),
             r
         );
         Vector3 bitangent = Vector3Scale(
             Vector3Subtract(
-                Vector3Scale(deltaPos2, deltaUV1.x), Vector3Scale(deltaPos1, deltaUV2.x)
+                Vector3Scale(delta_pos_2, delta_uv_1.x), Vector3Scale(delta_pos_1, delta_uv_2.x)
             ),
             r
         );
@@ -239,7 +239,7 @@ void gen_mesh_tangents(Mesh *mesh) {
     RL_FREE(tan1);
     RL_FREE(tan2);
 
-    if (mesh->vboId != NULL) {
+    if (mesh->vboId != nullptr) {
         if (mesh->vboId[SHADER_LOC_VERTEX_TANGENT] != 0) {
             // Update existing vertex buffer
             rlUpdateVertexBuffer(

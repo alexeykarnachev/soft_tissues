@@ -4,7 +4,6 @@
 #include "raylib/raymath.h"
 #include "raylib/rlgl.h"
 #include "utils.hpp"
-#include <filesystem>
 #include <stdexcept>
 
 namespace soft_tissues::pbr {
@@ -165,12 +164,6 @@ Vector2 MaterialPBR::get_tiling() const {
 
 float MaterialPBR::get_displacement_scale() const {
     return this->displacement_scale;
-}
-
-std::string MaterialPBR::get_name() const {
-    std::filesystem::path path(this->dir_path);
-    auto parent_name = path.parent_path().filename().string();
-    return parent_name;
 }
 
 void MaterialPBR::unload() {

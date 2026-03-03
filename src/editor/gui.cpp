@@ -62,7 +62,7 @@ void image(unsigned int texture, float width, float height) {
 
 void image(Texture texture, float width, float height) {
     if (height <= 0.0) {
-        float aspect = (float)texture.width / texture.height;
+        float aspect = static_cast<float>(texture.width) / texture.height;
         height = width / aspect;
     }
     return image(texture.id, width, height);
