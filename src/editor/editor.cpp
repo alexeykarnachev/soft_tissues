@@ -214,6 +214,9 @@ static void update_and_draw_globals() {
 }
 
 void update_and_draw() {
+    // BeginMode3D is required here so that gizmo::update_and_draw() (called
+    // below, outside the ImGui frame) can use rlgl matrix state. ImGui
+    // rendering is unaffected by the 3D mode context.
     BeginMode3D(system::camera::CAMERA);
     begin();
 

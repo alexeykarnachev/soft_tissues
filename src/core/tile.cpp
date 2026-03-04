@@ -15,10 +15,10 @@ using namespace utils;
 
 TileMaterials::TileMaterials() = default;
 
-TileMaterials::TileMaterials(std::string material_pbr_key)
+TileMaterials::TileMaterials(const std::string &material_pbr_key)
     : floor_key(material_pbr_key)
     , wall_key(material_pbr_key)
-    , ceil_key(std::move(material_pbr_key)) {}
+    , ceil_key(material_pbr_key) {}
 
 TileMaterials::TileMaterials(
     std::string floor_key, std::string wall_key, std::string ceil_key
@@ -120,7 +120,7 @@ Vector2 Tile::get_floor_position() const {
     uint32_t col = this->id % world::N_COLS;
 
     Vector2 pos = {col + 0.5f, row + 0.5f};
-    Vector2 size = {(float)world::N_COLS, (float)world::N_ROWS};
+    Vector2 size = {static_cast<float>(world::N_COLS), static_cast<float>(world::N_ROWS)};
     pos = Vector2Subtract(pos, Vector2Scale(size, 0.5));
     pos = Vector2Add(pos, world::ORIGIN);
 
