@@ -31,16 +31,16 @@ nlohmann::json TileMaterials::to_json() const {
     return {
         {"floor", this->floor_key},
         {"wall", this->wall_key},
-        {"ceiling", this->ceil_key},
+        {"ceil", this->ceil_key},
     };
 }
 
 TileMaterials TileMaterials::from_json(const nlohmann::json &json_data) {
     auto floor_key = json_data["floor"].get<std::string>();
     auto wall_key = json_data["wall"].get<std::string>();
-    auto ceiling_key = json_data["ceiling"].get<std::string>();
+    auto ceil_key = json_data["ceil"].get<std::string>();
 
-    return TileMaterials(floor_key, wall_key, ceiling_key);
+    return TileMaterials(floor_key, wall_key, ceil_key);
 }
 
 Tile::Tile() = default;
@@ -58,10 +58,6 @@ Tile::Tile(
     , walls(walls)
     , materials(materials)
     , constant_color(constant_color) {}
-
-uint32_t Tile::get_id() const {
-    return this->id;
-}
 
 void Tile::remove_wall(Direction direction) {
     this->walls[direction] = TileWall::NONE;

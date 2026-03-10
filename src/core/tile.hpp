@@ -11,8 +11,7 @@ namespace soft_tissues::tile {
 
 using utils::Direction;
 
-class TileMaterials {
-public:
+struct TileMaterials {
     std::string floor_key;
     std::string wall_key;
     std::string ceil_key;
@@ -31,14 +30,11 @@ enum class TileWall {
     SOLID,
 };
 
-class Tile {
-private:
+struct Tile {
     uint32_t id = 0;
     std::array<TileWall, 4> walls = {TileWall::NONE};
-
-public:
     TileMaterials materials;
-    Color constant_color = {0, 0, 0, 0};
+    Color constant_color = {0, 0, 0, 0};  // {0,0,0,0} = no override in shader
 
     Tile();
     Tile(uint32_t id);
@@ -48,8 +44,6 @@ public:
         TileMaterials materials,
         Color constant_color
     );
-
-    uint32_t get_id() const;
 
     void remove_wall(Direction direction);
     void remove_all_walls();

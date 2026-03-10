@@ -149,6 +149,7 @@ void run() {
     // load initial scene
     globals::registry.clear();
     world::reset();
+    system::scene::rebuild_wall_meshes();
     prefabs::spawn_player(world::ORIGIN);
 
     // main loop
@@ -159,7 +160,6 @@ void run() {
 
     // unload
     globals::registry.clear();
-    system::scene::unload_wall_meshes();
     editor::unload();
     resources::unload();
     CloseWindow();

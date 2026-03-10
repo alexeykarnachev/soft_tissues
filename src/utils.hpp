@@ -3,6 +3,7 @@
 #include "raylib/raylib.h"
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace soft_tissues::utils {
 
@@ -42,5 +43,22 @@ void gen_mesh_tangents(Mesh *mesh);
 Mesh gen_mesh_plane(int resolution);
 Mesh gen_mesh_cube();
 Mesh gen_mesh_sphere(int n_rings, int n_slices);
+
+// -----------------------------------------------------------------------
+// mesh builder
+struct MeshBuilder {
+    std::vector<float> vertices;
+    std::vector<float> normals;
+    std::vector<float> texcoords;
+    std::vector<unsigned short> indices;
+
+    void push_quad(
+        Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3,
+        Vector3 normal,
+        float u0, float v_0, float u1, float v_1
+    );
+
+    Mesh build();
+};
 
 }  // namespace soft_tissues::utils

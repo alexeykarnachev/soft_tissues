@@ -17,8 +17,6 @@ namespace soft_tissues::world {
 using namespace utils;
 
 static constexpr int N_TILES = N_ROWS * N_COLS;
-static const Vector2 SIZE = {N_COLS, N_ROWS};
-
 static std::array<tile::Tile, N_TILES> TILES;
 static std::unordered_map<int, std::vector<tile::Tile *>> ROOM_ID_TO_TILES;
 static std::unordered_map<tile::Tile *, int> TILE_TO_ROOM_ID;
@@ -44,28 +42,29 @@ int get_rooms_count() {
     return ROOM_ID_TO_TILES.size();
 }
 
-Vector2 get_size() {
-    return SIZE;
-}
+static std::pair<int, int> get_row_col_at_position(Vector2 pos) {
+    static constexpr Vector2 SIZE = {
+        static_cast<float>(N_COLS), static_cast<float>(N_ROWS)
+    };
 
-std::pair<int, int> get_row_col_at_position(Vector2 pos) {
     Vector2 a = Vector2Subtract(pos, ORIGIN);
     Vector2 b = Vector2Add(a, Vector2Scale(SIZE, 0.5));
 
-    int col = std::floor(b.x);
-    int row = std::floor(b.y);
+    int col = static_cast<int>(std::floor(b.x));
+    int row = static_cast<int>(std::floor(b.y));
 
     return {row, col};
 }
 
 Rectangle get_bound_rect() {
-    Vector2 top_left = Vector2Subtract(ORIGIN, Vector2Scale(SIZE, 0.5));
+    float half_w = static_cast<float>(N_COLS) * 0.5f;
+    float half_h = static_cast<float>(N_ROWS) * 0.5f;
 
     return {
-        .x = top_left.x,
-        .y = top_left.y,
-        .width = N_COLS,
-        .height = N_ROWS,
+        .x = ORIGIN.x - half_w,
+        .y = ORIGIN.y - half_h,
+        .width = static_cast<float>(N_COLS),
+        .height = static_cast<float>(N_ROWS),
     };
 }
 
@@ -119,15 +118,15 @@ tile::Tile *get_nearest_tile_neighbor_at_position(Vector2 pos) {
 }
 
 std::pair<int, int> get_tile_row_col(tile::Tile *tile) {
-    Vector2 pos = tile->get_floor_position();
-    return get_row_col_at_position(pos);
+    uint32_t id = tile->id;
+    return {static_cast<int>(id / N_COLS), static_cast<int>(id % N_COLS)};
 }
 
 std::array<tile::Tile *, 4> get_tile_neighbors(tile::Tile *tile) {
     std::array<tile::Tile *, 4> neighbors = {nullptr};
     auto [row, col] = get_tile_row_col(tile);
 
-    uint32_t id = tile->get_id();
+    uint32_t id = tile->id;
 
     if (row > 0) {
         neighbors[static_cast<int>(Direction::NORTH)] = &TILES[id - N_COLS];
@@ -186,7 +185,7 @@ int add_room() {
 
 void remove_room(int room_id) {
     if (ROOM_ID_TO_TILES.count(room_id) == 0) {
-        throw std::runtime_error("Can't remove unexisting room");
+        throw std::runtime_error("Can't remove nonexistent room");
     }
 
     for (auto tile : ROOM_ID_TO_TILES[room_id]) {
@@ -289,17 +288,6 @@ std::vector<tile::Tile *> get_room_tiles(int room_id) {
     return ROOM_ID_TO_TILES[room_id];
 }
 
-std::vector<tile::Tile *> get_not_room_tiles(int except_room_id) {
-    std::vector<tile::Tile *> tiles;
-    for (auto &[room_id, room_tiles] : ROOM_ID_TO_TILES) {
-        if (room_id != except_room_id) {
-            tiles.insert(tiles.end(), room_tiles.begin(), room_tiles.end());
-        }
-    }
-
-    return tiles;
-}
-
 std::vector<tile::Tile *> get_all_rooms_tiles() {
     std::vector<tile::Tile *> tiles;
     for (auto &[room_id, room_tiles] : ROOM_ID_TO_TILES) {
@@ -325,7 +313,7 @@ void add_tile_to_room(tile::Tile *tile, int room_id) {
     }
 
     if (ROOM_ID_TO_TILES.count(room_id) == 0) {
-        throw std::runtime_error("Can't add tile to unexisting room");
+        throw std::runtime_error("Can't add tile to nonexistent room");
     }
 
     ROOM_ID_TO_TILES[room_id].push_back(tile);
@@ -346,7 +334,7 @@ std::vector<std::pair<tile::Tile *, int>> get_tiles_with_room_ids() {
 }
 
 void load_tile_to_room(tile::Tile tile, int room_id) {
-    uint32_t tile_id = tile.get_id();
+    uint32_t tile_id = tile.id;
     if (tile_id >= N_TILES) {
         throw std::runtime_error("load_tile_to_room: tile_id out of bounds");
     }

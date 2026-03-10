@@ -10,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 namespace soft_tissues::resources {
 
@@ -20,6 +21,8 @@ static Material DEFAULT_MATERIAL;
 static pbr::PBRShader PBR_SHADER;
 static std::unordered_map<std::string, pbr::MaterialPBR> MATERIALS_PBR;
 static std::unordered_map<std::string, Mesh> MESHES;
+
+static std::unordered_map<std::string, Mesh> WALL_MESHES;
 
 static std::unordered_set<int> FREE_SHADOW_MAP_IDXS;
 static std::array<RenderTexture2D, render_config::MAX_N_SHADOW_MAPS> SHADOW_MAPS;
@@ -67,7 +70,24 @@ void load() {
     }
 }
 
+const std::unordered_map<std::string, Mesh> &get_wall_meshes() {
+    return WALL_MESHES;
+}
+
+void set_wall_meshes(std::unordered_map<std::string, Mesh> meshes) {
+    unload_wall_meshes();
+    WALL_MESHES = std::move(meshes);
+}
+
+void unload_wall_meshes() {
+    for (auto &[_, mesh] : WALL_MESHES) {
+        UnloadMesh(mesh);
+    }
+    WALL_MESHES.clear();
+}
+
 void unload() {
+    unload_wall_meshes();
     UnloadMaterial(DEFAULT_MATERIAL);
 
     // -------------------------------------------------------------------

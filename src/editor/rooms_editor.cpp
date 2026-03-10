@@ -120,13 +120,19 @@ void update_and_draw() {
                 }
             }
 
+            world::set_room_tile_materials(ROOM_ID, MATERIALS);
             system::scene::rebuild_wall_meshes();
             GHOST_TILES.clear();
             start_tile = nullptr;
             end_tile = nullptr;
         }
 
+        static std::string PREV_WALL_KEY;
         world::set_room_tile_materials(ROOM_ID, MATERIALS);
+        if (MATERIALS.wall_key != PREV_WALL_KEY) {
+            system::scene::rebuild_wall_meshes();
+            PREV_WALL_KEY = MATERIALS.wall_key;
+        }
         utils::draw_room_perimiter(ROOM_ID, GREEN, ORANGE);
 
         for (auto tile : GHOST_TILES) {

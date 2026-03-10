@@ -14,9 +14,7 @@ void reset();
 tile::Tile *get_tiles();
 int get_tiles_count();
 int get_rooms_count();
-Vector2 get_size();
 
-std::pair<int, int> get_row_col_at_position(Vector2 pos);
 Rectangle get_bound_rect();
 
 tile::Tile *get_tile_at_row_col(int row, int col);
@@ -39,7 +37,6 @@ void set_door_between_neighbor_tiles(tile::Tile *tile0, tile::Tile *tile1);
 std::vector<int> get_room_ids();
 int get_tile_room_id(tile::Tile *tile);
 std::vector<tile::Tile *> get_room_tiles(int room_id);
-std::vector<tile::Tile *> get_not_room_tiles(int except_room_id);
 std::vector<tile::Tile *> get_all_rooms_tiles();
 
 void set_room_tile_materials(int room_id, tile::TileMaterials materials);

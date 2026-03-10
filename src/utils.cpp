@@ -290,4 +290,56 @@ Mesh gen_mesh_sphere(int n_rings, int n_slices) {
     return mesh;
 }
 
+// -----------------------------------------------------------------------
+// mesh builder
+void MeshBuilder::push_quad(
+    Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3,
+    Vector3 normal,
+    float u0, float v_0, float u1, float v_1
+) {
+    auto base = static_cast<unsigned short>(vertices.size() / 3);
+
+    float verts[] = {v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z};
+    float norms[] = {normal.x, normal.y, normal.z, normal.x, normal.y, normal.z,
+                     normal.x, normal.y, normal.z, normal.x, normal.y, normal.z};
+    float uvs[] = {u0, v_0, u1, v_0, u1, v_1, u0, v_1};
+
+    vertices.insert(vertices.end(), verts, verts + 12);
+    normals.insert(normals.end(), norms, norms + 12);
+    texcoords.insert(texcoords.end(), uvs, uvs + 8);
+
+    unsigned short idx[] = {base, static_cast<unsigned short>(base + 1),
+        static_cast<unsigned short>(base + 2), base,
+        static_cast<unsigned short>(base + 2), static_cast<unsigned short>(base + 3)};
+    indices.insert(indices.end(), idx, idx + 6);
+}
+
+Mesh MeshBuilder::build() {
+    int vert_count = static_cast<int>(vertices.size() / 3);
+    int tri_count = static_cast<int>(indices.size() / 3);
+
+    auto *v = static_cast<float *>(RL_CALLOC(vertices.size(), sizeof(float)));
+    auto *n = static_cast<float *>(RL_CALLOC(normals.size(), sizeof(float)));
+    auto *t = static_cast<float *>(RL_CALLOC(texcoords.size(), sizeof(float)));
+    auto *i = static_cast<unsigned short *>(RL_CALLOC(indices.size(), sizeof(unsigned short)));
+
+    memcpy(v, vertices.data(), vertices.size() * sizeof(float));
+    memcpy(n, normals.data(), normals.size() * sizeof(float));
+    memcpy(t, texcoords.data(), texcoords.size() * sizeof(float));
+    memcpy(i, indices.data(), indices.size() * sizeof(unsigned short));
+
+    Mesh mesh = {};
+    mesh.vertexCount = vert_count;
+    mesh.triangleCount = tri_count;
+    mesh.vertices = v;
+    mesh.normals = n;
+    mesh.texcoords = t;
+    mesh.indices = i;
+
+    UploadMesh(&mesh, false);
+    gen_mesh_tangents(&mesh);
+
+    return mesh;
+}
+
 }  // namespace soft_tissues::utils

@@ -9,7 +9,9 @@
 #include "utils.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
-#include <cstring>
+#include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace soft_tissues::system::scene {
@@ -22,66 +24,6 @@ using namespace utils;
 // Per-tile approach: iterate every tile, for each solid wall direction
 // generate a thick wall segment (4 quads: inner, outer, top, bottom).
 // Corner posts fill gaps where perpendicular walls meet.
-// No loop tracing, no edge deduplication, no inside detection.
-
-static std::vector<Mesh> WALL_MESHES;
-
-struct MeshBuilder {
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<float> texcoords;
-    std::vector<unsigned short> indices;
-
-    void push_quad(
-        Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3,
-        Vector3 normal,
-        float u0, float v_0, float u1, float v_1
-    ) {
-        auto base = static_cast<unsigned short>(vertices.size() / 3);
-
-        float verts[] = {v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z};
-        float norms[] = {normal.x, normal.y, normal.z, normal.x, normal.y, normal.z,
-                         normal.x, normal.y, normal.z, normal.x, normal.y, normal.z};
-        float uvs[] = {u0, v_0, u1, v_0, u1, v_1, u0, v_1};
-
-        vertices.insert(vertices.end(), verts, verts + 12);
-        normals.insert(normals.end(), norms, norms + 12);
-        texcoords.insert(texcoords.end(), uvs, uvs + 8);
-
-        unsigned short idx[] = {base, static_cast<unsigned short>(base + 1),
-            static_cast<unsigned short>(base + 2), base,
-            static_cast<unsigned short>(base + 2), static_cast<unsigned short>(base + 3)};
-        indices.insert(indices.end(), idx, idx + 6);
-    }
-
-    Mesh build() {
-        int vert_count = static_cast<int>(vertices.size() / 3);
-        int tri_count = static_cast<int>(indices.size() / 3);
-
-        auto *v = static_cast<float *>(RL_CALLOC(vertices.size(), sizeof(float)));
-        auto *n = static_cast<float *>(RL_CALLOC(normals.size(), sizeof(float)));
-        auto *t = static_cast<float *>(RL_CALLOC(texcoords.size(), sizeof(float)));
-        auto *i = static_cast<unsigned short *>(RL_CALLOC(indices.size(), sizeof(unsigned short)));
-
-        memcpy(v, vertices.data(), vertices.size() * sizeof(float));
-        memcpy(n, normals.data(), normals.size() * sizeof(float));
-        memcpy(t, texcoords.data(), texcoords.size() * sizeof(float));
-        memcpy(i, indices.data(), indices.size() * sizeof(unsigned short));
-
-        Mesh mesh = {0};
-        mesh.vertexCount = vert_count;
-        mesh.triangleCount = tri_count;
-        mesh.vertices = v;
-        mesh.normals = n;
-        mesh.texcoords = t;
-        mesh.indices = i;
-
-        UploadMesh(&mesh, false);
-        gen_mesh_tangents(&mesh);
-
-        return mesh;
-    }
-};
 
 // Emit a wall segment for a tile's solid wall in a given direction.
 // shrink_a/shrink_b: shorten the wall by half_t at each end where a corner
@@ -254,39 +196,32 @@ static bool needs_corner_post(int row, int col) {
     // edges meeting at this corner. Check for any pair of perpendicular
     // walls from these 4 tiles.
 
-    bool has_horizontal = false;  // wall running along X (NORTH/SOUTH)
-    bool has_vertical = false;    // wall running along Z (WEST/EAST)
+    bool has_ns_wall = false;  // NORTH/SOUTH wall (runs along X)
+    bool has_ew_wall = false;  // WEST/EAST wall (runs along Z)
 
-    // NW tile (row-1, col-1): SOUTH wall (runs along X at this vertex's row)
-    //                         EAST wall (runs along Z at this vertex's col)
-    tile::Tile *nw = world::get_tile_at_row_col(row - 1, col - 1);
-    if (nw && world::get_tile_room_id(nw) != -1) {
-        if (nw->has_solid_wall(Direction::SOUTH)) has_horizontal = true;
-        if (nw->has_solid_wall(Direction::EAST))  has_vertical = true;
-    }
+    auto check_tile = [&](int r, int c, Direction d1, Direction d2) {
+        tile::Tile *t = world::get_tile_at_row_col(r, c);
+        if (t && world::get_tile_room_id(t) != -1) {
+            if (t->has_solid_wall(d1)) has_ns_wall = true;
+            if (t->has_solid_wall(d2)) has_ew_wall = true;
+        }
+    };
+
+    // NW tile (row-1, col-1): SOUTH wall, EAST wall
+    check_tile(row - 1, col - 1, Direction::SOUTH, Direction::EAST);
+    if (has_ns_wall && has_ew_wall) return true;
 
     // NE tile (row-1, col): SOUTH wall, WEST wall
-    tile::Tile *ne = world::get_tile_at_row_col(row - 1, col);
-    if (ne && world::get_tile_room_id(ne) != -1) {
-        if (ne->has_solid_wall(Direction::SOUTH)) has_horizontal = true;
-        if (ne->has_solid_wall(Direction::WEST))  has_vertical = true;
-    }
+    check_tile(row - 1, col, Direction::SOUTH, Direction::WEST);
+    if (has_ns_wall && has_ew_wall) return true;
 
     // SW tile (row, col-1): NORTH wall, EAST wall
-    tile::Tile *sw = world::get_tile_at_row_col(row, col - 1);
-    if (sw && world::get_tile_room_id(sw) != -1) {
-        if (sw->has_solid_wall(Direction::NORTH)) has_horizontal = true;
-        if (sw->has_solid_wall(Direction::EAST))  has_vertical = true;
-    }
+    check_tile(row, col - 1, Direction::NORTH, Direction::EAST);
+    if (has_ns_wall && has_ew_wall) return true;
 
     // SE tile (row, col): NORTH wall, WEST wall
-    tile::Tile *se = world::get_tile_at_row_col(row, col);
-    if (se && world::get_tile_room_id(se) != -1) {
-        if (se->has_solid_wall(Direction::NORTH)) has_horizontal = true;
-        if (se->has_solid_wall(Direction::WEST))  has_vertical = true;
-    }
-
-    return has_horizontal && has_vertical;
+    check_tile(row, col, Direction::NORTH, Direction::WEST);
+    return has_ns_wall && has_ew_wall;
 }
 
 // Get the grid vertex (row, col) at each end of a wall segment.
@@ -312,13 +247,45 @@ static std::pair<std::pair<int,int>, std::pair<int,int>> get_end_vertices(
             // Edge at right. a=NORTH end=NE vertex, b=SOUTH end=SE vertex
             return {{tile_row, tile_col + 1}, {tile_row + 1, tile_col + 1}};
     }
-    return {{0,0},{0,0}};
+    __builtin_unreachable();
+}
+
+// Determine which wall_key to use for a wall segment emitted by this tile.
+// For shared walls (dedup'd to lower-index tile), use that tile's wall_key.
+static const std::string &get_wall_key_for_tile(tile::Tile &tile) {
+    return tile.materials.wall_key;
+}
+
+// Find the wall_key for a corner post at grid vertex (row, col).
+// Uses the first surrounding tile that has a wall touching this vertex.
+static const std::string &get_corner_post_wall_key(int row, int col) {
+    static const std::string EMPTY;
+
+    // Check the 4 surrounding tiles for any wall touching this vertex
+    struct Check { int r; int c; Direction d1; Direction d2; };
+    Check checks[] = {
+        {row - 1, col - 1, Direction::SOUTH, Direction::EAST},
+        {row - 1, col,     Direction::SOUTH, Direction::WEST},
+        {row,     col - 1, Direction::NORTH, Direction::EAST},
+        {row,     col,     Direction::NORTH, Direction::WEST},
+    };
+
+    for (auto &ch : checks) {
+        tile::Tile *t = world::get_tile_at_row_col(ch.r, ch.c);
+        if (t && world::get_tile_room_id(t) != -1) {
+            if (t->has_solid_wall(ch.d1) || t->has_solid_wall(ch.d2)) {
+                return t->materials.wall_key;
+            }
+        }
+    }
+
+    return EMPTY;
 }
 
 void rebuild_wall_meshes() {
-    unload_wall_meshes();
+    resources::unload_wall_meshes();
 
-    MeshBuilder mb;
+    std::unordered_map<std::string, MeshBuilder> builders;
     tile::Tile *tiles = world::get_tiles();
     int n_tiles = world::get_tiles_count();
 
@@ -332,10 +299,11 @@ void rebuild_wall_meshes() {
         }
     }
 
-    // Emit wall segments
+    // Emit wall segments (one MeshBuilder per wall_key)
     for (int i = 0; i < n_tiles; ++i) {
         tile::Tile &tile = tiles[i];
         if (world::get_tile_room_id(&tile) == -1) continue;
+        if (tile.materials.wall_key.empty()) continue;  // tiles without materials yet
 
         Vector2 pos = tile.get_floor_position();
         auto neighbors = world::get_tile_neighbors(&tile);
@@ -357,11 +325,11 @@ void rebuild_wall_meshes() {
             bool post_a = post_grid[va.first][va.second];
             bool post_b = post_grid[vb.first][vb.second];
 
-            // Suppress end cap when a corner post exists at that end.
             bool cap_a = !post_a;
             bool cap_b = !post_b;
 
-            emit_wall_segment(mb, pos, dir, cap_a, cap_b, post_a, post_b);
+            const std::string &key = get_wall_key_for_tile(tile);
+            emit_wall_segment(builders[key], pos, dir, cap_a, cap_b, post_a, post_b);
         }
     }
 
@@ -373,20 +341,22 @@ void rebuild_wall_meshes() {
 
             float vx = static_cast<float>(col) - size.x * 0.5f + world::ORIGIN.x;
             float vz = static_cast<float>(row) - size.y * 0.5f + world::ORIGIN.y;
-            emit_corner_post(mb, vx, vz);
+
+            const std::string &key = get_corner_post_wall_key(row, col);
+            if (!key.empty()) {
+                emit_corner_post(builders[key], vx, vz);
+            }
         }
     }
 
-    if (mb.vertices.empty()) return;
-
-    WALL_MESHES.push_back(mb.build());
-}
-
-void unload_wall_meshes() {
-    for (auto &mesh : WALL_MESHES) {
-        UnloadMesh(mesh);
+    // Build meshes
+    std::unordered_map<std::string, Mesh> meshes;
+    for (auto &[key, mb] : builders) {
+        if (!mb.vertices.empty()) {
+            meshes.emplace(key, mb.build());
+        }
     }
-    WALL_MESHES.clear();
+    resources::set_wall_meshes(std::move(meshes));
 }
 
 // -----------------------------------------------------------------------
@@ -419,7 +389,7 @@ void draw_grid() {
         DrawLine3D(start_pos, end_pos, WHITE);
     }
 
-    // perimiter
+    // perimeter
     DrawLine3D(top_left, top_right, RED);
     DrawLine3D(top_right, bot_right, RED);
     DrawLine3D(bot_right, bot_left, RED);
@@ -452,24 +422,13 @@ void draw_tiles(const RenderState &render_state) {
         );
     }
 
-    // draw wall mesh
-    if (!WALL_MESHES.empty()) {
-        std::string wall_key;
-        for (int i = 0; i < n_tiles; ++i) {
-            if (world::get_tile_room_id(&tiles[i]) != -1) {
-                wall_key = tiles[i].materials.wall_key;
-                break;
-            }
-        }
-
-        if (!wall_key.empty()) {
-            const auto &wall_material_pbr = resources::get_material_pbr(wall_key);
-            Matrix identity = MatrixIdentity();
-            Color no_color = {0, 0, 0, 0};
-            for (const auto &wall_mesh : WALL_MESHES) {
-                render::draw_mesh(wall_mesh, wall_material_pbr, no_color, identity, render_state);
-            }
-        }
+    // draw wall meshes (one mesh per wall material)
+    const auto &wall_meshes = resources::get_wall_meshes();
+    Matrix identity = MatrixIdentity();
+    Color no_color = {0, 0, 0, 0};
+    for (const auto &[wall_key, wall_mesh] : wall_meshes) {
+        const auto &wall_material_pbr = resources::get_material_pbr(wall_key);
+        render::draw_mesh(wall_mesh, wall_material_pbr, no_color, identity, render_state);
     }
 }
 
