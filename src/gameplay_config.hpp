@@ -3,7 +3,7 @@
 namespace soft_tissues::gameplay_config {
 
 inline constexpr float PLAYER_HEIGHT = 1.8;
-inline constexpr float PLAYER_SPEED = 1.0;
+inline constexpr float PLAYER_SPEED = 3.0;
 inline constexpr float PLAYER_CAMERA_SENSITIVITY = 0.0015;
 inline constexpr float PLAYER_FOV = 70.0;
 

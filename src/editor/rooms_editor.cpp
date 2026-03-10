@@ -1,4 +1,5 @@
 #include "system/camera.hpp"
+#include "system/scene.hpp"
 #include "core/resources.hpp"
 #include "core/world.hpp"
 #include "editor.hpp"
@@ -119,6 +120,7 @@ void update_and_draw() {
                 }
             }
 
+            system::scene::rebuild_wall_meshes();
             GHOST_TILES.clear();
             start_tile = nullptr;
             end_tile = nullptr;
@@ -149,6 +151,7 @@ void update_and_draw() {
 
                     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                         world::set_door_between_neighbor_tiles(tile_at_cursor, nb);
+                        system::scene::rebuild_wall_meshes();
                     }
                 }
             }

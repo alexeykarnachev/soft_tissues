@@ -1,6 +1,7 @@
 #include "editor.hpp"
 
 #include "system/camera.hpp"
+#include "system/scene.hpp"
 #include "component/component.hpp"
 #include "globals.hpp"
 #include "core/prefabs.hpp"
@@ -195,6 +196,7 @@ static void update_and_draw_globals() {
             entities_editor::reset();
             rooms_editor::reset();
             world_serializer::load(file_path);
+            system::scene::rebuild_wall_meshes();
             TraceLog(LOG_INFO, "World opened: %s", file_path.c_str());
         }
 

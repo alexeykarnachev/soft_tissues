@@ -10,4 +10,7 @@ void draw_meshes(const RenderState &render_state);
 void draw_player();
 void draw_light_shells();
 
+void rebuild_wall_meshes();
+void unload_wall_meshes();
+
 }  // namespace soft_tissues::system::scene

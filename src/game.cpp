@@ -159,6 +159,7 @@ void run() {
 
     // unload
     globals::registry.clear();
+    system::scene::unload_wall_meshes();
     editor::unload();
     resources::unload();
     CloseWindow();
