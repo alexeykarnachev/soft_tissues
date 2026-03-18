@@ -76,7 +76,9 @@ void update_and_draw() {
 
     // ---------------------------------------------------------------
     Vector2 tile_at_cursor_pos;
-    tile::Tile *tile_at_cursor = world::get_tile_at_cursor(system::camera::CAMERA, &tile_at_cursor_pos);
+    tile::Tile *tile_at_cursor = IS_GUI_INTERACTED
+        ? nullptr
+        : world::get_tile_at_cursor(system::camera::CAMERA, &tile_at_cursor_pos);
 
     if (ROOM_ID != -1) {
         ImGui::BeginTabBar("Materials");
@@ -109,7 +111,7 @@ void update_and_draw() {
             if (tile_at_cursor != nullptr) end_tile = tile_at_cursor;
 
             GHOST_TILES = world::get_tiles_between_corners(start_tile, end_tile);
-        } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+        } else if (start_tile != nullptr && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             for (auto tile : GHOST_TILES) {
                 int room_id = world::get_tile_room_id(tile);
 

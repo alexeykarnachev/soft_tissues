@@ -1,6 +1,27 @@
 {
     "entities": [
         {
+            "Player": {},
+            "Transform": {
+                "position": [
+                    4.418288707733154,
+                    0.0,
+                    -3.6547937393188477
+                ],
+                "rotation": [
+                    -0.33379504084587097,
+                    16.404003143310547,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "id": 1048577
+        },
+        {
             "Flashlight": {},
             "Light": {
                 "casts_shadows": false,
@@ -25,7 +46,7 @@
                 "shadow_type": "DYNAMIC"
             },
             "Parent": {
-                "entity": 1048576
+                "entity": 1048577
             },
             "Transform": {
                 "position": [
@@ -36,27 +57,6 @@
                 "rotation": [
                     0.0,
                     0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "id": 1048577
-        },
-        {
-            "Player": {},
-            "Transform": {
-                "position": [
-                    4.418288707733154,
-                    0.0,
-                    -3.6547937393188477
-                ],
-                "rotation": [
-                    -0.33379504084587097,
-                    16.404003143310547,
                     0.0
                 ],
                 "scale": [
@@ -76,18 +76,18 @@
                 0,
                 0
             ],
-            "id": 254,
+            "id": 89,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
                 "wall": "modern_shattered_wallpaper"
             },
-            "room_id": 2,
+            "room_id": 3,
             "walls": [
-                0,
+                2,
                 2,
                 0,
-                2
+                1
             ]
         },
         {
@@ -97,28 +97,7 @@
                 0,
                 0
             ],
-            "id": 246,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                2,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 245,
+            "id": 251,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
@@ -139,13 +118,13 @@
                 0,
                 0
             ],
-            "id": 244,
+            "id": 124,
             "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
+                "ceil": "muddy_scattered_brickwork",
+                "floor": "muddy_scattered_brickwork",
+                "wall": "muddy_scattered_brickwork"
             },
-            "room_id": 2,
+            "room_id": 1,
             "walls": [
                 0,
                 2,
@@ -160,637 +139,7 @@
                 0,
                 0
             ],
-            "id": 243,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                2,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 238,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 230,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 229,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 228,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 227,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 222,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 216,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 215,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 214,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 213,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 212,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 211,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 206,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 200,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 199,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 198,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 197,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 196,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 195,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 190,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 184,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 183,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 182,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 181,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 180,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 179,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 47,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                2,
-                2,
-                2,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 174,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 202,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 75,
+            "id": 76,
             "materials": {
                 "ceil": "muddy_scattered_brickwork",
                 "floor": "muddy_scattered_brickwork",
@@ -811,7 +160,7 @@
                 0,
                 0
             ],
-            "id": 173,
+            "id": 203,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
@@ -832,28 +181,7 @@
                 0,
                 0
             ],
-            "id": 46,
-            "materials": {
-                "ceil": "muddy_scattered_brickwork",
-                "floor": "muddy_scattered_brickwork",
-                "wall": "muddy_scattered_brickwork"
-            },
-            "room_id": 1,
-            "walls": [
-                2,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 232,
+            "id": 220,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
@@ -874,217 +202,7 @@
                 0,
                 0
             ],
-            "id": 105,
-            "materials": {
-                "ceil": "muddy_scattered_brickwork",
-                "floor": "muddy_scattered_brickwork",
-                "wall": "muddy_scattered_brickwork"
-            },
-            "room_id": 1,
-            "walls": [
-                2,
-                2,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 164,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 205,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 78,
-            "materials": {
-                "ceil": "muddy_scattered_brickwork",
-                "floor": "muddy_scattered_brickwork",
-                "wall": "muddy_scattered_brickwork"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 137,
-            "materials": {
-                "ceil": "brick_wall",
-                "floor": "brick_wall",
-                "wall": "brick_wall"
-            },
-            "room_id": 0,
-            "walls": [
-                0,
-                1,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 234,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 107,
-            "materials": {
-                "ceil": "muddy_scattered_brickwork",
-                "floor": "muddy_scattered_brickwork",
-                "wall": "muddy_scattered_brickwork"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 166,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 136,
-            "materials": {
-                "ceil": "muddy_scattered_brickwork",
-                "floor": "muddy_scattered_brickwork",
-                "wall": "muddy_scattered_brickwork"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                0,
-                2,
-                2
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 204,
-            "materials": {
-                "ceil": "tiled_stone",
-                "floor": "hungarian_point_flooring",
-                "wall": "modern_shattered_wallpaper"
-            },
-            "room_id": 2,
-            "walls": [
-                0,
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 77,
+            "id": 93,
             "materials": {
                 "ceil": "muddy_scattered_brickwork",
                 "floor": "muddy_scattered_brickwork",
@@ -1147,28 +265,7 @@
                 0,
                 0
             ],
-            "id": 152,
-            "materials": {
-                "ceil": "muddy_scattered_brickwork",
-                "floor": "muddy_scattered_brickwork",
-                "wall": "muddy_scattered_brickwork"
-            },
-            "room_id": 1,
-            "walls": [
-                0,
-                2,
-                2,
-                0
-            ]
-        },
-        {
-            "constant_color": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "id": 220,
+            "id": 204,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
@@ -1189,7 +286,7 @@
                 0,
                 0
             ],
-            "id": 93,
+            "id": 77,
             "materials": {
                 "ceil": "muddy_scattered_brickwork",
                 "floor": "muddy_scattered_brickwork",
@@ -1210,7 +307,7 @@
                 0,
                 0
             ],
-            "id": 203,
+            "id": 166,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
@@ -1231,13 +328,181 @@
                 0,
                 0
             ],
-            "id": 76,
+            "id": 107,
             "materials": {
                 "ceil": "muddy_scattered_brickwork",
                 "floor": "muddy_scattered_brickwork",
                 "wall": "muddy_scattered_brickwork"
             },
             "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 234,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 205,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 78,
+            "materials": {
+                "ceil": "muddy_scattered_brickwork",
+                "floor": "muddy_scattered_brickwork",
+                "wall": "muddy_scattered_brickwork"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 164,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 105,
+            "materials": {
+                "ceil": "muddy_scattered_brickwork",
+                "floor": "muddy_scattered_brickwork",
+                "wall": "muddy_scattered_brickwork"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                2,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 232,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 46,
+            "materials": {
+                "ceil": "muddy_scattered_brickwork",
+                "floor": "muddy_scattered_brickwork",
+                "wall": "muddy_scattered_brickwork"
+            },
+            "room_id": 1,
+            "walls": [
+                2,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 173,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
             "walls": [
                 0,
                 0,
@@ -1294,7 +559,175 @@
                 0,
                 0
             ],
-            "id": 251,
+            "id": 75,
+            "materials": {
+                "ceil": "muddy_scattered_brickwork",
+                "floor": "muddy_scattered_brickwork",
+                "wall": "muddy_scattered_brickwork"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 202,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 174,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 180,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 222,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 227,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 198,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 216,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 245,
             "materials": {
                 "ceil": "tiled_stone",
                 "floor": "hungarian_point_flooring",
@@ -1315,7 +748,469 @@
                 0,
                 0
             ],
-            "id": 124,
+            "id": 229,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 200,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 179,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 238,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 230,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 103,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 3,
+            "walls": [
+                0,
+                0,
+                2,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 214,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 87,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 3,
+            "walls": [
+                2,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 244,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                2,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 215,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 88,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 3,
+            "walls": [
+                2,
+                2,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 246,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                2,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 119,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 3,
+            "walls": [
+                0,
+                0,
+                2,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 228,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 199,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 137,
+            "materials": {
+                "ceil": "brick_wall",
+                "floor": "brick_wall",
+                "wall": "brick_wall"
+            },
+            "room_id": 0,
+            "walls": [
+                0,
+                1,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 196,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 213,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 243,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                2,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 184,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 212,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 183,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 152,
             "materials": {
                 "ceil": "muddy_scattered_brickwork",
                 "floor": "muddy_scattered_brickwork",
@@ -1325,6 +1220,195 @@
             "walls": [
                 0,
                 2,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 211,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 182,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 206,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 197,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 136,
+            "materials": {
+                "ceil": "muddy_scattered_brickwork",
+                "floor": "muddy_scattered_brickwork",
+                "wall": "muddy_scattered_brickwork"
+            },
+            "room_id": 1,
+            "walls": [
+                0,
+                0,
+                2,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 254,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                2,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 195,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                2,
+                0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 190,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
+                0,
+                2
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 181,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 2,
+            "walls": [
+                0,
+                0,
                 0,
                 0
             ]
@@ -1722,7 +1806,7 @@
             },
             "room_id": 2,
             "walls": [
-                2,
+                1,
                 0,
                 0,
                 2
@@ -1787,7 +1871,7 @@
             "walls": [
                 0,
                 0,
-                2,
+                1,
                 0
             ]
         },
@@ -2650,6 +2734,27 @@
                 0,
                 0,
                 0
+            ]
+        },
+        {
+            "constant_color": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "id": 135,
+            "materials": {
+                "ceil": "tiled_stone",
+                "floor": "hungarian_point_flooring",
+                "wall": "modern_shattered_wallpaper"
+            },
+            "room_id": 3,
+            "walls": [
+                0,
+                1,
+                2,
+                2
             ]
         }
     ]
