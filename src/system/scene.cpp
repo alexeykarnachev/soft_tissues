@@ -20,13 +20,13 @@ using namespace utils;
 // -----------------------------------------------------------------------
 // wall mesh generation
 //
-// Per-tile approach: iterate every tile, for each solid wall direction
-// generate a thick wall segment (4 quads: inner, outer, top, bottom).
-// Corner posts fill gaps where perpendicular walls meet.
+// All walls are half-thickness: from tile edge inward by half_t.
+// Corner fills plug half_t x half_t gaps at vertices where perpendicular
+// walls meet (including walls from different tiles in the same room).
 
-// Emit a wall segment sitting entirely on one side of the tile edge.
-// Used for shared walls: each room emits its own half-width wall on its side.
-// inner_depth = half_t (from edge inward), outer_depth = 0 (flush with edge).
+// Emit a wall segment for one tile edge. Sits entirely inside the tile
+// (from edge inward by half_t). Walls are shortened at ends where corner
+// fills exist to avoid overlap.
 static void emit_inner_wall_segment(
     MeshBuilder &mb, Vector2 tile_pos, Direction dir,
     bool cap_a, bool cap_b, bool shrink_a, bool shrink_b
@@ -156,73 +156,50 @@ static void emit_corner_fill(
     float z0 = (dz > 0) ? vz : vz - half_t;
     float z1 = (dz > 0) ? vz + half_t : vz;
 
-    // X-face continues EW wall. Compute U at z0 and z1.
-    // EW wall: u=0 at a-end, u=1 at b-end.
-    // WEST: a-end at +Z, b-end at -Z → u increases toward -Z.
-    // EAST: a-end at -Z, b-end at +Z → u increases toward +Z.
-    // The fill's Z range is [z0, z1] (z0 < z1). We need u at each.
-    float x_u_at_z0, x_u_at_z1;
-    if (ew_dir == Direction::WEST) {
-        // u increases toward -Z. Fill is at one end.
-        // dz<0: vertex at +Z = a-end. Fill [z0=vz-ht, z1=vz]. z1 is at vertex (+Z, a-end, u≈0). z0 is further -Z (u≈ht).
-        // dz>0: vertex at -Z = b-end. Fill [z0=vz, z1=vz+ht]. z0 is at vertex (-Z, b-end, u≈1). z1 is further +Z (u≈1-ht).
-        if (dz < 0) { x_u_at_z1 = 0.0f; x_u_at_z0 = half_t; }
-        else         { x_u_at_z0 = 1.0f; x_u_at_z1 = 1.0f - half_t; }
-    } else { // EAST
-        // u increases toward +Z.
-        // dz>0: vertex at -Z = a-end. Fill [z0=vz, z1=vz+ht]. z0 at vertex (-Z, a-end, u≈0). z1 further +Z (u≈ht).
-        // dz<0: vertex at +Z = b-end. Fill [z0=vz-ht, z1=vz]. z1 at vertex (+Z, b-end, u≈1). z0 further -Z (u≈1-ht).
-        if (dz > 0) { x_u_at_z0 = 0.0f; x_u_at_z1 = half_t; }
-        else         { x_u_at_z0 = 1.0f - half_t; x_u_at_z1 = 1.0f; }
-    }
+    // UV at fill endpoints. Each fill face continues a wall whose U goes
+    // from 0 (a-end) to 1 (b-end). We compute U at the two fill vertices
+    // on each axis: the vertex edge (where fill meets wall) and the corner
+    // edge (where fill meets the tile boundary).
 
-    // Z-face continues NS wall. Compute U at x0 and x1.
-    // NORTH: a-end at -X, b-end at +X → u increases toward +X.
-    // SOUTH: a-end at +X, b-end at -X → u increases toward -X.
-    float z_u_at_x0, z_u_at_x1;
-    if (ns_dir == Direction::NORTH) {
-        // u increases toward +X.
-        if (dx > 0) { z_u_at_x0 = 0.0f; z_u_at_x1 = half_t; }
-        else         { z_u_at_x0 = 1.0f - half_t; z_u_at_x1 = 1.0f; }
-    } else { // SOUTH
-        // u increases toward -X.
-        if (dx < 0) { z_u_at_x0 = half_t; z_u_at_x1 = 0.0f; }
-        else         { z_u_at_x0 = 1.0f; z_u_at_x1 = 1.0f - half_t; }
-    }
+    // X-face continues EW wall along Z. Determine if vertex is at b-end (u=1).
+    bool x_at_hi = (ew_dir == Direction::WEST) ? (dz > 0) : (dz < 0);
+    float x_u_vertex  = x_at_hi ? 1.0f : 0.0f;
+    float x_u_corner  = x_at_hi ? 1.0f - half_t : half_t;
+    float x_u_at_z0 = (dz > 0) ? x_u_vertex : x_u_corner;
+    float x_u_at_z1 = (dz > 0) ? x_u_corner : x_u_vertex;
 
-    // Room-facing X quad: faces toward the tile center (dx direction)
+    // Z-face continues NS wall along X. Determine if vertex is at b-end (u=1).
+    bool z_at_hi = (ns_dir == Direction::NORTH) ? (dx < 0) : (dx > 0);
+    float z_u_vertex = z_at_hi ? 1.0f : 0.0f;
+    float z_u_corner = z_at_hi ? 1.0f - half_t : half_t;
+    float z_u_at_x0 = (dx > 0) ? z_u_vertex : z_u_corner;
+    float z_u_at_x1 = (dx > 0) ? z_u_corner : z_u_vertex;
+
+    // Room-facing X quad
     float x_face = (dx > 0) ? x1 : x0;
     Vector3 x_normal = (dx > 0) ? Vector3{1, 0, 0} : Vector3{-1, 0, 0};
-    if (dx > 0) {
-        // v0 at z1, v1 at z0 → u0 = x_u_at_z1, u1 = x_u_at_z0
-        mb.push_quad(
-            {x_face, 0, z1}, {x_face, 0, z0}, {x_face, h, z0}, {x_face, h, z1},
-            x_normal, x_u_at_z1, 0, x_u_at_z0, h
-        );
-    } else {
-        // v0 at z0, v1 at z1 → u0 = x_u_at_z0, u1 = x_u_at_z1
-        mb.push_quad(
-            {x_face, 0, z0}, {x_face, 0, z1}, {x_face, h, z1}, {x_face, h, z0},
-            x_normal, x_u_at_z0, 0, x_u_at_z1, h
-        );
-    }
+    float xq_z0 = (dx > 0) ? z1 : z0;
+    float xq_z1 = (dx > 0) ? z0 : z1;
+    float xq_u0 = (dx > 0) ? x_u_at_z1 : x_u_at_z0;
+    float xq_u1 = (dx > 0) ? x_u_at_z0 : x_u_at_z1;
+    mb.push_quad(
+        {x_face, 0, xq_z0}, {x_face, 0, xq_z1},
+        {x_face, h, xq_z1}, {x_face, h, xq_z0},
+        x_normal, xq_u0, 0, xq_u1, h
+    );
 
-    // Room-facing Z quad: faces toward the tile center (dz direction)
+    // Room-facing Z quad
     float z_face = (dz > 0) ? z1 : z0;
     Vector3 z_normal = (dz > 0) ? Vector3{0, 0, 1} : Vector3{0, 0, -1};
-    if (dz > 0) {
-        // v0 at x0, v1 at x1 → u0 = z_u_at_x0, u1 = z_u_at_x1
-        mb.push_quad(
-            {x0, 0, z_face}, {x1, 0, z_face}, {x1, h, z_face}, {x0, h, z_face},
-            z_normal, z_u_at_x0, 0, z_u_at_x1, h
-        );
-    } else {
-        // v0 at x1, v1 at x0 → u0 = z_u_at_x1, u1 = z_u_at_x0
-        mb.push_quad(
-            {x1, 0, z_face}, {x0, 0, z_face}, {x0, h, z_face}, {x1, h, z_face},
-            z_normal, z_u_at_x1, 0, z_u_at_x0, h
-        );
-    }
+    float zq_x0 = (dz > 0) ? x0 : x1;
+    float zq_x1 = (dz > 0) ? x1 : x0;
+    float zq_u0 = (dz > 0) ? z_u_at_x0 : z_u_at_x1;
+    float zq_u1 = (dz > 0) ? z_u_at_x1 : z_u_at_x0;
+    mb.push_quad(
+        {zq_x0, 0, z_face}, {zq_x1, 0, z_face},
+        {zq_x1, h, z_face}, {zq_x0, h, z_face},
+        z_normal, zq_u0, 0, zq_u1, h
+    );
 
     // Top and bottom caps omitted — occluded by floor/ceiling tiles.
 }
@@ -273,22 +250,17 @@ void rebuild_wall_meshes() {
             Direction dir = static_cast<Direction>(d);
             if (!tile.has_solid_wall(dir)) continue;
 
-            // Find grid vertices at each end of this wall segment.
-            int va_r, va_c, vb_r, vb_c;
-            switch (dir) {
-                case Direction::NORTH:
-                    va_r = tile_row; va_c = tile_col;
-                    vb_r = tile_row; vb_c = tile_col + 1; break;
-                case Direction::SOUTH:
-                    va_r = tile_row + 1; va_c = tile_col + 1;
-                    vb_r = tile_row + 1; vb_c = tile_col; break;
-                case Direction::WEST:
-                    va_r = tile_row + 1; va_c = tile_col;
-                    vb_r = tile_row; vb_c = tile_col; break;
-                case Direction::EAST:
-                    va_r = tile_row; va_c = tile_col + 1;
-                    vb_r = tile_row + 1; vb_c = tile_col + 1; break;
-            }
+            // Grid vertices at each end of this wall segment.
+            struct EndVerts { int ar, ac, br, bc; };
+            static constexpr EndVerts WALL_VERTS[] = {
+                {0, 0, 0, 1},  // NORTH
+                {1, 1, 1, 0},  // SOUTH
+                {1, 0, 0, 0},  // WEST
+                {0, 1, 1, 1},  // EAST
+            };
+            auto &wv = WALL_VERTS[d];
+            int va_r = tile_row + wv.ar, va_c = tile_col + wv.ac;
+            int vb_r = tile_row + wv.br, vb_c = tile_col + wv.bc;
 
             bool fill_a = fill_grid[va_r][va_c];
             bool fill_b = fill_grid[vb_r][vb_c];
@@ -301,15 +273,12 @@ void rebuild_wall_meshes() {
     }
 
     // Emit corner fills at vertices where perpendicular walls meet.
-    Vector2 grid_size = {
-        static_cast<float>(world::N_COLS), static_cast<float>(world::N_ROWS)
-    };
     for (int row = 0; row < VR; ++row) {
         for (int col = 0; col < VC; ++col) {
             if (!fill_grid[row][col]) continue;
 
-            float vx = static_cast<float>(col) - grid_size.x * 0.5f + world::ORIGIN.x;
-            float vz = static_cast<float>(row) - grid_size.y * 0.5f + world::ORIGIN.y;
+            float vx = static_cast<float>(col) - world::N_COLS * 0.5f + world::ORIGIN.x;
+            float vz = static_cast<float>(row) - world::N_ROWS * 0.5f + world::ORIGIN.y;
 
             for (auto &ch : VERTEX_CHECKS) {
                 tile::Tile *t = world::get_tile_at_row_col(row + ch.r, col + ch.c);
